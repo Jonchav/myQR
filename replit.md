@@ -8,6 +8,15 @@ This is a full-stack web application built with React and Express that allows us
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes
+
+### December 2024
+- **PRO Customization Model**: Implemented tiered feature system where basic QR generation is free, and advanced customization (colors, styles, logos, patterns) is positioned as a PRO feature
+- **Post-Generation Upgrade Flow**: Redesigned UX to show customization options after QR generation, encouraging users to upgrade their basic QR to a professional version
+- **Enhanced Landing Page**: Created professional landing page with features showcase for non-authenticated users
+- **Dark Mode Support**: Added complete dark/light theme system with toggle functionality
+- **Replit Authentication**: Integrated full authentication system with user sessions, profile management, and logout functionality
+
 ## System Architecture
 
 ### Frontend Architecture
