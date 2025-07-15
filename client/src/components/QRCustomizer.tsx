@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -22,6 +23,7 @@ interface QRCustomizerProps {
 
 export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onBackToHome, qrCode, onDownload }: QRCustomizerProps) {
   const { toast } = useToast();
+  const [isProcessingImage, setIsProcessingImage] = useState(false);
   
   const updateSetting = (key: string, value: any) => {
     const newSettings = { ...settings, [key]: value };
@@ -49,33 +51,44 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
     const file = event.target.files?.[0];
     if (file) {
       // Validar tipo de archivo
-      if (!file.type.startsWith('image/')) {
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml', 'image/bmp'];
+      if (!allowedTypes.includes(file.type.toLowerCase())) {
         toast({
           title: "Archivo no válido",
-          description: "Por favor selecciona un archivo de imagen válido (JPG, PNG, GIF, etc.)",
+          description: "Por favor selecciona un archivo de imagen válido (JPG, PNG, GIF, WebP, SVG, BMP)",
           variant: "destructive",
         });
         return;
       }
 
-      // Validar tamaño (máximo 5MB)
-      if (file.size > 5 * 1024 * 1024) {
+      // Validar tamaño (máximo 10MB)
+      if (file.size > 10 * 1024 * 1024) {
         toast({
           title: "Archivo muy grande",
-          description: "La imagen debe ser menor a 5MB. Por favor elige una imagen más pequeña.",
+          description: "La imagen debe ser menor a 10MB. Por favor elige una imagen más pequeña.",
           variant: "destructive",
         });
         return;
       }
 
+      setIsProcessingImage(true);
       const reader = new FileReader();
       reader.onload = (e) => {
         const result = e.target?.result as string;
         applyRealTimeChange("backgroundImage", result);
+        setIsProcessingImage(false);
         toast({
           title: "Imagen cargada",
           description: "La imagen de fondo se ha aplicado correctamente",
           variant: "default",
+        });
+      };
+      reader.onerror = () => {
+        setIsProcessingImage(false);
+        toast({
+          title: "Error al cargar",
+          description: "Hubo un error al procesar la imagen. Por favor intenta de nuevo.",
+          variant: "destructive",
         });
       };
       reader.readAsDataURL(file);
@@ -652,7 +665,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                   <div className="flex items-center gap-2">
                     <Input
                       type="file"
-                      accept="image/*"
+                      accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,image/svg+xml,image/bmp"
                       onChange={handleBackgroundImageUpload}
                       className="hidden"
                       id="backgroundImageInput"
@@ -660,10 +673,20 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                     <Button
                       variant="outline"
                       onClick={() => document.getElementById('backgroundImageInput')?.click()}
-                      className="flex items-center gap-2 border-purple-600 text-purple-300 hover:bg-purple-900/20"
+                      disabled={isProcessingImage}
+                      className="flex items-center gap-2 border-purple-600 text-purple-300 hover:bg-purple-900/20 disabled:opacity-50"
                     >
-                      <Upload className="w-4 h-4" />
-                      Subir Imagen
+                      {isProcessingImage ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          Procesando...
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="w-4 h-4" />
+                          Subir Imagen
+                        </>
+                      )}
                     </Button>
                     
                     {settings.backgroundImage && (
@@ -695,7 +718,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                     Sube una imagen para usar como fondo del código QR. Se combinará con los colores seleccionados.
                   </p>
                   <p className="text-xs text-gray-500">
-                    Formatos: JPG, PNG, GIF • Tamaño máximo: 5MB
+                    Formatos: JPG, PNG, GIF, WebP, SVG, BMP • Tamaño máximo: 10MB
                   </p>
                 </div>
               </div>
