@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { useToast } from "@/hooks/use-toast";
 import { Palette, Settings, Layers, Frame, Sparkles, Type, Shield, Loader2, Home, ArrowLeft, Download, Upload, X } from "lucide-react";
 
 interface QRCustomizerProps {
@@ -20,6 +21,8 @@ interface QRCustomizerProps {
 }
 
 export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onBackToHome, qrCode, onDownload }: QRCustomizerProps) {
+  const { toast } = useToast();
+  
   const updateSetting = (key: string, value: any) => {
     const newSettings = { ...settings, [key]: value };
     onChange(newSettings);
@@ -47,13 +50,21 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
     if (file) {
       // Validar tipo de archivo
       if (!file.type.startsWith('image/')) {
-        alert('Por favor selecciona un archivo de imagen válido.');
+        toast({
+          title: "Archivo no válido",
+          description: "Por favor selecciona un archivo de imagen válido (JPG, PNG, GIF, etc.)",
+          variant: "destructive",
+        });
         return;
       }
 
       // Validar tamaño (máximo 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        alert('La imagen debe ser menor a 5MB.');
+        toast({
+          title: "Archivo muy grande",
+          description: "La imagen debe ser menor a 5MB. Por favor elige una imagen más pequeña.",
+          variant: "destructive",
+        });
         return;
       }
 
@@ -61,6 +72,11 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
       reader.onload = (e) => {
         const result = e.target?.result as string;
         applyRealTimeChange("backgroundImage", result);
+        toast({
+          title: "Imagen cargada",
+          description: "La imagen de fondo se ha aplicado correctamente",
+          variant: "default",
+        });
       };
       reader.readAsDataURL(file);
     }
@@ -677,6 +693,9 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                   
                   <p className="text-sm text-gray-400">
                     Sube una imagen para usar como fondo del código QR. Se combinará con los colores seleccionados.
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Formatos: JPG, PNG, GIF • Tamaño máximo: 5MB
                   </p>
                 </div>
               </div>
