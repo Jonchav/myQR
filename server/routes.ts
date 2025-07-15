@@ -140,16 +140,24 @@ async function compositeQRWithBackground(qrDataUrl: string, backgroundImageDataU
       .png()
       .toBuffer();
     
-    // Step 3: Apply background using the mask - background will show only where mask is white (original QR black areas)
-    const compositeBuffer = await sharp(whiteCanvas)
+    // Step 3: Apply background only where the mask allows (black areas of original QR)
+    // Use the mask to blend the background with the white canvas
+    const maskedBackground = await sharp(processedBackground)
       .composite([
-        {
-          input: processedBackground,
-          blend: 'multiply'
-        },
         {
           input: qrMask,
           blend: 'multiply'
+        }
+      ])
+      .png()
+      .toBuffer();
+    
+    // Step 4: Composite the masked background with the white canvas
+    const compositeBuffer = await sharp(whiteCanvas)
+      .composite([
+        {
+          input: maskedBackground,
+          blend: 'over'
         }
       ])
       .png()
