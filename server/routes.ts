@@ -219,7 +219,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         qrCode: qrDataUrl,
         url: validatedData.url,
         id: qrRecord.id,
-        settings: validatedData
+        settings: validatedData,
+        title: qrRecord.title
       });
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -275,6 +276,73 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({
         success: false,
         error: "Error al obtener el código QR"
+      });
+    }
+  });
+
+  // Update QR code title
+  app.patch("/api/qr/:id", isAuthenticated, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const userId = (req.user as any).claims.sub;
+      const { title } = req.body;
+      
+      const updatedQR = await storage.updateQRCode(id, { title }, userId);
+      
+      if (!updatedQR) {
+        return res.status(404).json({
+          success: false,
+          error: "Código QR no encontrado"
+        });
+      }
+
+      res.json({
+        success: true,
+        qrCode: updatedQR
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: "Error al actualizar el código QR"
+      });
+    }
+  });
+
+  // Get QR code statistics
+  app.get("/api/qr/:id/stats", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const stats = await storage.getQRScanStats(id);
+      
+      res.json({
+        success: true,
+        stats
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: "Error al obtener estadísticas"
+      });
+    }
+  });
+
+  // Record QR scan
+  app.post("/api/qr/:id/scan", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const userAgent = req.headers['user-agent'];
+      const ipAddress = req.ip;
+      
+      await storage.recordQRScan(id, userAgent, ipAddress);
+      
+      res.json({
+        success: true,
+        message: "Scan registrado exitosamente"
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: "Error al registrar scan"
       });
     }
   });

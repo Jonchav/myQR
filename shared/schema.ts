@@ -29,9 +29,11 @@ export const users = pgTable("users", {
 export const qrCodes = pgTable("qr_codes", {
   id: serial("id").primaryKey(),
   userId: varchar("user_id").references(() => users.id),
+  title: varchar("title", { length: 255 }),
   url: text("url").notNull(),
   data: text("data").notNull(),
   type: varchar("type").notNull().default("url"),
+  scanCount: integer("scan_count").default(0),
   
   // Customization options
   backgroundColor: varchar("background_color").default("#ffffff"),
@@ -54,6 +56,15 @@ export const qrCodes = pgTable("qr_codes", {
   
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// QR Scans table for tracking statistics
+export const qrScans = pgTable("qr_scans", {
+  id: serial("id").primaryKey(),
+  qrCodeId: integer("qr_code_id").references(() => qrCodes.id, { onDelete: "cascade" }),
+  scannedAt: timestamp("scanned_at").defaultNow(),
+  userAgent: text("user_agent"),
+  ipAddress: varchar("ip_address", { length: 45 }),
 });
 
 // User preferences
@@ -80,6 +91,7 @@ export const insertUserSchema = createInsertSchema(users).pick({
 });
 
 export const insertQRCodeSchema = createInsertSchema(qrCodes).pick({
+  title: true,
   url: true,
   data: true,
   type: true,
@@ -123,6 +135,7 @@ export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type InsertQRCode = z.infer<typeof insertQRCodeSchema>;
 export type QRCode = typeof qrCodes.$inferSelect;
+export type QRScan = typeof qrScans.$inferSelect;
 export type UserPreferences = typeof userPreferences.$inferSelect;
 export type InsertUserPreferences = z.infer<typeof insertUserPreferencesSchema>;
 export type UpdateUserPreferences = z.infer<typeof updateUserPreferencesSchema>;

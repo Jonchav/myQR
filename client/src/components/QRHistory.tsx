@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { History, Download, Trash2, RefreshCw, Eye, Edit } from "lucide-react";
+import { History, Download, Trash2, RefreshCw, Eye, Edit, BarChart3, Save, X } from "lucide-react";
 import { format } from "date-fns";
 
 interface QRHistoryProps {
@@ -16,6 +18,9 @@ interface QRHistoryProps {
 
 export function QRHistory({ onEditQR }: QRHistoryProps) {
   const [selectedQR, setSelectedQR] = useState<any>(null);
+  const [editingQR, setEditingQR] = useState<any>(null);
+  const [newTitle, setNewTitle] = useState("");
+  const [showStats, setShowStats] = useState<number | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -66,11 +71,56 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
     },
   });
 
+  const updateTitleMutation = useMutation({
+    mutationFn: async ({ id, title }: { id: number; title: string }) => {
+      const response = await apiRequest("PATCH", `/api/qr/${id}`, { title });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/qr/history"] });
+      setEditingQR(null);
+      setNewTitle("");
+      toast({
+        title: "Título actualizado",
+        description: "El título del QR ha sido actualizado exitosamente",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Error al actualizar el título",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const { data: statsData, isLoading: statsLoading } = useQuery({
+    queryKey: ["/api/qr", showStats, "stats"],
+    enabled: showStats !== null,
+    retry: false,
+  });
+
   const handleDownload = (qrCode: any) => {
     const link = document.createElement("a");
     link.download = `qr-${qrCode.id}.png`;
     link.href = qrCode.qrDataUrl;
     link.click();
+  };
+
+  const startEditingTitle = (qr: any) => {
+    setEditingQR(qr);
+    setNewTitle(qr.title || "");
+  };
+
+  const saveTitle = () => {
+    if (editingQR) {
+      updateTitleMutation.mutate({ id: editingQR.id, title: newTitle });
+    }
+  };
+
+  const cancelEdit = () => {
+    setEditingQR(null);
+    setNewTitle("");
   };
 
   const getTypeColor = (type: string) => {
@@ -198,7 +248,52 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                     <Badge variant="outline" className="text-xs">
                       {qrCode.size}
                     </Badge>
+                    <Badge variant="outline" className="border-gray-600 text-gray-300">
+                      {qrCode.scanCount || 0} scans
+                    </Badge>
                   </div>
+                  
+                  {/* Title editing */}
+                  {editingQR && editingQR.id === qrCode.id ? (
+                    <div className="flex items-center gap-2 mb-2">
+                      <Input
+                        value={newTitle}
+                        onChange={(e) => setNewTitle(e.target.value)}
+                        placeholder="Agregar título..."
+                        className="flex-1 bg-gray-700 border-gray-600 text-white text-sm"
+                      />
+                      <Button
+                        size="sm"
+                        onClick={saveTitle}
+                        disabled={updateTitleMutation.isPending}
+                        className="bg-purple-600 hover:bg-purple-700"
+                      >
+                        <Save className="w-3 h-3" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={cancelEdit}
+                        className="border-gray-600 text-gray-300"
+                      >
+                        <X className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 mb-1">
+                      <p className="text-purple-300 font-medium text-sm flex-1">
+                        {qrCode.title || "Sin título"}
+                      </p>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => startEditingTitle(qrCode)}
+                        className="text-gray-400 hover:text-white p-1 h-auto"
+                      >
+                        <Edit className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  )}
                   
                   <p className="text-sm font-medium text-gray-300 truncate">
                     {qrCode.url}
@@ -222,6 +317,69 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                 </div>
                 
                 <div className="flex items-center gap-2">
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setShowStats(qrCode.id)}
+                        className="text-purple-400 hover:text-purple-300 hover:bg-purple-900/20"
+                      >
+                        <BarChart3 className="w-4 h-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="bg-gray-900 border-gray-700">
+                      <DialogHeader>
+                        <DialogTitle className="text-white">Estadísticas del QR</DialogTitle>
+                      </DialogHeader>
+                      <div className="py-4">
+                        {statsLoading ? (
+                          <div className="space-y-3">
+                            <Skeleton className="h-4 w-full bg-gray-800" />
+                            <Skeleton className="h-4 w-3/4 bg-gray-800" />
+                            <Skeleton className="h-4 w-1/2 bg-gray-800" />
+                          </div>
+                        ) : statsData?.stats ? (
+                          <div className="space-y-4">
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="bg-gray-800 rounded-lg p-3">
+                                <p className="text-sm text-gray-400">Total de scans</p>
+                                <p className="text-2xl font-bold text-purple-400">{statsData.stats.total}</p>
+                              </div>
+                              <div className="bg-gray-800 rounded-lg p-3">
+                                <p className="text-sm text-gray-400">Hoy</p>
+                                <p className="text-2xl font-bold text-blue-400">{statsData.stats.today}</p>
+                              </div>
+                              <div className="bg-gray-800 rounded-lg p-3">
+                                <p className="text-sm text-gray-400">Este mes</p>
+                                <p className="text-2xl font-bold text-green-400">{statsData.stats.thisMonth}</p>
+                              </div>
+                              <div className="bg-gray-800 rounded-lg p-3">
+                                <p className="text-sm text-gray-400">Este año</p>
+                                <p className="text-2xl font-bold text-orange-400">{statsData.stats.thisYear}</p>
+                              </div>
+                            </div>
+                            {statsData.stats.dailyStats && statsData.stats.dailyStats.length > 0 && (
+                              <div className="bg-gray-800 rounded-lg p-3">
+                                <p className="text-sm text-gray-400 mb-2">Últimos 7 días</p>
+                                <div className="space-y-1">
+                                  {statsData.stats.dailyStats.slice(-7).map((day: any) => (
+                                    <div key={day.date} className="flex justify-between text-sm">
+                                      <span className="text-gray-300">{format(new Date(day.date), 'dd/MM')}</span>
+                                      <span className="text-purple-400">{day.count} scans</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <p className="text-gray-400">No hay estadísticas disponibles</p>
+                        )}
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                  
                   {onEditQR && (
                     <Button
                       variant="ghost"

@@ -1,17 +1,19 @@
 import {
   users,
   qrCodes,
+  qrScans,
   userPreferences,
   type User,
   type UpsertUser,
   type QRCode,
+  type QRScan,
   type InsertQRCode,
   type UserPreferences,
   type InsertUserPreferences,
   type UpdateUserPreferences,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, and } from "drizzle-orm";
+import { eq, desc, and, count, sql } from "drizzle-orm";
 
 export interface IStorage {
   // User operations
@@ -25,6 +27,17 @@ export interface IStorage {
   getQRCode(id: number): Promise<QRCode | undefined>;
   deleteQRCode(id: number, userId?: string): Promise<boolean>;
   updateQRCode(id: number, updates: any, userId?: string): Promise<QRCode | undefined>;
+  
+  // QR Code statistics operations
+  recordQRScan(qrCodeId: number, userAgent?: string, ipAddress?: string): Promise<void>;
+  getQRScanStats(qrCodeId: number): Promise<{
+    total: number;
+    today: number;
+    thisMonth: number;
+    thisYear: number;
+    dailyStats: Array<{ date: string; count: number }>;
+  }>;
+  getQRCodeWithStats(id: number): Promise<QRCode & { scanStats: any } | undefined>;
   
   // User preferences operations
   getUserPreferences(userId: string): Promise<UserPreferences | undefined>;
@@ -152,6 +165,115 @@ export class DatabaseStorage implements IStorage {
       .where(eq(userPreferences.userId, userId))
       .returning();
     return prefs;
+  }
+
+  // QR Code statistics operations
+  async recordQRScan(qrCodeId: number, userAgent?: string, ipAddress?: string): Promise<void> {
+    await db.insert(qrScans).values({
+      qrCodeId,
+      userAgent,
+      ipAddress,
+      scannedAt: new Date(),
+    });
+    
+    // Update scan count
+    await db
+      .update(qrCodes)
+      .set({
+        scanCount: sql`${qrCodes.scanCount} + 1`,
+      })
+      .where(eq(qrCodes.id, qrCodeId));
+  }
+
+  async getQRScanStats(qrCodeId: number): Promise<{
+    total: number;
+    today: number;
+    thisMonth: number;
+    thisYear: number;
+    dailyStats: Array<{ date: string; count: number }>;
+  }> {
+    const now = new Date();
+    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const startOfYear = new Date(now.getFullYear(), 0, 1);
+    
+    // Get total scans
+    const [totalResult] = await db
+      .select({ count: count() })
+      .from(qrScans)
+      .where(eq(qrScans.qrCodeId, qrCodeId));
+    
+    // Get today's scans
+    const [todayResult] = await db
+      .select({ count: count() })
+      .from(qrScans)
+      .where(
+        and(
+          eq(qrScans.qrCodeId, qrCodeId),
+          sql`${qrScans.scannedAt} >= ${startOfDay}`
+        )
+      );
+    
+    // Get this month's scans
+    const [monthResult] = await db
+      .select({ count: count() })
+      .from(qrScans)
+      .where(
+        and(
+          eq(qrScans.qrCodeId, qrCodeId),
+          sql`${qrScans.scannedAt} >= ${startOfMonth}`
+        )
+      );
+    
+    // Get this year's scans
+    const [yearResult] = await db
+      .select({ count: count() })
+      .from(qrScans)
+      .where(
+        and(
+          eq(qrScans.qrCodeId, qrCodeId),
+          sql`${qrScans.scannedAt} >= ${startOfYear}`
+        )
+      );
+    
+    // Get daily stats for the last 30 days
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    const dailyStats = await db
+      .select({
+        date: sql`DATE(${qrScans.scannedAt})`.as('date'),
+        count: count(),
+      })
+      .from(qrScans)
+      .where(
+        and(
+          eq(qrScans.qrCodeId, qrCodeId),
+          sql`${qrScans.scannedAt} >= ${thirtyDaysAgo}`
+        )
+      )
+      .groupBy(sql`DATE(${qrScans.scannedAt})`)
+      .orderBy(sql`DATE(${qrScans.scannedAt})`);
+    
+    return {
+      total: totalResult?.count ?? 0,
+      today: todayResult?.count ?? 0,
+      thisMonth: monthResult?.count ?? 0,
+      thisYear: yearResult?.count ?? 0,
+      dailyStats: dailyStats.map(stat => ({
+        date: stat.date as string,
+        count: stat.count,
+      })),
+    };
+  }
+
+  async getQRCodeWithStats(id: number): Promise<QRCode & { scanStats: any } | undefined> {
+    const qrCode = await this.getQRCode(id);
+    if (!qrCode) return undefined;
+    
+    const scanStats = await this.getQRScanStats(id);
+    return {
+      ...qrCode,
+      scanStats,
+    };
   }
 
   // History operations

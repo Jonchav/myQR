@@ -20,6 +20,10 @@ Preferred communication style: Simple, everyday language.
 - **Vibrant Color Transformation**: Replaced green palette with intense, pulsating colors featuring purple primary (HSL 280°, 100%, 70%) and dynamic animations
 - **QR Pattern Background**: Added subtle QR-code pattern background texture using SVG with very low opacity (0.015) for authentic theming
 - **Dynamic Animations**: Implemented vibrant pulsing effects with hue-rotation, saturation changes, and colorful glow animations for enhanced visual appeal
+- **QR Code Title System**: Added ability to add custom titles to QR codes for better organization and identification in history
+- **Comprehensive Scan Analytics**: Implemented detailed scan tracking with daily, monthly, and yearly statistics, including visual charts and daily breakdown
+- **Advanced Database Schema**: Expanded database with qrScans table for detailed analytics tracking and title field for QR organization
+- **Enhanced History Management**: Updated QR history interface with inline title editing, scan count display, and comprehensive statistics modal
 
 ## System Architecture
 
