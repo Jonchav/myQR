@@ -77,7 +77,7 @@ function getErrorCorrectionLevel(level: string): "L" | "M" | "Q" | "H" {
 
 
 
-// Function to generate simple, recognizable logo SVGs
+// Function to generate high-quality, recognizable logo SVGs
 function generateLogoSVG(logoType: string, size: number = 60, color: string = "#000000"): string {
   const logoMap: { [key: string]: string } = {
     star: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.4}" fill="#FFD700"/>
@@ -95,71 +95,62 @@ function generateLogoSVG(logoType: string, size: number = 60, color: string = "#
     check: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.4}" fill="#4CAF50"/>
             <polyline points="${size*0.35},${size*0.5} ${size*0.45},${size*0.6} ${size*0.65},${size*0.4}" stroke="#FFF" stroke-width="5" fill="none" stroke-linecap="round"/>`,
     
-    // Logos exactos basados en la imagen de referencia
-    facebook: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.35}" fill="#1877F2"/>
-               <path d="M${size*0.58} ${size*0.8} L${size*0.58} ${size*0.55} L${size*0.68} ${size*0.55} L${size*0.7} ${size*0.45} L${size*0.58} ${size*0.45} L${size*0.58} ${size*0.38} C${size*0.58} ${size*0.33} ${size*0.62} ${size*0.3} ${size*0.68} ${size*0.3} L${size*0.7} ${size*0.3} L${size*0.7} ${size*0.2} L${size*0.65} ${size*0.2} C${size*0.52} ${size*0.2} ${size*0.45} ${size*0.27} ${size*0.45} ${size*0.38} L${size*0.45} ${size*0.45} L${size*0.38} ${size*0.45} L${size*0.38} ${size*0.55} L${size*0.45} ${size*0.55} L${size*0.45} ${size*0.8} Z" fill="#FFF"/>`,
+    // Logos mega-simplificados con máxima claridad y contraste
+    facebook: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.45}" fill="#1877F2"/>
+               <text x="${size/2}" y="${size*0.75}" text-anchor="middle" fill="#FFF" font-size="${size*0.8}" font-family="Arial, sans-serif" font-weight="bold">f</text>`,
 
-    twitter: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.35}" fill="#000"/>
-              <text x="${size/2}" y="${size*0.65}" text-anchor="middle" fill="#FFF" font-size="${size*0.4}" font-weight="bold">X</text>`,
+    twitter: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.45}" fill="#000"/>
+              <text x="${size/2}" y="${size*0.75}" text-anchor="middle" fill="#FFF" font-size="${size*0.7}" font-family="Arial, sans-serif" font-weight="bold">X</text>`,
 
-    instagram: `<defs>
-                  <linearGradient id="instagramGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" style="stop-color:#ff8a00;stop-opacity:1" />
-                    <stop offset="50%" style="stop-color:#e4405f;stop-opacity:1" />
-                    <stop offset="100%" style="stop-color:#833ab4;stop-opacity:1" />
-                  </linearGradient>
-                </defs>
-                <circle cx="${size/2}" cy="${size/2}" r="${size*0.35}" fill="url(#instagramGradient)"/>
-                <rect x="${size*0.32}" y="${size*0.32}" width="${size*0.36}" height="${size*0.36}" rx="${size*0.08}" fill="none" stroke="#FFF" stroke-width="3"/>
-                <circle cx="${size/2}" cy="${size/2}" r="${size*0.08}" fill="none" stroke="#FFF" stroke-width="3"/>
-                <circle cx="${size*0.62}" cy="${size*0.38}" r="${size*0.03}" fill="#FFF"/>`,
+    instagram: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.45}" fill="#E4405F"/>
+                <rect x="${size*0.25}" y="${size*0.25}" width="${size*0.5}" height="${size*0.5}" rx="${size*0.1}" fill="none" stroke="#FFF" stroke-width="8"/>
+                <circle cx="${size/2}" cy="${size/2}" r="${size*0.12}" fill="none" stroke="#FFF" stroke-width="6"/>
+                <circle cx="${size*0.7}" cy="${size*0.3}" r="${size*0.08}" fill="#FFF"/>`,
 
-    tiktok: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.35}" fill="#000"/>
-             <path d="M${size*0.55} ${size*0.35} C${size*0.55} ${size*0.3} ${size*0.6} ${size*0.25} ${size*0.65} ${size*0.25} C${size*0.7} ${size*0.25} ${size*0.75} ${size*0.3} ${size*0.75} ${size*0.35} L${size*0.75} ${size*0.4} C${size*0.7} ${size*0.4} ${size*0.65} ${size*0.35} ${size*0.65} ${size*0.3} C${size*0.6} ${size*0.3} ${size*0.55} ${size*0.35} ${size*0.55} ${size*0.35} L${size*0.55} ${size*0.7} C${size*0.55} ${size*0.75} ${size*0.5} ${size*0.8} ${size*0.45} ${size*0.8} C${size*0.4} ${size*0.8} ${size*0.35} ${size*0.75} ${size*0.35} ${size*0.7} L${size*0.35} ${size*0.35} C${size*0.35} ${size*0.3} ${size*0.4} ${size*0.25} ${size*0.45} ${size*0.25} C${size*0.5} ${size*0.25} ${size*0.55} ${size*0.3} ${size*0.55} ${size*0.35} Z" fill="#FF0050"/>
-             <path d="M${size*0.4} ${size*0.4} C${size*0.4} ${size*0.35} ${size*0.45} ${size*0.3} ${size*0.5} ${size*0.3} C${size*0.55} ${size*0.3} ${size*0.6} ${size*0.35} ${size*0.6} ${size*0.4} C${size*0.6} ${size*0.45} ${size*0.55} ${size*0.5} ${size*0.5} ${size*0.5} L${size*0.5} ${size*0.7} C${size*0.45} ${size*0.7} ${size*0.4} ${size*0.65} ${size*0.4} ${size*0.6} Z" fill="#25F4EE"/>`,
+    tiktok: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.45}" fill="#000"/>
+             <circle cx="${size*0.4}" cy="${size*0.4}" r="${size*0.15}" fill="#FF0050"/>
+             <circle cx="${size*0.6}" cy="${size*0.6}" r="${size*0.12}" fill="#25F4EE"/>`,
 
-    discord: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.35}" fill="#5865F2"/>
-              <ellipse cx="${size/2}" cy="${size*0.45}" rx="${size*0.18}" ry="${size*0.12}" fill="#FFF"/>
-              <circle cx="${size*0.45}" cy="${size*0.43}" r="${size*0.03}" fill="#5865F2"/>
-              <circle cx="${size*0.55}" cy="${size*0.43}" r="${size*0.03}" fill="#5865F2"/>`,
+    discord: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.45}" fill="#5865F2"/>
+              <ellipse cx="${size/2}" cy="${size*0.45}" rx="${size*0.3}" ry="${size*0.2}" fill="#FFF"/>
+              <circle cx="${size*0.4}" cy="${size*0.4}" r="${size*0.08}" fill="#5865F2"/>
+              <circle cx="${size*0.6}" cy="${size*0.4}" r="${size*0.08}" fill="#5865F2"/>`,
 
-    snapchat: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.35}" fill="#FFFC00"/>
-               <rect x="${size*0.35}" y="${size*0.35}" width="${size*0.3}" height="${size*0.3}" rx="${size*0.15}" fill="#FFF"/>
-               <rect x="${size*0.4}" y="${size*0.4}" width="${size*0.2}" height="${size*0.2}" rx="${size*0.1}" fill="#FFFC00"/>`,
+    snapchat: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.45}" fill="#FFFC00"/>
+               <circle cx="${size/2}" cy="${size/2}" r="${size*0.25}" fill="#FFF"/>
+               <circle cx="${size*0.4}" cy="${size*0.4}" r="${size*0.05}" fill="#000"/>
+               <circle cx="${size*0.6}" cy="${size*0.4}" r="${size*0.05}" fill="#000"/>`,
 
-    youtube: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.35}" fill="#FF0000"/>
-              <polygon points="${size*0.42},${size*0.42} ${size*0.58},${size/2} ${size*0.42},${size*0.58}" fill="#FFF"/>`,
+    youtube: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.45}" fill="#FF0000"/>
+              <polygon points="${size*0.3},${size*0.3} ${size*0.7},${size/2} ${size*0.3},${size*0.7}" fill="#FFF"/>`,
 
-    whatsapp: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.35}" fill="#25D366"/>
-               <circle cx="${size/2}" cy="${size/2}" r="${size*0.18}" fill="none" stroke="#FFF" stroke-width="3"/>
-               <path d="M${size*0.35} ${size*0.6} L${size*0.4} ${size*0.55} L${size*0.6} ${size*0.55} L${size*0.65} ${size*0.6}" stroke="#FFF" stroke-width="3" fill="none" stroke-linecap="round"/>`,
+    whatsapp: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.45}" fill="#25D366"/>
+               <circle cx="${size/2}" cy="${size/2}" r="${size*0.25}" fill="none" stroke="#FFF" stroke-width="8"/>
+               <path d="M${size*0.25} ${size*0.7} L${size*0.35} ${size*0.6} L${size*0.65} ${size*0.6} L${size*0.75} ${size*0.7}" stroke="#FFF" stroke-width="6" fill="none" stroke-linecap="round"/>`,
 
-    behance: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.35}" fill="#1769FF"/>
-              <text x="${size/2}" y="${size*0.65}" text-anchor="middle" fill="#FFF" font-size="${size*0.25}" font-weight="bold">Be</text>`,
+    behance: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.45}" fill="#1769FF"/>
+              <text x="${size/2}" y="${size*0.75}" text-anchor="middle" fill="#FFF" font-size="${size*0.4}" font-family="Arial, sans-serif" font-weight="bold">Be</text>`,
 
-    threads: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.35}" fill="#000"/>
-              <text x="${size/2}" y="${size*0.65}" text-anchor="middle" fill="#FFF" font-size="${size*0.3}" font-weight="bold">@</text>`,
+    threads: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.45}" fill="#000"/>
+              <text x="${size/2}" y="${size*0.75}" text-anchor="middle" fill="#FFF" font-size="${size*0.8}" font-family="Arial, sans-serif" font-weight="normal">@</text>`,
 
-    linkedin: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.35}" fill="#0A66C2"/>
-               <rect x="${size*0.35}" y="${size*0.48}" width="${size*0.1}" height="${size*0.22}" fill="#FFF"/>
-               <rect x="${size*0.55}" y="${size*0.52}" width="${size*0.1}" height="${size*0.18}" fill="#FFF"/>
-               <circle cx="${size*0.4}" cy="${size*0.4}" r="${size*0.04}" fill="#FFF"/>`,
+    linkedin: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.45}" fill="#0A66C2"/>
+               <text x="${size/2}" y="${size*0.75}" text-anchor="middle" fill="#FFF" font-size="${size*0.6}" font-family="Arial, sans-serif" font-weight="bold">in</text>`,
 
-    dribbble: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.35}" fill="#EA4C89"/>
-               <circle cx="${size/2}" cy="${size/2}" r="${size*0.22}" fill="none" stroke="#FFF" stroke-width="3"/>
-               <path d="M${size*0.35} ${size*0.35} Q${size*0.55} ${size*0.45} ${size*0.65} ${size*0.35}" stroke="#FFF" stroke-width="2" fill="none"/>
-               <path d="M${size*0.35} ${size*0.65} Q${size*0.45} ${size*0.55} ${size*0.65} ${size*0.65}" stroke="#FFF" stroke-width="2" fill="none"/>`,
+    dribbble: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.45}" fill="#EA4C89"/>
+               <circle cx="${size/2}" cy="${size/2}" r="${size*0.3}" fill="none" stroke="#FFF" stroke-width="6"/>
+               <circle cx="${size*0.35}" cy="${size*0.35}" r="${size*0.05}" fill="#FFF"/>`,
 
-    pinterest: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.35}" fill="#BD081C"/>
-               <text x="${size/2}" y="${size*0.65}" text-anchor="middle" fill="#FFF" font-size="${size*0.3}" font-weight="bold">P</text>`,
+    pinterest: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.45}" fill="#BD081C"/>
+               <text x="${size/2}" y="${size*0.75}" text-anchor="middle" fill="#FFF" font-size="${size*0.8}" font-family="Arial, sans-serif" font-weight="bold">P</text>`,
 
-    twitch: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.35}" fill="#9146FF"/>
-             <rect x="${size*0.4}" y="${size*0.35}" width="${size*0.06}" height="${size*0.2}" fill="#FFF"/>
-             <rect x="${size*0.54}" y="${size*0.35}" width="${size*0.06}" height="${size*0.2}" fill="#FFF"/>
-             <rect x="${size*0.45}" y="${size*0.6}" width="${size*0.1}" height="${size*0.05}" fill="#FFF"/>`,
+    twitch: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.45}" fill="#9146FF"/>
+             <rect x="${size*0.35}" y="${size*0.25}" width="${size*0.12}" height="${size*0.4}" fill="#FFF"/>
+             <rect x="${size*0.53}" y="${size*0.25}" width="${size*0.12}" height="${size*0.4}" fill="#FFF"/>
+             <rect x="${size*0.4}" y="${size*0.7}" width="${size*0.2}" height="${size*0.1}" fill="#FFF"/>`,
 
-    telegram: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.35}" fill="#0088CC"/>
-               <polygon points="${size*0.35},${size*0.55} ${size*0.65},${size*0.4} ${size*0.5},${size*0.5} ${size*0.45},${size*0.65}" fill="#FFF"/>`,
+    telegram: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.45}" fill="#0088CC"/>
+               <polygon points="${size*0.25},${size*0.65} ${size*0.75},${size*0.35} ${size*0.45},${size*0.5} ${size*0.35},${size*0.75}" fill="#FFF"/>`,
   };
 
   const logoPath = logoMap[logoType];
@@ -210,7 +201,7 @@ async function generateAdvancedQRCode(options: any): Promise<string> {
 // Function to add logo to QR code
 async function addLogoToQR(qrDataUrl: string, logoType: string, qrSize: number, logoColor: string): Promise<string> {
   try {
-    const logoSize = Math.floor(qrSize * 0.25); // Logo is 25% of QR size
+    const logoSize = Math.floor(qrSize * 0.35); // Logo is 35% of QR size (increased for better visibility)
     const logoSVG = generateLogoSVG(logoType, logoSize, logoColor);
     
     if (!logoSVG) return qrDataUrl;
@@ -220,12 +211,12 @@ async function addLogoToQR(qrDataUrl: string, logoType: string, qrSize: number, 
     const qrBuffer = Buffer.from(qrBase64, 'base64');
     
     // Create white circular background for better contrast
-    const backgroundSize = Math.floor(logoSize * 1.1);
+    const backgroundSize = Math.floor(logoSize * 1.15);
     const backgroundSVG = `<svg width="${backgroundSize}" height="${backgroundSize}" viewBox="0 0 ${backgroundSize} ${backgroundSize}" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="${backgroundSize/2}" cy="${backgroundSize/2}" r="${backgroundSize/2}" fill="white" stroke="#E0E0E0" stroke-width="2"/>
+      <circle cx="${backgroundSize/2}" cy="${backgroundSize/2}" r="${backgroundSize/2}" fill="white" stroke="#E0E0E0" stroke-width="3"/>
     </svg>`;
     
-    // Convert SVGs to buffers
+    // Convert SVGs to buffers with higher quality
     const logoBuffer = Buffer.from(logoSVG);
     const backgroundBuffer = Buffer.from(backgroundSVG);
     
@@ -243,7 +234,10 @@ async function addLogoToQR(qrDataUrl: string, logoType: string, qrSize: number, 
           left: Math.floor((qrSize - logoSize) / 2),
         }
       ])
-      .png()
+      .png({
+        quality: 100,
+        compressionLevel: 0
+      })
       .toBuffer();
     
     return `data:image/png;base64,${result.toString('base64')}`;
