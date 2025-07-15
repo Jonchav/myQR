@@ -7,6 +7,15 @@ import QRCode from "qrcode";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import sharp from "sharp";
 import * as XLSX from "xlsx";
+import Stripe from "stripe";
+
+// Initialize Stripe
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
+}
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: "2024-06-20",
+});
 
 // Enhanced QR generation schema
 const qrGenerationSchema = z.object({
@@ -726,6 +735,249 @@ export async function registerRoutes(app: Express): Promise<Server> {
         success: false,
         error: "Error al exportar todas las estadísticas"
       });
+    }
+  });
+
+  // Stripe payment endpoints
+  
+  // Start free trial
+  app.post("/api/subscription/trial", isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req.user as any).claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ error: "Usuario no encontrado" });
+      }
+      
+      if (user.trialUsed) {
+        return res.status(400).json({ error: "La prueba gratuita ya fue utilizada" });
+      }
+      
+      const trialEndDate = new Date();
+      trialEndDate.setDate(trialEndDate.getDate() + 3); // 3 days trial
+      
+      await storage.updateUserSubscription(userId, {
+        subscriptionStatus: "trialing",
+        subscriptionPlan: "trial",
+        subscriptionStartDate: new Date(),
+        subscriptionEndDate: trialEndDate,
+        trialUsed: true
+      });
+      
+      res.json({
+        success: true,
+        message: "Prueba gratuita de 3 días activada",
+        trialEndDate: trialEndDate.toISOString()
+      });
+    } catch (error) {
+      console.error("Error starting trial:", error);
+      res.status(500).json({ error: "Error al iniciar la prueba gratuita" });
+    }
+  });
+
+  // Create subscription
+  app.post("/api/subscription/create", isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req.user as any).claims.sub;
+      const { plan } = req.body; // 'daily', 'weekly', 'monthly'
+      
+      const user = await storage.getUser(userId);
+      if (!user || !user.email) {
+        return res.status(404).json({ error: "Usuario no encontrado o sin email" });
+      }
+      
+      // Price mapping in cents
+      const priceMap = {
+        daily: 99,   // $0.99
+        weekly: 399, // $3.99
+        monthly: 699 // $6.99
+      };
+      
+      const price = priceMap[plan as keyof typeof priceMap];
+      if (!price) {
+        return res.status(400).json({ error: "Plan de suscripción inválido" });
+      }
+      
+      // Create or get Stripe customer
+      let stripeCustomerId = user.stripeCustomerId;
+      if (!stripeCustomerId) {
+        const customer = await stripe.customers.create({
+          email: user.email,
+          name: `${user.firstName || ""} ${user.lastName || ""}`.trim() || user.email,
+          metadata: {
+            userId: userId
+          }
+        });
+        stripeCustomerId = customer.id;
+        await storage.updateUserSubscription(userId, {
+          stripeCustomerId: stripeCustomerId
+        });
+      }
+      
+      // Create subscription
+      const subscription = await stripe.subscriptions.create({
+        customer: stripeCustomerId,
+        items: [{
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: `myQR ${plan.charAt(0).toUpperCase() + plan.slice(1)} Plan`,
+              description: `Suscripción ${plan} a myQR Pro`
+            },
+            unit_amount: price,
+            recurring: {
+              interval: plan === 'daily' ? 'day' : plan === 'weekly' ? 'week' : 'month'
+            }
+          }
+        }],
+        payment_behavior: 'default_incomplete',
+        expand: ['latest_invoice.payment_intent'],
+      });
+      
+      // Update user subscription info
+      await storage.updateUserSubscription(userId, {
+        stripeSubscriptionId: subscription.id,
+        subscriptionStatus: "incomplete",
+        subscriptionPlan: plan,
+        subscriptionStartDate: new Date()
+      });
+      
+      const invoice = subscription.latest_invoice as Stripe.Invoice;
+      const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
+      
+      res.json({
+        success: true,
+        subscriptionId: subscription.id,
+        clientSecret: paymentIntent.client_secret,
+        plan: plan,
+        price: price / 100
+      });
+    } catch (error) {
+      console.error("Error creating subscription:", error);
+      res.status(500).json({ error: "Error al crear la suscripción" });
+    }
+  });
+
+  // Get subscription status
+  app.get("/api/subscription/status", isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req.user as any).claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ error: "Usuario no encontrado" });
+      }
+      
+      const now = new Date();
+      const isActive = user.subscriptionStatus === "active" || 
+                      (user.subscriptionStatus === "trialing" && 
+                       user.subscriptionEndDate && new Date(user.subscriptionEndDate) > now);
+      
+      res.json({
+        success: true,
+        isActive,
+        status: user.subscriptionStatus,
+        plan: user.subscriptionPlan,
+        trialUsed: user.trialUsed,
+        subscriptionEndDate: user.subscriptionEndDate
+      });
+    } catch (error) {
+      console.error("Error getting subscription status:", error);
+      res.status(500).json({ error: "Error al obtener el estado de suscripción" });
+    }
+  });
+
+  // Cancel subscription
+  app.post("/api/subscription/cancel", isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req.user as any).claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user || !user.stripeSubscriptionId) {
+        return res.status(404).json({ error: "Suscripción no encontrada" });
+      }
+      
+      await stripe.subscriptions.cancel(user.stripeSubscriptionId);
+      
+      await storage.updateUserSubscription(userId, {
+        subscriptionStatus: "canceled",
+        subscriptionEndDate: new Date()
+      });
+      
+      res.json({
+        success: true,
+        message: "Suscripción cancelada exitosamente"
+      });
+    } catch (error) {
+      console.error("Error canceling subscription:", error);
+      res.status(500).json({ error: "Error al cancelar la suscripción" });
+    }
+  });
+
+  // Webhook endpoint for Stripe
+  app.post("/api/webhook/stripe", async (req, res) => {
+    const sig = req.headers['stripe-signature'];
+    
+    try {
+      const event = stripe.webhooks.constructEvent(req.body, sig!, process.env.STRIPE_WEBHOOK_SECRET || '');
+      
+      switch (event.type) {
+        case 'invoice.payment_succeeded':
+          const invoice = event.data.object as Stripe.Invoice;
+          if (invoice.subscription) {
+            const subscription = await stripe.subscriptions.retrieve(invoice.subscription as string);
+            const customer = await stripe.customers.retrieve(subscription.customer as string);
+            
+            if (customer && !customer.deleted) {
+              const userId = customer.metadata?.userId;
+              if (userId) {
+                await storage.updateUserSubscription(userId, {
+                  subscriptionStatus: "active",
+                  subscriptionEndDate: new Date(subscription.current_period_end * 1000)
+                });
+              }
+            }
+          }
+          break;
+          
+        case 'invoice.payment_failed':
+          const failedInvoice = event.data.object as Stripe.Invoice;
+          if (failedInvoice.subscription) {
+            const subscription = await stripe.subscriptions.retrieve(failedInvoice.subscription as string);
+            const customer = await stripe.customers.retrieve(subscription.customer as string);
+            
+            if (customer && !customer.deleted) {
+              const userId = customer.metadata?.userId;
+              if (userId) {
+                await storage.updateUserSubscription(userId, {
+                  subscriptionStatus: "past_due"
+                });
+              }
+            }
+          }
+          break;
+          
+        case 'customer.subscription.deleted':
+          const deletedSub = event.data.object as Stripe.Subscription;
+          const customer = await stripe.customers.retrieve(deletedSub.customer as string);
+          
+          if (customer && !customer.deleted) {
+            const userId = customer.metadata?.userId;
+            if (userId) {
+              await storage.updateUserSubscription(userId, {
+                subscriptionStatus: "canceled",
+                subscriptionEndDate: new Date()
+              });
+            }
+          }
+          break;
+      }
+      
+      res.json({ received: true });
+    } catch (error) {
+      console.error('Webhook error:', error);
+      res.status(400).send('Webhook error');
     }
   });
 

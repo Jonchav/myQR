@@ -21,6 +21,16 @@ export const users = pgTable("users", {
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
+  
+  // Stripe subscription fields
+  stripeCustomerId: varchar("stripe_customer_id"),
+  stripeSubscriptionId: varchar("stripe_subscription_id"),
+  subscriptionStatus: varchar("subscription_status").default("inactive"), // active, inactive, trialing, past_due, canceled
+  subscriptionPlan: varchar("subscription_plan"), // trial, daily, weekly, monthly
+  subscriptionStartDate: timestamp("subscription_start_date"),
+  subscriptionEndDate: timestamp("subscription_end_date"),
+  trialUsed: boolean("trial_used").default(false),
+  
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

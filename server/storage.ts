@@ -20,6 +20,15 @@ export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
   getUserByUsername(username: string): Promise<User | undefined>;
+  updateUserSubscription(userId: string, subscriptionData: {
+    stripeCustomerId?: string;
+    stripeSubscriptionId?: string;
+    subscriptionStatus?: string;
+    subscriptionPlan?: string;
+    subscriptionStartDate?: Date;
+    subscriptionEndDate?: Date;
+    trialUsed?: boolean;
+  }): Promise<User | undefined>;
   
   // QR Code operations
   createQRCode(qrCode: any, userId?: string): Promise<QRCode>;
@@ -72,6 +81,26 @@ export class DatabaseStorage implements IStorage {
 
   async getUserByUsername(username: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
+  }
+
+  async updateUserSubscription(userId: string, subscriptionData: {
+    stripeCustomerId?: string;
+    stripeSubscriptionId?: string;
+    subscriptionStatus?: string;
+    subscriptionPlan?: string;
+    subscriptionStartDate?: Date;
+    subscriptionEndDate?: Date;
+    trialUsed?: boolean;
+  }): Promise<User | undefined> {
+    const [user] = await db
+      .update(users)
+      .set({
+        ...subscriptionData,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, userId))
+      .returning();
     return user;
   }
 
