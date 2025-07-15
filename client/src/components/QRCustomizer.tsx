@@ -290,6 +290,35 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
         </CardTitle>
       </CardHeader>
       <CardContent>
+        {/* URL Input Section */}
+        <div className="mb-6 space-y-3 p-4 bg-gray-900/50 border border-gray-700 rounded-lg">
+          <Label className="text-lg font-semibold text-white flex items-center gap-2">
+            <span className="text-purple-400">🔗</span>
+            Ingresar Enlace
+            <Badge variant="destructive" className="text-xs">Requerido</Badge>
+          </Label>
+          <div className="space-y-2">
+            <Input
+              type="url"
+              placeholder="https://ejemplo.com"
+              value={settings.url || ''}
+              onChange={(e) => updateSetting('url', e.target.value)}
+              className={`bg-gray-900 border-gray-700 text-white placeholder-gray-400 focus:border-purple-500 focus:ring-purple-500 ${
+                !settings.url ? 'border-red-500/50' : ''
+              }`}
+            />
+            <p className="text-sm text-gray-400">
+              Ingresa la URL para generar tu código QR personalizado con todas las opciones PRO
+            </p>
+            {!settings.url && (
+              <p className="text-xs text-red-400 flex items-center gap-1">
+                <span>⚠️</span>
+                URL requerida para generar el código QR
+              </p>
+            )}
+          </div>
+        </div>
+
         <Tabs defaultValue="themes" className="w-full">
           <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="themes" className="flex items-center gap-1">
@@ -725,7 +754,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
         </Card>
 
         <div className="flex gap-2 mt-6">
-          <Button onClick={onGenerate} disabled={isGenerating} className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
+          <Button onClick={onGenerate} disabled={isGenerating || !settings.url} className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
             {isGenerating ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
