@@ -471,6 +471,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Regenerate QR code with tracking
+  app.post("/api/qr/:id/regenerate", isAuthenticated, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const userId = (req.user as any).claims.sub;
+      
+      // Get existing QR code
+      const existingQR = await storage.getQRCode(id);
+      
+      if (!existingQR || existingQR.userId !== userId) {
+        return res.status(404).json({
+          success: false,
+          error: "Código QR no encontrado"
+        });
+      }
+      
+      // Create new tracking URL
+      const trackingUrl = `${req.protocol}://${req.get('host')}/api/scan/${id}`;
+      
+      // Generate new QR code with tracking URL
+      const qrDataUrl = await generateAdvancedQRCode({
+        url: trackingUrl,
+        data: trackingUrl,
+        backgroundColor: existingQR.backgroundColor,
+        foregroundColor: existingQR.foregroundColor,
+        style: existingQR.style,
+        size: existingQR.size,
+        pattern: existingQR.pattern,
+        frame: existingQR.frame,
+        gradient: existingQR.gradient,
+        border: existingQR.border,
+        logo: existingQR.logo,
+        includeText: existingQR.includeText,
+        textContent: existingQR.textContent,
+        errorCorrection: existingQR.errorCorrection
+      });
+      
+      // Update the QR code record
+      const updatedQR = await storage.updateQRCode(id, { qrDataUrl }, userId);
+      
+      res.json({
+        success: true,
+        message: "Código QR regenerado con seguimiento automático",
+        qrCode: updatedQR
+      });
+    } catch (error) {
+      console.error("Error regenerating QR:", error);
+      res.status(500).json({
+        success: false,
+        error: "Error al regenerar el código QR"
+      });
+    }
+  });
+
   // User preferences routes
   app.get("/api/user/preferences", isAuthenticated, async (req, res) => {
     try {

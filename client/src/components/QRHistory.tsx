@@ -71,6 +71,27 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
     },
   });
 
+  const regenerateQRMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const response = await apiRequest("POST", `/api/qr/${id}/regenerate`);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/qr/history"] });
+      toast({
+        title: "QR regenerado",
+        description: "El código QR ahora tiene seguimiento automático de scans",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Error al regenerar el código QR",
+        variant: "destructive",
+      });
+    },
+  });
+
   const updateTitleMutation = useMutation({
     mutationFn: async ({ id, title }: { id: number; title: string }) => {
       const response = await apiRequest("PATCH", `/api/qr/${id}`, { title });
@@ -370,6 +391,17 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                     title="Registrar scan de prueba"
                   >
                     <Plus className="w-4 h-4" />
+                  </Button>
+                  
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => regenerateQRMutation.mutate(qrCode.id)}
+                    disabled={regenerateQRMutation.isPending}
+                    className="text-green-400 hover:text-green-300 hover:bg-green-900/20"
+                    title="Regenerar con seguimiento automático"
+                  >
+                    <RefreshCw className="w-4 h-4" />
                   </Button>
                   
                   <Dialog>
