@@ -327,29 +327,25 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
     const { width, height } = getCardDimensions(cardTemplate);
     const background = generateCardBackground(cardStyle, width, height);
     
-    // Calculate QR code size and position
-    const qrSize = Math.min(width, height) * 0.35; // QR is 35% of the smaller dimension
-    const qrX = width * 0.1; // 10% from left
-    const qrY = height * 0.1; // 10% from top
+    // Calculate QR code size and position - centered and larger
+    const qrSize = Math.min(width, height) * 0.45; // Increased to 45% for better visibility
+    const qrX = (width - qrSize) / 2; // Center horizontally
+    const qrY = (height - qrSize) / 2; // Center vertically
     
     // Create the card background SVG
     const cardBackgroundSVG = `
       <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
         ${background}
         
-        <!-- QR Code background -->
-        <rect x="${qrX - 20}" y="${qrY - 20}" width="${qrSize + 40}" height="${qrSize + 40}" 
-              fill="white" rx="20" opacity="0.9"/>
+        <!-- QR Code background with subtle shadow -->
+        <rect x="${qrX - 25}" y="${qrY - 25}" width="${qrSize + 50}" height="${qrSize + 50}" 
+              fill="white" rx="25" opacity="0.95" 
+              style="filter: drop-shadow(0 8px 16px rgba(0,0,0,0.3))"/>
         
-        <!-- "SCAN ME" text -->
-        <text x="${qrX + qrSize/2}" y="${qrY + qrSize + 60}" 
-              text-anchor="middle" fill="white" font-size="48" font-weight="bold" 
-              font-family="Arial, sans-serif">SCAN ME</text>
-        
-        <!-- Platform label -->
-        <text x="${width - 40}" y="${height - 40}" 
-              text-anchor="end" fill="rgba(255,255,255,0.7)" font-size="24" 
-              font-family="Arial, sans-serif">${cardTemplate.replace('_', ' ').toUpperCase()}</text>
+        <!-- "SCAN ME" text positioned below QR -->
+        <text x="${width/2}" y="${qrY + qrSize + 80}" 
+              text-anchor="middle" fill="white" font-size="54" font-weight="bold" 
+              font-family="Arial, sans-serif" opacity="0.9">SCAN ME</text>
       </svg>
     `;
     
@@ -370,7 +366,7 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
       .png()
       .toBuffer();
     
-    // Composite the background and QR code
+    // Composite the background and QR code with higher quality settings
     const result = await sharp(backgroundImage)
       .composite([
         {
@@ -381,7 +377,9 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
       ])
       .png({
         quality: 100,
-        compressionLevel: 0
+        compressionLevel: 0,
+        progressive: false,
+        force: true
       })
       .toBuffer();
     
