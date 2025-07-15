@@ -244,7 +244,7 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
               variant="outline"
               size="sm"
               onClick={refreshData}
-              className="border-purple-600 text-purple-300 hover:bg-purple-900/20"
+              className="border-purple-500 text-purple-300 hover:text-purple-200 hover:bg-purple-800/30"
               title="Actualizar Estadísticas"
             >
               <RotateCcw className="w-4 h-4" />
@@ -255,7 +255,7 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                 size="sm"
                 onClick={() => clearHistoryMutation.mutate()}
                 disabled={clearHistoryMutation.isPending}
-                className="border-gray-700 text-gray-300 hover:bg-gray-800"
+                className="border-red-500 text-red-300 hover:text-red-200 hover:bg-red-800/30"
               >
                 <Trash2 className="w-4 h-4 mr-2" />
                 Limpiar
@@ -315,7 +315,7 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                         size="sm"
                         onClick={saveTitle}
                         disabled={updateTitleMutation.isPending}
-                        className="bg-purple-600 hover:bg-purple-700"
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white"
                       >
                         <Save className="w-3 h-3" />
                       </Button>
@@ -323,7 +323,7 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                         size="sm"
                         variant="outline"
                         onClick={cancelEdit}
-                        className="border-gray-600 text-gray-300"
+                        className="border-red-600 text-red-300 hover:bg-red-800/30"
                       >
                         <X className="w-3 h-3" />
                       </Button>
@@ -337,7 +337,7 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                         size="sm"
                         variant="ghost"
                         onClick={() => startEditingTitle(qrCode)}
-                        className="text-gray-400 hover:text-white p-1 h-auto"
+                        className="text-amber-400 hover:text-amber-300 hover:bg-amber-800/30 p-1 h-auto border border-amber-600/50"
                       >
                         <Edit className="w-3 h-3" />
                       </Button>
@@ -373,7 +373,7 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                     variant="ghost"
                     size="sm"
                     onClick={() => copyUrl(qrCode.url, qrCode.id)}
-                    className="text-blue-400 hover:text-blue-300 hover:bg-blue-900/20"
+                    className="text-cyan-300 hover:text-cyan-200 hover:bg-cyan-800/30 border border-cyan-600/50"
                     title="Copiar URL original"
                   >
                     <Copy className="w-4 h-4" />
@@ -384,7 +384,7 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                     size="sm"
                     onClick={() => regenerateQRMutation.mutate(qrCode.id)}
                     disabled={regenerateQRMutation.isPending}
-                    className="text-green-400 hover:text-green-300 hover:bg-green-900/20"
+                    className="text-emerald-300 hover:text-emerald-200 hover:bg-emerald-800/30 border border-emerald-600/50"
                     title="Regenerar con seguimiento automático"
                   >
                     <RefreshCw className="w-4 h-4" />
@@ -396,7 +396,7 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                         variant="ghost"
                         size="sm"
                         onClick={() => setShowStats(qrCode.id)}
-                        className="text-purple-400 hover:text-purple-300 hover:bg-purple-900/20"
+                        className="text-violet-300 hover:text-violet-200 hover:bg-violet-800/30 border border-violet-600/50"
                       >
                         <BarChart3 className="w-4 h-4" />
                       </Button>
@@ -461,7 +461,7 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                       variant="ghost"
                       size="sm"
                       onClick={() => onEditQR(qrCode)}
-                      className="text-blue-400 hover:text-blue-300 hover:bg-blue-900/20"
+                      className="text-blue-300 hover:text-blue-200 hover:bg-blue-800/30 border border-blue-600/50"
                     >
                       <Edit className="w-4 h-4" />
                     </Button>
@@ -471,7 +471,7 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                     variant="ghost"
                     size="sm"
                     onClick={() => handleDownload(qrCode)}
-                    className="text-green-400 hover:text-green-300 hover:bg-green-900/20"
+                    className="text-green-300 hover:text-green-200 hover:bg-green-800/30 border border-green-600/50"
                   >
                     <Download className="w-4 h-4" />
                   </Button>
@@ -481,7 +481,7 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                     size="sm"
                     onClick={() => deleteQRMutation.mutate(qrCode.id)}
                     disabled={deleteQRMutation.isPending}
-                    className="text-red-400 hover:text-red-300 hover:bg-red-900/20"
+                    className="text-red-300 hover:text-red-200 hover:bg-red-800/30 border border-red-600/50"
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>
