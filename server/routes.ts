@@ -789,7 +789,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Price mapping in cents
       const priceMap = {
-        daily: 99,   // $0.99
         weekly: 399, // $3.99
         monthly: 699 // $6.99
       };
@@ -827,7 +826,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             },
             unit_amount: price,
             recurring: {
-              interval: plan === 'daily' ? 'day' : plan === 'weekly' ? 'week' : 'month'
+              interval: plan === 'weekly' ? 'week' : 'month'
             }
           }
         }],

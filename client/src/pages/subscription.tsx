@@ -183,21 +183,6 @@ export default function Subscription() {
   
   const plans = [
     {
-      id: "daily",
-      name: "Diario",
-      price: "$0.99",
-      period: "por día",
-      icon: Zap,
-      description: "Perfecto para uso ocasional",
-      features: [
-        "Acceso completo a myQR Pro",
-        "Historial ilimitado",
-        "Estadísticas avanzadas",
-        "Exportación a Excel",
-        "Customización premium"
-      ]
-    },
-    {
       id: "weekly",
       name: "Semanal",
       price: "$3.99",
@@ -211,7 +196,7 @@ export default function Subscription() {
         "Estadísticas avanzadas",
         "Exportación a Excel",
         "Customización premium",
-        "Ahorra vs. plan diario"
+        "Cancela cuando quieras"
       ]
     },
     {
@@ -339,7 +324,7 @@ export default function Subscription() {
         )}
         
         {/* Subscription plans */}
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {plans.map((plan) => {
             const Icon = plan.icon;
             return (
