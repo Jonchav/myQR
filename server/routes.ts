@@ -6,6 +6,7 @@ import { z } from "zod";
 import QRCode from "qrcode";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import sharp from "sharp";
+import * as XLSX from "xlsx";
 
 // Enhanced QR generation schema
 const qrGenerationSchema = z.object({
@@ -566,6 +567,164 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({
         success: false,
         error: "Error al actualizar las preferencias"
+      });
+    }
+  });
+
+  // Export individual QR statistics to Excel
+  app.get("/api/qr/:id/export", isAuthenticated, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const userId = (req.user as any).claims.sub;
+      
+      const qrCode = await storage.getQRCode(id);
+      if (!qrCode || qrCode.userId !== userId) {
+        return res.status(404).json({
+          success: false,
+          error: "Código QR no encontrado"
+        });
+      }
+      
+      const stats = await storage.getQRScanStats(id);
+      
+      // Create workbook and worksheet
+      const wb = XLSX.utils.book_new();
+      
+      // Summary sheet
+      const summaryData = [
+        ["Estadísticas del QR Code", ""],
+        ["Título", qrCode.title || "Sin título"],
+        ["URL", qrCode.url || qrCode.data],
+        ["Tipo", qrCode.type.toUpperCase()],
+        ["Fecha de creación", qrCode.createdAt ? new Date(qrCode.createdAt).toLocaleDateString() : "N/A"],
+        ["", ""],
+        ["Resumen de Escaneos", ""],
+        ["Total de escaneos", stats.total],
+        ["Escaneos hoy", stats.today],
+        ["Escaneos este mes", stats.thisMonth],
+        ["Escaneos este año", stats.thisYear],
+      ];
+      
+      const summaryWs = XLSX.utils.aoa_to_sheet(summaryData);
+      XLSX.utils.book_append_sheet(wb, summaryWs, "Resumen");
+      
+      // Daily stats sheet
+      if (stats.dailyStats && stats.dailyStats.length > 0) {
+        const dailyData = [
+          ["Fecha", "Escaneos"]
+        ];
+        
+        stats.dailyStats.forEach(day => {
+          dailyData.push([day.date, day.count]);
+        });
+        
+        const dailyWs = XLSX.utils.aoa_to_sheet(dailyData);
+        XLSX.utils.book_append_sheet(wb, dailyWs, "Estadísticas Diarias");
+      }
+      
+      // Generate Excel file
+      const excelBuffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+      
+      const filename = `qr-${id}-${qrCode.title || 'sin-titulo'}-${new Date().toISOString().split('T')[0]}.xlsx`;
+      
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.send(excelBuffer);
+      
+    } catch (error) {
+      console.error("Error exporting QR stats:", error);
+      res.status(500).json({
+        success: false,
+        error: "Error al exportar estadísticas"
+      });
+    }
+  });
+
+  // Export all QR statistics to Excel
+  app.get("/api/qr/export/all", isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req.user as any).claims.sub;
+      const qrCodes = await storage.getQRCodes(userId);
+      
+      // Create workbook
+      const wb = XLSX.utils.book_new();
+      
+      // Summary sheet with all QR codes
+      const summaryData = [
+        ["Resumen General de QR Codes", "", "", "", "", ""],
+        ["Título", "URL", "Tipo", "Fecha Creación", "Total Escaneos", "Escaneos Hoy"]
+      ];
+      
+      let totalScans = 0;
+      let totalToday = 0;
+      
+      for (const qr of qrCodes) {
+        const stats = await storage.getQRScanStats(qr.id);
+        totalScans += stats.total;
+        totalToday += stats.today;
+        
+        summaryData.push([
+          qr.title || "Sin título",
+          qr.url || qr.data,
+          qr.type.toUpperCase(),
+          qr.createdAt ? new Date(qr.createdAt).toLocaleDateString() : "N/A",
+          stats.total,
+          stats.today
+        ]);
+      }
+      
+      // Add totals row
+      summaryData.push(["", "", "", "", "", ""]);
+      summaryData.push(["TOTALES", "", "", "", totalScans, totalToday]);
+      
+      const summaryWs = XLSX.utils.aoa_to_sheet(summaryData);
+      XLSX.utils.book_append_sheet(wb, summaryWs, "Resumen General");
+      
+      // Individual sheets for each QR code
+      for (const qr of qrCodes) {
+        const stats = await storage.getQRScanStats(qr.id);
+        
+        const qrData = [
+          [`Estadísticas: ${qr.title || "Sin título"}`, ""],
+          ["URL", qr.url || qr.data],
+          ["Tipo", qr.type.toUpperCase()],
+          ["Fecha creación", qr.createdAt ? new Date(qr.createdAt).toLocaleDateString() : "N/A"],
+          ["", ""],
+          ["Escaneos", ""],
+          ["Total", stats.total],
+          ["Hoy", stats.today],
+          ["Este mes", stats.thisMonth],
+          ["Este año", stats.thisYear],
+          ["", ""],
+          ["Estadísticas Diarias", ""]
+        ];
+        
+        if (stats.dailyStats && stats.dailyStats.length > 0) {
+          qrData.push(["Fecha", "Escaneos"]);
+          stats.dailyStats.forEach(day => {
+            qrData.push([day.date, day.count]);
+          });
+        }
+        
+        const qrWs = XLSX.utils.aoa_to_sheet(qrData);
+        const sheetName = `QR${qr.id}-${(qr.title || "Sin título").slice(0, 20)}`;
+        XLSX.utils.book_append_sheet(wb, qrWs, sheetName);
+      }
+      
+      // Generate Excel file
+      const excelBuffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+      
+      const filename = `todos-qr-codes-${new Date().toISOString().split('T')[0]}.xlsx`;
+      
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.send(excelBuffer);
+      
+    } catch (error) {
+      console.error("Error exporting all QR stats:", error);
+      res.status(500).json({
+        success: false,
+        error: "Error al exportar todas las estadísticas"
       });
     }
   });

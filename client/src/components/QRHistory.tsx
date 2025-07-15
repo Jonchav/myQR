@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { History, Download, Trash2, RefreshCw, Eye, Edit, BarChart3, Save, X, Copy, RotateCcw, TrendingUp, PieChart, BarChart } from "lucide-react";
+import { History, Download, Trash2, RefreshCw, Eye, Edit, BarChart3, Save, X, Copy, RotateCcw, TrendingUp, PieChart, BarChart, FileSpreadsheet } from "lucide-react";
 import { format, subDays, startOfWeek, startOfMonth, startOfYear, endOfWeek, endOfMonth, endOfYear } from "date-fns";
 import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart as RechartsPieChart, Pie, Cell } from "recharts";
 
@@ -185,6 +185,67 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
   
   const COLORS = ["#8b5cf6", "#06b6d4", "#10b981", "#f59e0b", "#ef4444"];
 
+  // Export functions
+  const exportQRStatsToExcel = async (qrId: number) => {
+    try {
+      const response = await fetch(`/api/qr/${qrId}/export`);
+      if (!response.ok) {
+        throw new Error('Error al exportar estadísticas');
+      }
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `qr-${qrId}-stats.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      toast({
+        title: "Exportación exitosa",
+        description: "Estadísticas exportadas a Excel",
+      });
+    } catch (error) {
+      toast({
+        title: "Error al exportar",
+        description: "No se pudieron exportar las estadísticas",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const exportAllQRStatsToExcel = async () => {
+    try {
+      const response = await fetch('/api/qr/export/all');
+      if (!response.ok) {
+        throw new Error('Error al exportar todas las estadísticas');
+      }
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `todos-qr-stats.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      toast({
+        title: "Exportación exitosa",
+        description: "Todas las estadísticas exportadas a Excel",
+      });
+    } catch (error) {
+      toast({
+        title: "Error al exportar",
+        description: "No se pudieron exportar las estadísticas",
+        variant: "destructive",
+      });
+    }
+  };
+
   const refreshData = () => {
     queryClient.invalidateQueries({ queryKey: ["/api/qr/history"] });
     queryClient.invalidateQueries({ queryKey: ["/api/qr", showStats, "stats"] });
@@ -305,6 +366,18 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
             >
               <RotateCcw className="w-4 h-4" />
             </Button>
+            {qrCodes.length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={exportAllQRStatsToExcel}
+                className="border-green-500 text-green-300 hover:text-green-200 hover:bg-green-800/30"
+                title="Exportar Todos a Excel"
+              >
+                <FileSpreadsheet className="w-4 h-4 mr-2" />
+                Exportar Todos
+              </Button>
+            )}
             {qrCodes.length > 0 && (
               <Button
                 variant="outline"
@@ -440,6 +513,16 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                     <RefreshCw className="w-4 h-4" />
                   </Button>
                   
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => exportQRStatsToExcel(qrCode.id)}
+                    className="text-green-300 hover:text-green-200 hover:bg-green-800/30 border border-green-600/50"
+                    title="Exportar estadísticas a Excel"
+                  >
+                    <FileSpreadsheet className="w-4 h-4" />
+                  </Button>
+                  
                   <Dialog>
                     <DialogTrigger asChild>
                       <Button
@@ -548,6 +631,18 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                                     <PieChart className="w-4 h-4" />
                                   </Button>
                                 </div>
+                              </div>
+                              
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => showStats && exportQRStatsToExcel(showStats)}
+                                  className="border-green-500 text-green-300 hover:text-green-200 hover:bg-green-800/30"
+                                >
+                                  <FileSpreadsheet className="w-4 h-4 mr-2" />
+                                  Exportar Excel
+                                </Button>
                               </div>
                             </div>
 
