@@ -323,6 +323,58 @@ export default function Subscription() {
           </div>
         )}
         
+        {/* Test card information */}
+        <div className="max-w-4xl mx-auto mb-8">
+          <Card className="border-blue-200 bg-blue-50 dark:bg-blue-950">
+            <CardHeader>
+              <CardTitle className="text-blue-800 dark:text-blue-200 flex items-center gap-2">
+                <Zap className="w-5 h-5" />
+                Modo de Prueba - Información para Testing
+              </CardTitle>
+              <CardDescription className="text-blue-700 dark:text-blue-300">
+                Usa estas tarjetas de prueba para probar el sistema de pagos
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <h3 className="font-semibold mb-3 text-blue-800 dark:text-blue-200">Tarjetas de Prueba:</h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="p-2 bg-white dark:bg-gray-800 rounded border">
+                      <strong>Visa:</strong> 4242 4242 4242 4242
+                    </div>
+                    <div className="p-2 bg-white dark:bg-gray-800 rounded border">
+                      <strong>Mastercard:</strong> 5555 5555 5555 4444
+                    </div>
+                    <div className="p-2 bg-white dark:bg-gray-800 rounded border">
+                      <strong>American Express:</strong> 3782 822463 10005
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-3 text-blue-800 dark:text-blue-200">Datos adicionales:</h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="p-2 bg-white dark:bg-gray-800 rounded border">
+                      <strong>Fecha de vencimiento:</strong> Cualquier fecha futura
+                    </div>
+                    <div className="p-2 bg-white dark:bg-gray-800 rounded border">
+                      <strong>CVC:</strong> Cualquier número de 3 dígitos
+                    </div>
+                    <div className="p-2 bg-white dark:bg-gray-800 rounded border">
+                      <strong>Código postal:</strong> Cualquier código válido
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded">
+                <p className="text-sm text-yellow-800 dark:text-yellow-300">
+                  <strong>Importante:</strong> No uses tarjetas reales. Este es un entorno de pruebas de Stripe.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Subscription plans */}
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {plans.map((plan) => {
