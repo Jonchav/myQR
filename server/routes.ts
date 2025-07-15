@@ -250,10 +250,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get QR code history
-  app.get("/api/qr/history", async (req, res) => {
+  // Get QR code history (PRO-only)
+  app.get("/api/qr/history", isAuthenticated, async (req, res) => {
     try {
-      const userId = req.user ? (req.user as any).claims?.sub : undefined;
+      const userId = (req.user as any).claims.sub;
       const qrCodes = await storage.getQRCodes(userId);
       res.json({
         success: true,
@@ -320,8 +320,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get QR code statistics
-  app.get("/api/qr/:id/stats/:range?", async (req, res) => {
+  // Get QR code statistics (PRO-only)
+  app.get("/api/qr/:id/stats/:range?", isAuthenticated, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const range = req.params.range || "daily";

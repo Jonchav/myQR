@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Download, QrCode, Link, CheckCircle, AlertCircle, RefreshCw, Settings, User, LogOut, Moon, Sun, History, Palette, Sparkles } from "lucide-react";
+import { Loader2, Download, QrCode, Link, CheckCircle, AlertCircle, RefreshCw, Settings, User, LogOut, Moon, Sun, History, Palette, Sparkles, Shield } from "lucide-react";
 import { QRCustomizer } from "@/components/QRCustomizer";
 import { QRHistory } from "@/components/QRHistory";
 import { useTheme } from "@/components/ThemeProvider";
@@ -256,7 +256,7 @@ export default function Home() {
             </TabsTrigger>
             <TabsTrigger value="history" className="flex items-center gap-2 text-gray-600 dark:text-gray-400 data-[state=active]:text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-600">
               <History className="w-4 h-4" />
-              Historial
+              Historial PRO
             </TabsTrigger>
           </TabsList>
 
@@ -457,7 +457,93 @@ export default function Home() {
           </TabsContent>
 
           <TabsContent value="history" className="mt-8">
-            <QRHistory onEditQR={handleEditQR} />
+            <Card className="max-w-2xl mx-auto bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border-purple-200 dark:border-purple-700">
+              <CardHeader className="text-center">
+                <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <History className="w-8 h-8 text-white" />
+                </div>
+                <CardTitle className="text-2xl text-purple-700 dark:text-purple-300">
+                  Historial PRO
+                </CardTitle>
+                <p className="text-gray-600 dark:text-gray-400 mt-2">
+                  Accede a tu historial de códigos QR, estadísticas detalladas y exportación a Excel
+                </p>
+              </CardHeader>
+              <CardContent className="text-center space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-purple-200 dark:border-purple-700">
+                    <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <History className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                    </div>
+                    <h3 className="font-semibold text-sm text-gray-900 dark:text-white mb-1">
+                      Historial Completo
+                    </h3>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">
+                      Accede a todos tus códigos QR generados con fechas y detalles
+                    </p>
+                  </div>
+                  
+                  <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-purple-200 dark:border-purple-700">
+                    <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <Sparkles className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                    </div>
+                    <h3 className="font-semibold text-sm text-gray-900 dark:text-white mb-1">
+                      Estadísticas Avanzadas
+                    </h3>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">
+                      Análisis detallado de escaneos con gráficos y métricas
+                    </p>
+                  </div>
+                  
+                  <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-purple-200 dark:border-purple-700">
+                    <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <Download className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                    </div>
+                    <h3 className="font-semibold text-sm text-gray-900 dark:text-white mb-1">
+                      Exportación Excel
+                    </h3>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">
+                      Exporta datos y estadísticas a archivos Excel profesionales
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg p-4">
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <Shield className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                    <span className="font-semibold text-amber-700 dark:text-amber-300">
+                      Funcionalidad PRO
+                    </span>
+                  </div>
+                  <p className="text-sm text-amber-700 dark:text-amber-300">
+                    El historial y las estadísticas están disponibles solo para usuarios PRO. 
+                    Inicia sesión para acceder a esta funcionalidad premium.
+                  </p>
+                </div>
+                
+                <div className="flex gap-3 justify-center">
+                  {!isAuthenticated ? (
+                    <Button 
+                      className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
+                      asChild
+                    >
+                      <a href="/api/login">
+                        <User className="w-4 h-4 mr-2" />
+                        Iniciar Sesión PRO
+                      </a>
+                    </Button>
+                  ) : (
+                    <Button 
+                      onClick={() => setActiveTab("generate")}
+                      className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
+                    >
+                      <QrCode className="w-4 h-4 mr-2" />
+                      Generar QR Gratuito
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </main>

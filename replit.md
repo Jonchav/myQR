@@ -11,6 +11,8 @@ Preferred communication style: Simple, everyday language.
 ## Recent Changes
 
 ### December 2024
+- **Refined Freemium Model**: Removed background image upload option and made history tracking strictly PRO-only, keeping only basic QR generation free
+- **PRO-Only Features**: History access, scan statistics, Excel exports, and advanced analytics are now exclusively for authenticated users
 - **PRO Customization Model**: Implemented tiered feature system where basic QR generation is free, and advanced customization (colors, styles, logos, patterns) is positioned as a PRO feature
 - **Post-Generation Upgrade Flow**: Redesigned UX to show customization options after QR generation, encouraging users to upgrade their basic QR to a professional version
 - **Enhanced Landing Page**: Created professional landing page with features showcase for non-authenticated users

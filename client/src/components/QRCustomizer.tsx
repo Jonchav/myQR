@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useToast } from "@/hooks/use-toast";
-import { Palette, Settings, Layers, Frame, Sparkles, Type, Shield, Loader2, Home, ArrowLeft, Download, Upload, X } from "lucide-react";
+import { Palette, Settings, Layers, Frame, Sparkles, Type, Shield, Loader2, Home, ArrowLeft, Download, X } from "lucide-react";
 
 interface QRCustomizerProps {
   settings: any;
@@ -23,7 +23,7 @@ interface QRCustomizerProps {
 
 export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onBackToHome, qrCode, onDownload }: QRCustomizerProps) {
   const { toast } = useToast();
-  const [isProcessingImage, setIsProcessingImage] = useState(false);
+
   
   const updateSetting = (key: string, value: any) => {
     const newSettings = { ...settings, [key]: value };
@@ -37,7 +37,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
     
     // Si hay una URL y el cambio es visual, regenerar automáticamente
     if (settings.url && onGenerate && !isGenerating) {
-      const visualChanges = ['backgroundColor', 'foregroundColor', 'style', 'pattern', 'gradient', 'frame', 'size', 'backgroundImage'];
+      const visualChanges = ['backgroundColor', 'foregroundColor', 'style', 'pattern', 'gradient', 'frame', 'size'];
       if (visualChanges.includes(key)) {
         setTimeout(() => {
           onGenerate();
@@ -46,54 +46,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
     }
   };
 
-  // Función para manejar la carga de imagen de fondo
-  const handleBackgroundImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      // Validar tipo de archivo
-      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml', 'image/bmp'];
-      if (!allowedTypes.includes(file.type.toLowerCase())) {
-        toast({
-          title: "Archivo no válido",
-          description: "Por favor selecciona un archivo de imagen válido (JPG, PNG, GIF, WebP, SVG, BMP)",
-          variant: "destructive",
-        });
-        return;
-      }
 
-      // Validar tamaño (máximo 10MB)
-      if (file.size > 10 * 1024 * 1024) {
-        toast({
-          title: "Archivo muy grande",
-          description: "La imagen debe ser menor a 10MB. Por favor elige una imagen más pequeña.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      setIsProcessingImage(true);
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        applyRealTimeChange("backgroundImage", result);
-        setIsProcessingImage(false);
-        toast({
-          title: "Imagen cargada",
-          description: "La imagen de fondo se ha aplicado correctamente",
-          variant: "default",
-        });
-      };
-      reader.onerror = () => {
-        setIsProcessingImage(false);
-        toast({
-          title: "Error al cargar",
-          description: "Hubo un error al procesar la imagen. Por favor intenta de nuevo.",
-          variant: "destructive",
-        });
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   const colorPresets = [
     { name: "Clásico", bg: "#ffffff", fg: "#000000", category: "basic" },
@@ -652,76 +605,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                 </Select>
               </div>
 
-              {/* Background Image Section */}
-              <div className="space-y-3 p-4 bg-purple-900/20 border border-purple-700 rounded-lg">
-                <div className="flex items-center gap-2">
-                  <Badge className="gradient-gold text-black border-0 text-xs">
-                    PRO
-                  </Badge>
-                  <Label className="text-lg font-semibold text-white">Imagen de Fondo</Label>
-                </div>
-                
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Input
-                      type="file"
-                      accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,image/svg+xml,image/bmp"
-                      onChange={handleBackgroundImageUpload}
-                      className="hidden"
-                      id="backgroundImageInput"
-                    />
-                    <Button
-                      variant="outline"
-                      onClick={() => document.getElementById('backgroundImageInput')?.click()}
-                      disabled={isProcessingImage}
-                      className="flex items-center gap-2 border-purple-600 text-purple-300 hover:bg-purple-900/20 disabled:opacity-50"
-                    >
-                      {isProcessingImage ? (
-                        <>
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                          Procesando...
-                        </>
-                      ) : (
-                        <>
-                          <Upload className="w-4 h-4" />
-                          Subir Imagen
-                        </>
-                      )}
-                    </Button>
-                    
-                    {settings.backgroundImage && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => applyRealTimeChange("backgroundImage", null)}
-                        className="text-red-400 hover:text-red-300 hover:bg-red-900/20"
-                      >
-                        <X className="w-4 h-4" />
-                      </Button>
-                    )}
-                  </div>
-                  
-                  {settings.backgroundImage && (
-                    <div className="relative">
-                      <img
-                        src={settings.backgroundImage}
-                        alt="Imagen de fondo"
-                        className="w-full h-24 object-cover rounded-lg border border-purple-600"
-                      />
-                      <div className="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center">
-                        <span className="text-white text-sm font-medium">Vista previa</span>
-                      </div>
-                    </div>
-                  )}
-                  
-                  <p className="text-sm text-gray-400">
-                    Sube una imagen para usar como fondo del código QR. Se combinará con los colores seleccionados.
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    Formatos: JPG, PNG, GIF, WebP, SVG, BMP • Tamaño máximo: 10MB
-                  </p>
-                </div>
-              </div>
+
             </div>
           </TabsContent>
 
