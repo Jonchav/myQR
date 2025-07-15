@@ -9,7 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { History, Download, Trash2, RefreshCw, Eye, Edit, BarChart3, Save, X, Copy, Plus } from "lucide-react";
+import { History, Download, Trash2, RefreshCw, Eye, Edit, BarChart3, Save, X, Copy, RotateCcw } from "lucide-react";
 import { format } from "date-fns";
 
 interface QRHistoryProps {
@@ -121,28 +121,14 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
     retry: false,
   });
 
-  const recordScanMutation = useMutation({
-    mutationFn: async (qrId: number) => {
-      const response = await apiRequest("POST", `/api/qr/${qrId}/scan`);
-      return response.json();
-    },
-    onSuccess: () => {
-      // Refetch stats and history to update scan counts
-      queryClient.invalidateQueries({ queryKey: ["/api/qr", showStats, "stats"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/qr/history"] });
-      toast({
-        title: "Scan registrado",
-        description: "El scan ha sido registrado exitosamente",
-      });
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "Error al registrar el scan",
-        variant: "destructive",
-      });
-    },
-  });
+  const refreshData = () => {
+    queryClient.invalidateQueries({ queryKey: ["/api/qr/history"] });
+    queryClient.invalidateQueries({ queryKey: ["/api/qr", showStats, "stats"] });
+    toast({
+      title: "Datos actualizados",
+      description: "La información se ha actualizado correctamente",
+    });
+  };
 
   const handleDownload = (qrCode: any) => {
     const link = document.createElement("a");
@@ -253,18 +239,29 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
             <History className="w-5 h-5 text-purple-400" />
             Historial de QR ({qrCodes.length})
           </CardTitle>
-          {qrCodes.length > 0 && (
+          <div className="flex items-center gap-2">
             <Button
               variant="outline"
               size="sm"
-              onClick={() => clearHistoryMutation.mutate()}
-              disabled={clearHistoryMutation.isPending}
+              onClick={refreshData}
               className="border-gray-700 text-gray-300 hover:bg-gray-800"
             >
-              <Trash2 className="w-4 h-4 mr-2" />
-              Limpiar
+              <RotateCcw className="w-4 h-4 mr-2" />
+              Actualizar
             </Button>
-          )}
+            {qrCodes.length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => clearHistoryMutation.mutate()}
+                disabled={clearHistoryMutation.isPending}
+                className="border-gray-700 text-gray-300 hover:bg-gray-800"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Limpiar
+              </Button>
+            )}
+          </div>
         </div>
       </CardHeader>
       <CardContent>
@@ -385,12 +382,11 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => recordScanMutation.mutate(qrCode.id)}
-                    disabled={recordScanMutation.isPending}
-                    className="text-orange-400 hover:text-orange-300 hover:bg-orange-900/20"
-                    title="Registrar scan de prueba"
+                    onClick={refreshData}
+                    className="text-blue-400 hover:text-blue-300 hover:bg-blue-900/20"
+                    title="Actualizar datos"
                   >
-                    <Plus className="w-4 h-4" />
+                    <RotateCcw className="w-4 h-4" />
                   </Button>
                   
                   <Button
