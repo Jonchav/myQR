@@ -787,14 +787,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: "Usuario no encontrado o sin email" });
       }
       
-      // Price mapping in cents
-      const priceMap = {
-        weekly: 345, // $3.45
-        monthly: 645 // $6.45
+      // Product ID mapping
+      const productMap = {
+        weekly: "prod_SgbM5d8WfUgLP6", // $3.45
+        monthly: "prod_SgbMQxYEXBZ0u5" // $6.45
       };
       
-      const price = priceMap[plan as keyof typeof priceMap];
-      if (!price) {
+      const productId = productMap[plan as keyof typeof productMap];
+      if (!productId) {
         return res.status(400).json({ error: "Plan de suscripción inválido" });
       }
       
@@ -814,21 +814,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
+      // Get the default price for the product
+      const product = await stripe.products.retrieve(productId);
+      const prices = await stripe.prices.list({
+        product: productId,
+        active: true,
+        limit: 1
+      });
+      
+      if (prices.data.length === 0) {
+        return res.status(400).json({ error: "No hay precios disponibles para este producto" });
+      }
+      
+      const priceId = prices.data[0].id;
+      
       // Create subscription
       const subscription = await stripe.subscriptions.create({
         customer: stripeCustomerId,
         items: [{
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: `myQR ${plan.charAt(0).toUpperCase() + plan.slice(1)} Plan`,
-              description: `Suscripción ${plan} a myQR Pro`
-            },
-            unit_amount: price,
-            recurring: {
-              interval: plan === 'weekly' ? 'week' : 'month'
-            }
-          }
+          price: priceId
         }],
         payment_behavior: 'default_incomplete',
         expand: ['latest_invoice.payment_intent'],
@@ -850,7 +854,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         subscriptionId: subscription.id,
         clientSecret: paymentIntent.client_secret,
         plan: plan,
-        price: price / 100
+        price: prices.data[0].unit_amount ? prices.data[0].unit_amount / 100 : 0
       });
     } catch (error) {
       console.error("Error creating subscription:", error);
