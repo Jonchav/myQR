@@ -90,15 +90,19 @@ export default function Home() {
   });
 
   const handleGenerate = () => {
-    if (!url.trim()) {
+    // Use URL from settings if available, otherwise use the basic URL field
+    const urlToUse = qrSettings.url || url;
+    
+    if (!urlToUse.trim()) {
       setError("Por favor, ingresa una URL");
       return;
     }
 
     try {
-      new URL(url);
+      new URL(urlToUse);
       setError(null);
-      generateQRMutation.mutate(qrSettings);
+      const settingsToUse = { ...qrSettings, url: urlToUse };
+      generateQRMutation.mutate(settingsToUse);
     } catch {
       setError("Por favor, ingresa una URL válida (debe comenzar con http:// o https://)");
     }
@@ -141,6 +145,14 @@ export default function Home() {
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       handleGenerate();
+    }
+  };
+
+  const handleSettingsChange = (newSettings: any) => {
+    setQrSettings(newSettings);
+    // Sync the URL state with the settings
+    if (newSettings.url !== url) {
+      setUrl(newSettings.url);
     }
   };
 
@@ -433,7 +445,7 @@ export default function Home() {
               <div className="lg:col-span-2">
                 <QRCustomizer
                   settings={qrSettings}
-                  onChange={setQrSettings}
+                  onChange={handleSettingsChange}
                   onGenerate={handleGenerate}
                   isGenerating={generateQRMutation.isPending}
                   onBackToHome={() => setActiveTab("generate")}
