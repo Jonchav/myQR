@@ -7,9 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { History, Download, Trash2, RefreshCw, Eye, Edit, BarChart3, Save, X } from "lucide-react";
+import { History, Download, Trash2, RefreshCw, Eye, Edit, BarChart3, Save, X, Copy, Plus } from "lucide-react";
 import { format } from "date-fns";
 
 interface QRHistoryProps {
@@ -100,6 +100,29 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
     retry: false,
   });
 
+  const recordScanMutation = useMutation({
+    mutationFn: async (qrId: number) => {
+      const response = await apiRequest("POST", `/api/qr/${qrId}/scan`);
+      return response.json();
+    },
+    onSuccess: () => {
+      // Refetch stats and history to update scan counts
+      queryClient.invalidateQueries({ queryKey: ["/api/qr", showStats, "stats"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/qr/history"] });
+      toast({
+        title: "Scan registrado",
+        description: "El scan ha sido registrado exitosamente",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Error al registrar el scan",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleDownload = (qrCode: any) => {
     const link = document.createElement("a");
     link.download = `qr-${qrCode.id}.png`;
@@ -121,6 +144,16 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
   const cancelEdit = () => {
     setEditingQR(null);
     setNewTitle("");
+  };
+
+  const copyUrl = (url: string, qrId: number) => {
+    navigator.clipboard.writeText(url);
+    // Record a scan when URL is copied (simulating actual usage)
+    recordScanMutation.mutate(qrId);
+    toast({
+      title: "URL copiada",
+      description: "La URL ha sido copiada al portapapeles y se registró un scan",
+    });
   };
 
   const getTypeColor = (type: string) => {
@@ -317,6 +350,27 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                 </div>
                 
                 <div className="flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => copyUrl(qrCode.url, qrCode.id)}
+                    className="text-blue-400 hover:text-blue-300 hover:bg-blue-900/20"
+                    title="Copiar URL y registrar scan"
+                  >
+                    <Copy className="w-4 h-4" />
+                  </Button>
+                  
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => recordScanMutation.mutate(qrCode.id)}
+                    disabled={recordScanMutation.isPending}
+                    className="text-orange-400 hover:text-orange-300 hover:bg-orange-900/20"
+                    title="Registrar scan de prueba"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </Button>
+                  
                   <Dialog>
                     <DialogTrigger asChild>
                       <Button
@@ -331,6 +385,9 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                     <DialogContent className="bg-gray-900 border-gray-700">
                       <DialogHeader>
                         <DialogTitle className="text-white">Estadísticas del QR</DialogTitle>
+                        <DialogDescription className="text-gray-400">
+                          Visualiza las estadísticas de uso de este código QR
+                        </DialogDescription>
                       </DialogHeader>
                       <div className="py-4">
                         {statsLoading ? (
