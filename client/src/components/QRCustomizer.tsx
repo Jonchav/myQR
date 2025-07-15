@@ -413,7 +413,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
         )}
 
         <Tabs defaultValue="themes" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="themes" className="flex items-center gap-1">
               <Sparkles className="w-4 h-4" />
               <span className="hidden sm:inline">Temas</span>
@@ -421,6 +421,10 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
             <TabsTrigger value="colors" className="flex items-center gap-1">
               <Palette className="w-4 h-4" />
               <span className="hidden sm:inline">Colores</span>
+            </TabsTrigger>
+            <TabsTrigger value="cards" className="flex items-center gap-1">
+              <Frame className="w-4 h-4" />
+              <span className="hidden sm:inline">Tarjetas</span>
             </TabsTrigger>
             <TabsTrigger value="design" className="flex items-center gap-1">
               <Layers className="w-4 h-4" />
@@ -614,6 +618,77 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
               </div>
 
 
+            </div>
+          </TabsContent>
+
+          <TabsContent value="cards" className="space-y-6">
+            <div className="space-y-4">
+              <div className="text-center space-y-2">
+                <h3 className="text-lg font-semibold text-purple-400">🎨 Tarjetas Creativas</h3>
+                <p className="text-sm text-gray-400">Crea tarjetas coloridas perfectas para redes sociales</p>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Formato de Tarjeta</Label>
+                  <Select value={settings.cardTemplate || "none"} onValueChange={(value) => applyRealTimeChange("cardTemplate", value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Sin tarjeta</SelectItem>
+                      <SelectItem value="instagram_post">📷 Instagram Post (1:1)</SelectItem>
+                      <SelectItem value="instagram_story">📱 Instagram Story (9:16)</SelectItem>
+                      <SelectItem value="facebook_post">📘 Facebook Post (1.9:1)</SelectItem>
+                      <SelectItem value="facebook_story">📱 Facebook Story (9:16)</SelectItem>
+                      <SelectItem value="twitter_post">🐦 Twitter Post (16:9)</SelectItem>
+                      <SelectItem value="linkedin_post">💼 LinkedIn Post (1.91:1)</SelectItem>
+                      <SelectItem value="youtube_thumbnail">📺 YouTube Thumbnail (16:9)</SelectItem>
+                      <SelectItem value="tiktok_video">🎵 TikTok Video (9:16)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Estilo de Tarjeta</Label>
+                  <Select value={settings.cardStyle || "modern_gradient"} onValueChange={(value) => applyRealTimeChange("cardStyle", value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="modern_gradient">🌈 Gradiente Moderno</SelectItem>
+                      <SelectItem value="neon_waves">⚡ Ondas Neón</SelectItem>
+                      <SelectItem value="geometric">🔷 Geométrico</SelectItem>
+                      <SelectItem value="organic_flow">🌊 Flujo Orgánico</SelectItem>
+                      <SelectItem value="minimalist">⚪ Minimalista</SelectItem>
+                      <SelectItem value="abstract_art">🎨 Arte Abstracto</SelectItem>
+                      <SelectItem value="corporate">🏢 Corporativo</SelectItem>
+                      <SelectItem value="creative_burst">✨ Explosión Creativa</SelectItem>
+                      <SelectItem value="elegant_lines">📐 Líneas Elegantes</SelectItem>
+                      <SelectItem value="vibrant_blocks">🎯 Bloques Vibrantes</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Vista previa de dimensiones */}
+              {settings.cardTemplate && settings.cardTemplate !== "none" && (
+                <div className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg">
+                  <h4 className="text-sm font-medium text-white mb-2">📏 Información de Formato</h4>
+                  <div className="text-xs text-gray-400 space-y-1">
+                    {settings.cardTemplate === "instagram_post" && <p>• Formato cuadrado perfecto para feeds de Instagram</p>}
+                    {settings.cardTemplate === "instagram_story" && <p>• Formato vertical para Stories e Instagram/Facebook</p>}
+                    {settings.cardTemplate === "facebook_post" && <p>• Formato horizontal optimizado para Facebook</p>}
+                    {settings.cardTemplate === "facebook_story" && <p>• Formato vertical para Stories de Facebook</p>}
+                    {settings.cardTemplate === "twitter_post" && <p>• Formato horizontal para Twitter/X</p>}
+                    {settings.cardTemplate === "linkedin_post" && <p>• Formato profesional para LinkedIn</p>}
+                    {settings.cardTemplate === "youtube_thumbnail" && <p>• Formato horizontal para miniaturas de YouTube</p>}
+                    {settings.cardTemplate === "tiktok_video" && <p>• Formato vertical para TikTok</p>}
+                    <p>• El QR se posiciona automáticamente en el diseño</p>
+                    <p>• Incluye texto "SCAN ME" para mejor visibilidad</p>
+                  </div>
+                </div>
+              )}
             </div>
           </TabsContent>
 

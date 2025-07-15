@@ -49,6 +49,14 @@ const qrGenerationSchema = z.object({
   textContent: z.string().optional(),
   errorCorrection: z.enum(["L", "M", "Q", "H"]).default("M"),
   backgroundImage: z.string().optional(), // Data URL for background image
+  cardTemplate: z.enum([
+    "none", "instagram_post", "instagram_story", "facebook_post", "facebook_story",
+    "twitter_post", "linkedin_post", "youtube_thumbnail", "tiktok_video"
+  ]).default("none"),
+  cardStyle: z.enum([
+    "modern_gradient", "neon_waves", "geometric", "organic_flow", "minimalist",
+    "abstract_art", "corporate", "creative_burst", "elegant_lines", "vibrant_blocks"
+  ]).default("modern_gradient"),
 });
 
 // Function to get QR code size in pixels
@@ -184,6 +192,206 @@ function getBrandColors(logoType: string): { primary: string; background?: strin
   return brandColors[logoType] || null;
 }
 
+// Function to get card dimensions for different social media platforms
+function getCardDimensions(template: string): { width: number; height: number } {
+  const dimensions: { [key: string]: { width: number; height: number } } = {
+    "instagram_post": { width: 1080, height: 1080 }, // Square
+    "instagram_story": { width: 1080, height: 1920 }, // 9:16
+    "facebook_post": { width: 1200, height: 630 }, // 1.9:1
+    "facebook_story": { width: 1080, height: 1920 }, // 9:16
+    "twitter_post": { width: 1200, height: 675 }, // 16:9
+    "linkedin_post": { width: 1200, height: 627 }, // 1.91:1
+    "youtube_thumbnail": { width: 1280, height: 720 }, // 16:9
+    "tiktok_video": { width: 1080, height: 1920 }, // 9:16
+  };
+  
+  return dimensions[template] || { width: 800, height: 800 };
+}
+
+// Function to generate card background based on style
+function generateCardBackground(style: string, width: number, height: number): string {
+  const backgrounds: { [key: string]: string } = {
+    "modern_gradient": `
+      <defs>
+        <linearGradient id="modernGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#modernGrad)"/>
+    `,
+    
+    "neon_waves": `
+      <defs>
+        <linearGradient id="neonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#ff006e;stop-opacity:1" />
+          <stop offset="50%" style="stop-color:#ffbe0b;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#8338ec;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#neonGrad)"/>
+      <path d="M0,${height*0.3} Q${width*0.25},${height*0.2} ${width*0.5},${height*0.3} T${width},${height*0.2} L${width},${height} L0,${height} Z" fill="rgba(255,255,255,0.1)"/>
+    `,
+    
+    "geometric": `
+      <defs>
+        <linearGradient id="geoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#f093fb;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#f5576c;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#geoGrad)"/>
+      <polygon points="0,0 ${width*0.3},0 0,${height*0.3}" fill="rgba(255,255,255,0.2)"/>
+      <polygon points="${width},${height} ${width*0.7},${height} ${width},${height*0.7}" fill="rgba(255,255,255,0.2)"/>
+    `,
+    
+    "organic_flow": `
+      <defs>
+        <linearGradient id="organicGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#a8edea;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#fed6e3;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#organicGrad)"/>
+      <ellipse cx="${width*0.2}" cy="${height*0.8}" rx="${width*0.3}" ry="${height*0.2}" fill="rgba(255,255,255,0.3)"/>
+      <ellipse cx="${width*0.8}" cy="${height*0.2}" rx="${width*0.2}" ry="${height*0.3}" fill="rgba(255,255,255,0.2)"/>
+    `,
+    
+    "minimalist": `
+      <rect width="${width}" height="${height}" fill="#f8f9fa"/>
+      <rect x="${width*0.1}" y="${height*0.1}" width="${width*0.8}" height="${height*0.8}" fill="none" stroke="#dee2e6" stroke-width="2"/>
+    `,
+    
+    "abstract_art": `
+      <defs>
+        <linearGradient id="abstractGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#ffecd2;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#fcb69f;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#abstractGrad)"/>
+      <circle cx="${width*0.8}" cy="${height*0.2}" r="${width*0.1}" fill="rgba(255,255,255,0.4)"/>
+      <circle cx="${width*0.2}" cy="${height*0.8}" r="${width*0.15}" fill="rgba(255,255,255,0.3)"/>
+    `,
+    
+    "corporate": `
+      <rect width="${width}" height="${height}" fill="#1e293b"/>
+      <rect x="0" y="0" width="${width}" height="${height*0.3}" fill="#334155"/>
+      <rect x="0" y="${height*0.7}" width="${width}" height="${height*0.3}" fill="#475569"/>
+    `,
+    
+    "creative_burst": `
+      <defs>
+        <radialGradient id="burstGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" style="stop-color:#ff9a9e;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#fecfef;stop-opacity:1" />
+        </radialGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#burstGrad)"/>
+      <polygon points="${width*0.5},${height*0.1} ${width*0.6},${height*0.4} ${width*0.9},${height*0.4} ${width*0.7},${height*0.6} ${width*0.8},${height*0.9} ${width*0.5},${height*0.7} ${width*0.2},${height*0.9} ${width*0.3},${height*0.6} ${width*0.1},${height*0.4} ${width*0.4},${height*0.4}" fill="rgba(255,255,255,0.2)"/>
+    `,
+    
+    "elegant_lines": `
+      <defs>
+        <linearGradient id="elegantGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#e3ffe7;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#d9e7ff;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#elegantGrad)"/>
+      <path d="M0,${height*0.2} Q${width*0.5},${height*0.1} ${width},${height*0.2}" stroke="rgba(255,255,255,0.6)" stroke-width="3" fill="none"/>
+      <path d="M0,${height*0.8} Q${width*0.5},${height*0.9} ${width},${height*0.8}" stroke="rgba(255,255,255,0.6)" stroke-width="3" fill="none"/>
+    `,
+    
+    "vibrant_blocks": `
+      <rect width="${width}" height="${height}" fill="#ff6b6b"/>
+      <rect x="0" y="0" width="${width*0.5}" height="${height*0.5}" fill="#4ecdc4"/>
+      <rect x="${width*0.5}" y="${height*0.5}" width="${width*0.5}" height="${height*0.5}" fill="#45b7d1"/>
+      <rect x="${width*0.5}" y="0" width="${width*0.5}" height="${height*0.5}" fill="#f9ca24"/>
+      <rect x="0" y="${height*0.5}" width="${width*0.5}" height="${height*0.5}" fill="#f0932b"/>
+    `,
+  };
+  
+  return backgrounds[style] || backgrounds["modern_gradient"];
+}
+
+// Function to generate creative card with QR code
+async function generateCreativeCard(qrDataUrl: string, options: any): Promise<string> {
+  try {
+    const { cardTemplate, cardStyle } = options;
+    
+    if (cardTemplate === "none") {
+      return qrDataUrl;
+    }
+    
+    const { width, height } = getCardDimensions(cardTemplate);
+    const background = generateCardBackground(cardStyle, width, height);
+    
+    // Calculate QR code size and position
+    const qrSize = Math.min(width, height) * 0.35; // QR is 35% of the smaller dimension
+    const qrX = width * 0.1; // 10% from left
+    const qrY = height * 0.1; // 10% from top
+    
+    // Create the card background SVG
+    const cardBackgroundSVG = `
+      <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+        ${background}
+        
+        <!-- QR Code background -->
+        <rect x="${qrX - 20}" y="${qrY - 20}" width="${qrSize + 40}" height="${qrSize + 40}" 
+              fill="white" rx="20" opacity="0.9"/>
+        
+        <!-- "SCAN ME" text -->
+        <text x="${qrX + qrSize/2}" y="${qrY + qrSize + 60}" 
+              text-anchor="middle" fill="white" font-size="48" font-weight="bold" 
+              font-family="Arial, sans-serif">SCAN ME</text>
+        
+        <!-- Platform label -->
+        <text x="${width - 40}" y="${height - 40}" 
+              text-anchor="end" fill="rgba(255,255,255,0.7)" font-size="24" 
+              font-family="Arial, sans-serif">${cardTemplate.replace('_', ' ').toUpperCase()}</text>
+      </svg>
+    `;
+    
+    // Convert QR code to buffer
+    const qrBase64 = qrDataUrl.replace(/^data:image\/[a-z]+;base64,/, '');
+    const qrBuffer = Buffer.from(qrBase64, 'base64');
+    
+    // Create background from SVG
+    const backgroundBuffer = Buffer.from(cardBackgroundSVG);
+    const backgroundImage = await sharp(backgroundBuffer)
+      .png()
+      .resize(width, height)
+      .toBuffer();
+    
+    // Resize QR code to fit in the designated area
+    const resizedQRBuffer = await sharp(qrBuffer)
+      .resize(Math.floor(qrSize), Math.floor(qrSize))
+      .png()
+      .toBuffer();
+    
+    // Composite the background and QR code
+    const result = await sharp(backgroundImage)
+      .composite([
+        {
+          input: resizedQRBuffer,
+          top: Math.floor(qrY),
+          left: Math.floor(qrX),
+        }
+      ])
+      .png({
+        quality: 100,
+        compressionLevel: 0
+      })
+      .toBuffer();
+    
+    return `data:image/png;base64,${result.toString('base64')}`;
+  } catch (error) {
+    console.error('Error generating creative card:', error);
+    return qrDataUrl; // Return original QR if card generation fails
+  }
+}
+
 // Function to generate advanced QR code
 async function generateAdvancedQRCode(options: any): Promise<string> {
   const size = getQRSize(options.size);
@@ -228,6 +436,13 @@ async function generateAdvancedQRCode(options: any): Promise<string> {
     console.log('Adding logo to QR code...');
     qrDataUrl = await addLogoToQR(qrDataUrl, options.logo, size, qrForegroundColor);
     console.log('Logo added successfully');
+  }
+  
+  // Generate creative card if specified
+  if (options.cardTemplate && options.cardTemplate !== "none") {
+    console.log('Generating creative card...');
+    qrDataUrl = await generateCreativeCard(qrDataUrl, options);
+    console.log('Creative card generated successfully');
   }
   
   return qrDataUrl;
