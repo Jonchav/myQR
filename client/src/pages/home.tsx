@@ -195,11 +195,13 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-r from-primary to-primary/80 rounded-xl flex items-center justify-center vibrant-pulse color-glow">
                 <QrCode className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900 dark:text-white">myQR</h1>
+                <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+                  my<span className="text-primary vibrant-pulse">QR</span>
+                </h1>
                 <p className="text-sm text-gray-600 dark:text-gray-400">Generador Profesional</p>
               </div>
             </div>
@@ -217,7 +219,7 @@ export default function Home() {
               {isAuthenticated ? (
                 <div className="flex items-center space-x-3">
                   <div className="flex items-center space-x-2">
-                    <div className="w-8 h-8 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-full flex items-center justify-center">
+                    <div className="w-8 h-8 bg-gradient-to-r from-primary to-primary/80 rounded-full flex items-center justify-center vibrant-pulse">
                       <User className="w-4 h-4 text-white" />
                     </div>
                     <span className="text-sm font-medium text-gray-900 dark:text-white">
@@ -231,7 +233,7 @@ export default function Home() {
                   </Button>
                 </div>
               ) : (
-                <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground" asChild>
+                <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground vibrant-pulse color-glow" asChild>
                   <a href="/api/login">Iniciar Sesión</a>
                 </Button>
               )}

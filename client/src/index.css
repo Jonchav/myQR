@@ -3,58 +3,58 @@
 @tailwind utilities;
 
 :root {
-  /* Starbucks-inspired professional palette */
+  /* Vibrant pulsating color palette */
   --background: hsl(0, 0%, 98%);
-  --foreground: hsl(158, 25%, 15%);
-  --muted: hsl(158, 8%, 94%);
-  --muted-foreground: hsl(158, 8%, 45%);
+  --foreground: hsl(220, 25%, 15%);
+  --muted: hsl(220, 8%, 94%);
+  --muted-foreground: hsl(220, 8%, 45%);
   --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(158, 25%, 15%);
+  --popover-foreground: hsl(220, 25%, 15%);
   --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(158, 25%, 15%);
-  --border: hsl(158, 8%, 88%);
-  --input: hsl(158, 8%, 94%);
-  --primary: hsl(158, 64%, 52%);
+  --card-foreground: hsl(220, 25%, 15%);
+  --border: hsl(220, 8%, 88%);
+  --input: hsl(220, 8%, 94%);
+  --primary: hsl(280, 100%, 70%);
   --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(158, 12%, 88%);
-  --secondary-foreground: hsl(158, 25%, 15%);
-  --accent: hsl(158, 12%, 88%);
-  --accent-foreground: hsl(158, 25%, 15%);
-  --destructive: hsl(0, 72%, 51%);
+  --secondary: hsl(220, 12%, 88%);
+  --secondary-foreground: hsl(220, 25%, 15%);
+  --accent: hsl(220, 12%, 88%);
+  --accent-foreground: hsl(220, 25%, 15%);
+  --destructive: hsl(0, 84%, 60%);
   --destructive-foreground: hsl(0, 0%, 100%);
-  --success: hsl(158, 76%, 36%);
+  --success: hsl(142, 76%, 50%);
   --success-foreground: hsl(0, 0%, 100%);
   --warning: hsl(38, 92%, 50%);
   --warning-foreground: hsl(0, 0%, 100%);
-  --ring: hsl(158, 64%, 52%);
+  --ring: hsl(280, 100%, 70%);
   --radius: 0.5rem;
 }
 
 .dark {
-  /* Dark theme with forest green accents */
-  --background: hsl(158, 25%, 8%);
-  --foreground: hsl(158, 8%, 95%);
-  --muted: hsl(158, 25%, 18%);
-  --muted-foreground: hsl(158, 8%, 65%);
-  --popover: hsl(158, 25%, 10%);
-  --popover-foreground: hsl(158, 8%, 95%);
-  --card: hsl(158, 25%, 10%);
-  --card-foreground: hsl(158, 8%, 95%);
-  --border: hsl(158, 25%, 18%);
-  --input: hsl(158, 25%, 18%);
-  --primary: hsl(158, 64%, 52%);
-  --primary-foreground: hsl(158, 25%, 8%);
-  --secondary: hsl(158, 25%, 18%);
-  --secondary-foreground: hsl(158, 8%, 95%);
-  --accent: hsl(158, 25%, 18%);
-  --accent-foreground: hsl(158, 8%, 95%);
-  --destructive: hsl(0, 62%, 45%);
-  --destructive-foreground: hsl(158, 8%, 95%);
-  --success: hsl(158, 76%, 50%);
-  --success-foreground: hsl(158, 25%, 8%);
+  /* Dark theme with vibrant pulsating accents */
+  --background: hsl(220, 25%, 8%);
+  --foreground: hsl(220, 8%, 95%);
+  --muted: hsl(220, 25%, 18%);
+  --muted-foreground: hsl(220, 8%, 65%);
+  --popover: hsl(220, 25%, 10%);
+  --popover-foreground: hsl(220, 8%, 95%);
+  --card: hsl(220, 25%, 10%);
+  --card-foreground: hsl(220, 8%, 95%);
+  --border: hsl(220, 25%, 18%);
+  --input: hsl(220, 25%, 18%);
+  --primary: hsl(280, 100%, 70%);
+  --primary-foreground: hsl(220, 25%, 8%);
+  --secondary: hsl(220, 25%, 18%);
+  --secondary-foreground: hsl(220, 8%, 95%);
+  --accent: hsl(220, 25%, 18%);
+  --accent-foreground: hsl(220, 8%, 95%);
+  --destructive: hsl(0, 85%, 60%);
+  --destructive-foreground: hsl(220, 8%, 95%);
+  --success: hsl(142, 76%, 50%);
+  --success-foreground: hsl(220, 25%, 8%);
   --warning: hsl(38, 92%, 60%);
-  --warning-foreground: hsl(158, 25%, 8%);
-  --ring: hsl(158, 64%, 52%);
+  --warning-foreground: hsl(220, 25%, 8%);
+  --ring: hsl(280, 100%, 70%);
   --radius: 0.5rem;
 }
 
@@ -102,19 +102,108 @@
     border-color: hsl(var(--warning));
   }
 
-  /* Professional Starbucks-inspired theme utilities */
+  /* Vibrant pulsating color theme utilities */
   .gradient-bg {
-    background: linear-gradient(135deg, hsl(158, 25%, 8%) 0%, hsl(158, 25%, 12%) 25%, hsl(158, 25%, 18%) 75%, hsl(158, 25%, 10%) 100%);
+    background: linear-gradient(135deg, hsl(220, 25%, 8%) 0%, hsl(220, 25%, 12%) 25%, hsl(220, 25%, 18%) 75%, hsl(220, 25%, 10%) 100%);
   }
 
   .qr-pattern-bg {
-    background-color: hsl(158, 8%, 96%);
+    background-color: hsl(220, 8%, 96%);
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill='%23000' fill-opacity='0.015'%3E%3Crect x='0' y='0' width='3' height='3'/%3E%3Crect x='6' y='0' width='3' height='3'/%3E%3Crect x='12' y='0' width='3' height='3'/%3E%3Crect x='24' y='0' width='3' height='3'/%3E%3Crect x='30' y='0' width='3' height='3'/%3E%3Crect x='36' y='0' width='3' height='3'/%3E%3Crect x='3' y='3' width='3' height='3'/%3E%3Crect x='9' y='3' width='3' height='3'/%3E%3Crect x='18' y='3' width='3' height='3'/%3E%3Crect x='27' y='3' width='3' height='3'/%3E%3Crect x='33' y='3' width='3' height='3'/%3E%3Crect x='0' y='6' width='3' height='3'/%3E%3Crect x='9' y='6' width='3' height='3'/%3E%3Crect x='15' y='6' width='3' height='3'/%3E%3Crect x='21' y='6' width='3' height='3'/%3E%3Crect x='30' y='6' width='3' height='3'/%3E%3Crect x='36' y='6' width='3' height='3'/%3E%3Crect x='6' y='9' width='3' height='3'/%3E%3Crect x='12' y='9' width='3' height='3'/%3E%3Crect x='24' y='9' width='3' height='3'/%3E%3Crect x='33' y='9' width='3' height='3'/%3E%3Crect x='3' y='12' width='3' height='3'/%3E%3Crect x='15' y='12' width='3' height='3'/%3E%3Crect x='21' y='12' width='3' height='3'/%3E%3Crect x='27' y='12' width='3' height='3'/%3E%3Crect x='36' y='12' width='3' height='3'/%3E%3Crect x='0' y='15' width='3' height='3'/%3E%3Crect x='9' y='15' width='3' height='3'/%3E%3Crect x='18' y='15' width='3' height='3'/%3E%3Crect x='30' y='15' width='3' height='3'/%3E%3Crect x='6' y='18' width='3' height='3'/%3E%3Crect x='12' y='18' width='3' height='3'/%3E%3Crect x='24' y='18' width='3' height='3'/%3E%3Crect x='33' y='18' width='3' height='3'/%3E%3Crect x='3' y='21' width='3' height='3'/%3E%3Crect x='15' y='21' width='3' height='3'/%3E%3Crect x='21' y='21' width='3' height='3'/%3E%3Crect x='36' y='21' width='3' height='3'/%3E%3Crect x='0' y='24' width='3' height='3'/%3E%3Crect x='9' y='24' width='3' height='3'/%3E%3Crect x='18' y='24' width='3' height='3'/%3E%3Crect x='27' y='24' width='3' height='3'/%3E%3Crect x='30' y='24' width='3' height='3'/%3E%3Crect x='6' y='27' width='3' height='3'/%3E%3Crect x='15' y='27' width='3' height='3'/%3E%3Crect x='24' y='27' width='3' height='3'/%3E%3Crect x='33' y='27' width='3' height='3'/%3E%3Crect x='0' y='30' width='3' height='3'/%3E%3Crect x='9' y='30' width='3' height='3'/%3E%3Crect x='12' y='30' width='3' height='3'/%3E%3Crect x='21' y='30' width='3' height='3'/%3E%3Crect x='36' y='30' width='3' height='3'/%3E%3Crect x='3' y='33' width='3' height='3'/%3E%3Crect x='18' y='33' width='3' height='3'/%3E%3Crect x='27' y='33' width='3' height='3'/%3E%3Crect x='30' y='33' width='3' height='3'/%3E%3Crect x='6' y='36' width='3' height='3'/%3E%3Crect x='12' y='36' width='3' height='3'/%3E%3Crect x='15' y='36' width='3' height='3'/%3E%3Crect x='24' y='36' width='3' height='3'/%3E%3Crect x='33' y='36' width='3' height='3'/%3E%3Crect x='36' y='36' width='3' height='3'/%3E%3C/g%3E%3C/svg%3E");
   }
 
   .dark .qr-pattern-bg {
-    background-color: hsl(158, 25%, 8%);
+    background-color: hsl(220, 25%, 8%);
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill='%23fff' fill-opacity='0.015'%3E%3Crect x='0' y='0' width='3' height='3'/%3E%3Crect x='6' y='0' width='3' height='3'/%3E%3Crect x='12' y='0' width='3' height='3'/%3E%3Crect x='24' y='0' width='3' height='3'/%3E%3Crect x='30' y='0' width='3' height='3'/%3E%3Crect x='36' y='0' width='3' height='3'/%3E%3Crect x='3' y='3' width='3' height='3'/%3E%3Crect x='9' y='3' width='3' height='3'/%3E%3Crect x='18' y='3' width='3' height='3'/%3E%3Crect x='27' y='3' width='3' height='3'/%3E%3Crect x='33' y='3' width='3' height='3'/%3E%3Crect x='0' y='6' width='3' height='3'/%3E%3Crect x='9' y='6' width='3' height='3'/%3E%3Crect x='15' y='6' width='3' height='3'/%3E%3Crect x='21' y='6' width='3' height='3'/%3E%3Crect x='30' y='6' width='3' height='3'/%3E%3Crect x='36' y='6' width='3' height='3'/%3E%3Crect x='6' y='9' width='3' height='3'/%3E%3Crect x='12' y='9' width='3' height='3'/%3E%3Crect x='24' y='9' width='3' height='3'/%3E%3Crect x='33' y='9' width='3' height='3'/%3E%3Crect x='3' y='12' width='3' height='3'/%3E%3Crect x='15' y='12' width='3' height='3'/%3E%3Crect x='21' y='12' width='3' height='3'/%3E%3Crect x='27' y='12' width='3' height='3'/%3E%3Crect x='36' y='12' width='3' height='3'/%3E%3Crect x='0' y='15' width='3' height='3'/%3E%3Crect x='9' y='15' width='3' height='3'/%3E%3Crect x='18' y='15' width='3' height='3'/%3E%3Crect x='30' y='15' width='3' height='3'/%3E%3Crect x='6' y='18' width='3' height='3'/%3E%3Crect x='12' y='18' width='3' height='3'/%3E%3Crect x='24' y='18' width='3' height='3'/%3E%3Crect x='33' y='18' width='3' height='3'/%3E%3Crect x='3' y='21' width='3' height='3'/%3E%3Crect x='15' y='21' width='3' height='3'/%3E%3Crect x='21' y='21' width='3' height='3'/%3E%3Crect x='36' y='21' width='3' height='3'/%3E%3Crect x='0' y='24' width='3' height='3'/%3E%3Crect x='9' y='24' width='3' height='3'/%3E%3Crect x='18' y='24' width='3' height='3'/%3E%3Crect x='27' y='24' width='3' height='3'/%3E%3Crect x='30' y='24' width='3' height='3'/%3E%3Crect x='6' y='27' width='3' height='3'/%3E%3Crect x='15' y='27' width='3' height='3'/%3E%3Crect x='24' y='27' width='3' height='3'/%3E%3Crect x='33' y='27' width='3' height='3'/%3E%3Crect x='0' y='30' width='3' height='3'/%3E%3Crect x='9' y='30' width='3' height='3'/%3E%3Crect x='12' y='30' width='3' height='3'/%3E%3Crect x='21' y='30' width='3' height='3'/%3E%3Crect x='36' y='30' width='3' height='3'/%3E%3Crect x='3' y='33' width='3' height='3'/%3E%3Crect x='18' y='33' width='3' height='3'/%3E%3Crect x='27' y='33' width='3' height='3'/%3E%3Crect x='30' y='33' width='3' height='3'/%3E%3Crect x='6' y='36' width='3' height='3'/%3E%3Crect x='12' y='36' width='3' height='3'/%3E%3Crect x='15' y='36' width='3' height='3'/%3E%3Crect x='24' y='36' width='3' height='3'/%3E%3Crect x='33' y='36' width='3' height='3'/%3E%3Crect x='36' y='36' width='3' height='3'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* Vibrant pulsing animations */
+  @keyframes vibrancy-pulse {
+    0% {
+      filter: hue-rotate(0deg) saturate(100%) brightness(100%);
+    }
+    20% {
+      filter: hue-rotate(72deg) saturate(150%) brightness(120%);
+    }
+    40% {
+      filter: hue-rotate(144deg) saturate(200%) brightness(110%);
+    }
+    60% {
+      filter: hue-rotate(216deg) saturate(180%) brightness(130%);
+    }
+    80% {
+      filter: hue-rotate(288deg) saturate(160%) brightness(115%);
+    }
+    100% {
+      filter: hue-rotate(360deg) saturate(100%) brightness(100%);
+    }
+  }
+
+  @keyframes color-glow {
+    0% {
+      box-shadow: 0 0 5px hsl(280, 100%, 70%);
+    }
+    25% {
+      box-shadow: 0 0 20px hsl(60, 100%, 70%);
+    }
+    50% {
+      box-shadow: 0 0 30px hsl(180, 100%, 70%);
+    }
+    75% {
+      box-shadow: 0 0 20px hsl(300, 100%, 70%);
+    }
+    100% {
+      box-shadow: 0 0 5px hsl(280, 100%, 70%);
+    }
+  }
+
+  .vibrant-pulse {
+    animation: vibrancy-pulse 3s ease-in-out infinite;
+  }
+
+  .color-glow {
+    animation: color-glow 2s ease-in-out infinite;
+  }
+
+  /* Intense accent colors */
+  .accent-cyan {
+    color: hsl(180, 100%, 60%);
+  }
+
+  .accent-magenta {
+    color: hsl(300, 100%, 60%);
+  }
+
+  .accent-yellow {
+    color: hsl(60, 100%, 60%);
+  }
+
+  .accent-orange {
+    color: hsl(30, 100%, 60%);
+  }
+
+  .accent-lime {
+    color: hsl(90, 100%, 60%);
+  }
+
+  .bg-accent-cyan {
+    background-color: hsl(180, 100%, 60%);
+  }
+
+  .bg-accent-magenta {
+    background-color: hsl(300, 100%, 60%);
+  }
+
+  .bg-accent-yellow {
+    background-color: hsl(60, 100%, 60%);
+  }
+
+  .bg-accent-orange {
+    background-color: hsl(30, 100%, 60%);
+  }
+
+  .bg-accent-lime {
+    background-color: hsl(90, 100%, 60%);
   }
 
   .gradient-card {
