@@ -37,11 +37,13 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
     
     // Si hay una URL y el cambio es visual, regenerar automáticamente
     if (settings.url && onGenerate && !isGenerating) {
-      const visualChanges = ['backgroundColor', 'foregroundColor', 'style', 'pattern', 'gradient', 'frame', 'size'];
+      const visualChanges = ['backgroundColor', 'foregroundColor', 'style', 'pattern', 'gradient', 'frame', 'size', 'border', 'logo', 'errorCorrection', 'includeText', 'textContent'];
       if (visualChanges.includes(key)) {
-        setTimeout(() => {
+        // Usar debounce para evitar múltiples llamadas
+        clearTimeout(window.qrRegenerateTimeout);
+        window.qrRegenerateTimeout = setTimeout(() => {
           onGenerate();
-        }, 300); // Delay para evitar múltiples llamadas
+        }, 500); // Delay optimizado
       }
     }
   };
@@ -340,9 +342,14 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                 !settings.url ? 'border-red-500/50' : ''
               }`}
             />
-            <p className="text-sm text-gray-400">
-              Ingresa la URL para generar tu código QR personalizado con todas las opciones PRO
-            </p>
+            <div className="space-y-2">
+              <p className="text-sm text-gray-400">
+                Ingresa la URL para generar tu código QR personalizado con todas las opciones PRO
+              </p>
+              <p className="text-xs text-purple-300 bg-purple-900/20 px-2 py-1 rounded">
+                💡 Los cambios de personalización se aplicarán automáticamente después de generar el QR inicial
+              </p>
+            </div>
             {!settings.url && (
               <p className="text-xs text-red-400 flex items-center gap-1">
                 <span>⚠️</span>
@@ -360,6 +367,11 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   Generando...
+                </>
+              ) : qrCode ? (
+                <>
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Aplicar Cambios
                 </>
               ) : (
                 <>
@@ -668,7 +680,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Marco</Label>
-                <Select value={settings.frame} onValueChange={(value) => updateSetting("frame", value)}>
+                <Select value={settings.frame} onValueChange={(value) => applyRealTimeChange("frame", value)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -688,7 +700,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
 
               <div className="space-y-2">
                 <Label>Borde</Label>
-                <Select value={settings.border} onValueChange={(value) => updateSetting("border", value)}>
+                <Select value={settings.border} onValueChange={(value) => applyRealTimeChange("border", value)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -704,7 +716,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
 
             <div className="space-y-2">
               <Label>Logo Central</Label>
-              <Select value={settings.logo} onValueChange={(value) => updateSetting("logo", value)}>
+              <Select value={settings.logo} onValueChange={(value) => applyRealTimeChange("logo", value)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -746,7 +758,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
 
               <div className="space-y-2">
                 <Label>Corrección de Errores</Label>
-                <Select value={settings.errorCorrection} onValueChange={(value) => updateSetting("errorCorrection", value)}>
+                <Select value={settings.errorCorrection} onValueChange={(value) => applyRealTimeChange("errorCorrection", value)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -763,7 +775,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                 <Switch
                   id="includeText"
                   checked={settings.includeText}
-                  onCheckedChange={(checked) => updateSetting("includeText", checked)}
+                  onCheckedChange={(checked) => applyRealTimeChange("includeText", checked)}
                 />
                 <Label htmlFor="includeText" className="flex items-center gap-2">
                   <Type className="w-4 h-4" />
@@ -777,7 +789,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                   <Input
                     id="textContent"
                     value={settings.textContent || ""}
-                    onChange={(e) => updateSetting("textContent", e.target.value)}
+                    onChange={(e) => applyRealTimeChange("textContent", e.target.value)}
                     placeholder="Texto que aparecerá debajo del QR"
                   />
                 </div>

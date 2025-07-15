@@ -19,6 +19,7 @@ Preferred communication style: Simple, everyday language.
 - **Enhanced Scan Statistics**: Added detailed scan records endpoint with individual scan timestamps, user agents, and IP addresses
 - **Tabbed Statistics Interface**: Organized statistics modal into three tabs (Resumen, Análisis, Detallado) for better navigation
 - **Timezone Clarification**: Added UTC timezone indicators to statistics and detailed scan records to prevent confusion
+- **Real-time QR Updates**: Implemented automatic QR regeneration when visual settings change, eliminating need to manually click "generar pro"
 - **Search Functionality**: Added search capability for QR names, URLs, and types in history tab with real-time filtering
 - **PRO Status System**: Created subscription status tracking with badges and upgrade prompts in header
 - **Payment Processing**: Integrated Stripe Elements for secure payment processing and subscription management
