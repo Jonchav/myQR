@@ -7,16 +7,17 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Palette, Settings, Layers, Frame, Sparkles, Type, Shield, Loader2 } from "lucide-react";
+import { Palette, Settings, Layers, Frame, Sparkles, Type, Shield, Loader2, Home, ArrowLeft } from "lucide-react";
 
 interface QRCustomizerProps {
   settings: any;
   onChange: (settings: any) => void;
   onGenerate: () => void;
   isGenerating: boolean;
+  onBackToHome?: () => void;
 }
 
-export function QRCustomizer({ settings, onChange, onGenerate, isGenerating }: QRCustomizerProps) {
+export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onBackToHome }: QRCustomizerProps) {
   const updateSetting = (key: string, value: any) => {
     onChange({ ...settings, [key]: value });
   };
@@ -270,9 +271,22 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating }: Q
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Settings className="w-5 h-5" />
-          Personalización Avanzada
+        <CardTitle className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Settings className="w-5 h-5" />
+            Personalización Avanzada
+          </div>
+          {onBackToHome && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onBackToHome}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Volver
+            </Button>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent>

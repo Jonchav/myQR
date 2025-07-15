@@ -231,10 +231,14 @@ export default function Home() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="generate" className="flex items-center gap-2">
               <QrCode className="w-4 h-4" />
               Generar
+            </TabsTrigger>
+            <TabsTrigger value="customize" className="flex items-center gap-2">
+              <Palette className="w-4 h-4" />
+              Personalizar PRO
             </TabsTrigger>
             <TabsTrigger value="history" className="flex items-center gap-2">
               <History className="w-4 h-4" />
@@ -400,8 +404,8 @@ export default function Home() {
                                   className="w-full mt-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
                                   size="sm"
                                 >
-                                  <Palette className="w-4 h-4 mr-2" />
-                                  Personalizar este QR
+                                  <Sparkles className="w-4 h-4 mr-2" />
+                                  Personalizar PRO
                                 </Button>
                               </CardContent>
                             </Card>
@@ -432,6 +436,7 @@ export default function Home() {
                   onChange={setQrSettings}
                   onGenerate={handleGenerate}
                   isGenerating={generateQRMutation.isPending}
+                  onBackToHome={() => setActiveTab("generate")}
                 />
               </div>
               
