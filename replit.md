@@ -10,6 +10,20 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+### January 2025
+- **Sistema de Edición de Texto Avanzado**: Implementado control completo sobre el texto en tarjetas QR
+- **Posicionamiento de Texto**: Opciones para posicionar texto arriba, centro o abajo del QR
+- **Alineación de Texto**: Controles para alinear texto a la izquierda, centro o derecha
+- **Personalización Tipográfica**: Amplia selección de fuentes (Arial, Georgia, Times, Verdana, Helvetica, Comic Sans, Impact, Courier, Trebuchet, Palatino)
+- **Controles de Formato**: Opciones para negrita, cursiva y sombra de texto
+- **Tamaño y Opacidad**: Controles deslizantes para ajustar tamaño (12-48px) y opacidad (25-100%)
+- **Selector de Color**: Selector visual de colores para texto con vista previa en tiempo real
+- **Regeneración Automática**: Texto se actualiza automáticamente al cambiar cualquier propiedad visual
+- **Vista Previa en Tiempo Real**: Muestra vista previa del texto con todos los estilos aplicados
+- **Calidad Profesional 4K**: Mejorado generador QR base con resolución 1200px y configuraciones PNG máximas
+- **Kernel Lanczos3**: Implementado reescalado profesional para nitidez superior en todas las composiciones
+- **Esquema de BD Expandido**: Agregados campos para textPosition, textAlign, textSize, textColor, textOpacity, textFont, textShadow, textBold, textItalic
+
 ### December 2024
 - **Stripe Payment Integration**: Implemented complete payment system with subscription plans and 3-day free trial
 - **Subscription Plans**: Added weekly ($3.45) and monthly ($6.45) subscription options with Stripe integration using actual product IDs

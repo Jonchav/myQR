@@ -316,6 +316,77 @@ function generateCardBackground(style: string, width: number, height: number): s
   return backgrounds[style] || backgrounds["modern_gradient"];
 }
 
+// Function to generate text SVG with advanced formatting
+function generateTextSVG(options: any, cardWidth: number, cardHeight: number, qrX: number, qrY: number, qrSize: number): string {
+  const {
+    textContent,
+    textPosition = "bottom",
+    textAlign = "center",
+    textSize = 24,
+    textColor = "#000000",
+    textOpacity = 100,
+    textFont = "Arial",
+    textShadow = false,
+    textBold = false,
+    textItalic = false
+  } = options;
+  
+  // Calculate text position
+  let textX = cardWidth / 2;
+  let textY = cardHeight / 2;
+  
+  switch (textPosition) {
+    case "top":
+      textY = qrY - 40;
+      break;
+    case "center":
+      textY = cardHeight / 2;
+      break;
+    case "bottom":
+      textY = qrY + qrSize + 60;
+      break;
+  }
+  
+  // Calculate text anchor based on alignment
+  let textAnchor = "middle";
+  switch (textAlign) {
+    case "left":
+      textX = 50;
+      textAnchor = "start";
+      break;
+    case "right":
+      textX = cardWidth - 50;
+      textAnchor = "end";
+      break;
+    case "center":
+      textX = cardWidth / 2;
+      textAnchor = "middle";
+      break;
+  }
+  
+  // Build font style
+  const fontWeight = textBold ? "bold" : "normal";
+  const fontStyle = textItalic ? "italic" : "normal";
+  const opacity = textOpacity / 100;
+  
+  // Build text shadow
+  const shadowStyle = textShadow ? `filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.5))` : "";
+  
+  return `
+    <text x="${textX}" y="${textY}" 
+          text-anchor="${textAnchor}" 
+          fill="${textColor}" 
+          font-size="${textSize}" 
+          font-weight="${fontWeight}"
+          font-style="${fontStyle}"
+          font-family="${textFont}, sans-serif" 
+          opacity="${opacity}"
+          style="${shadowStyle}">
+      ${textContent}
+    </text>
+  `;
+}
+
 // Function to generate creative card with QR code
 async function generateCreativeCard(qrDataUrl: string, options: any): Promise<string> {
   try {
@@ -343,10 +414,8 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
               fill="white" rx="25" opacity="0.95" 
               style="filter: drop-shadow(0 8px 16px rgba(0,0,0,0.3))"/>
         
-        <!-- "SCAN ME" text positioned below QR -->
-        <text x="${width/2}" y="${qrY + qrSize + 80}" 
-              text-anchor="middle" fill="white" font-size="54" font-weight="bold" 
-              font-family="Arial, sans-serif" opacity="0.9">SCAN ME</text>
+        <!-- Custom text if enabled -->
+        ${options.includeText && options.textContent ? generateTextSVG(options, width, height, qrX, qrY, qrSize) : ''}
       </svg>
     `;
     

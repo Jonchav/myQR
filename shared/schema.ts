@@ -56,9 +56,23 @@ export const qrCodes = pgTable("qr_codes", {
   border: varchar("border").default("none"), // none, thin, thick, double
   logo: varchar("logo").default("none"), // none, replit, custom
   
-  // Advanced options
+  // Advanced text options
   includeText: boolean("include_text").default(false),
   textContent: text("text_content"),
+  textPosition: varchar("text_position").default("bottom"), // top, center, bottom
+  textAlign: varchar("text_align").default("center"), // left, center, right
+  textSize: integer("text_size").default(24), // Font size in pixels
+  textColor: varchar("text_color").default("#000000"),
+  textOpacity: integer("text_opacity").default(100), // 0-100
+  textFont: varchar("text_font").default("Arial"), // Arial, Helvetica, Times, Georgia, Verdana, etc.
+  textShadow: boolean("text_shadow").default(false),
+  textBold: boolean("text_bold").default(false),
+  textItalic: boolean("text_italic").default(false),
+  
+  // Creative card options
+  cardTemplate: varchar("card_template").default("none"), // none, instagram-post, instagram-story, etc.
+  cardStyle: varchar("card_style").default("gradient1"), // gradient1, gradient2, neon, etc.
+  
   errorCorrection: varchar("error_correction").default("M"), // L, M, Q, H
   
   // QR Code data
@@ -116,6 +130,17 @@ export const insertQRCodeSchema = createInsertSchema(qrCodes).pick({
   logo: true,
   includeText: true,
   textContent: true,
+  textPosition: true,
+  textAlign: true,
+  textSize: true,
+  textColor: true,
+  textOpacity: true,
+  textFont: true,
+  textShadow: true,
+  textBold: true,
+  textItalic: true,
+  cardTemplate: true,
+  cardStyle: true,
   errorCorrection: true,
   qrDataUrl: true,
 });
