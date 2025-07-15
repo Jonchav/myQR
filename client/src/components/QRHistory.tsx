@@ -8,9 +8,12 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { History, Download, Trash2, RefreshCw, Eye, Edit, BarChart3, Save, X, Copy, RotateCcw } from "lucide-react";
-import { format } from "date-fns";
+import { History, Download, Trash2, RefreshCw, Eye, Edit, BarChart3, Save, X, Copy, RotateCcw, TrendingUp, PieChart, BarChart } from "lucide-react";
+import { format, subDays, startOfWeek, startOfMonth, startOfYear, endOfWeek, endOfMonth, endOfYear } from "date-fns";
+import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart as RechartsPieChart, Cell } from "recharts";
 
 interface QRHistoryProps {
   onEditQR?: (qr: any) => void;
@@ -21,6 +24,8 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
   const [editingQR, setEditingQR] = useState<any>(null);
   const [newTitle, setNewTitle] = useState("");
   const [showStats, setShowStats] = useState<number | null>(null);
+  const [statsRange, setStatsRange] = useState<"daily" | "weekly" | "monthly" | "yearly">("daily");
+  const [chartType, setChartType] = useState<"bar" | "line" | "pie">("bar");
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -116,10 +121,69 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
   });
 
   const { data: statsData, isLoading: statsLoading } = useQuery({
-    queryKey: ["/api/qr", showStats, "stats"],
+    queryKey: ["/api/qr", showStats, "stats", statsRange],
     enabled: showStats !== null,
     retry: false,
   });
+
+  // Process stats data based on selected range
+  const processStatsData = (stats: any) => {
+    if (!stats || !stats.dailyStats) return [];
+    
+    const now = new Date();
+    let startDate: Date;
+    let labelFormat: string;
+    
+    switch (statsRange) {
+      case "daily":
+        startDate = subDays(now, 6);
+        labelFormat = "dd/MM";
+        break;
+      case "weekly":
+        startDate = subDays(now, 28);
+        labelFormat = "dd/MM";
+        break;
+      case "monthly":
+        startDate = subDays(now, 365);
+        labelFormat = "MM/yyyy";
+        break;
+      case "yearly":
+        startDate = subDays(now, 365 * 3);
+        labelFormat = "yyyy";
+        break;
+    }
+    
+    return stats.dailyStats
+      .filter((day: any) => new Date(day.date) >= startDate)
+      .map((day: any) => ({
+        date: format(new Date(day.date), labelFormat),
+        count: day.count,
+        fullDate: day.date
+      }));
+  };
+
+  // Prepare pie chart data
+  const preparePieData = (stats: any) => {
+    if (!stats) return [];
+    
+    const total = stats.total || 0;
+    const today = stats.today || 0;
+    const thisWeek = (stats.thisWeek || stats.today || 0);
+    const thisMonth = stats.thisMonth || 0;
+    const older = Math.max(0, total - thisMonth);
+    
+    return [
+      { name: "Hoy", value: today, fill: "#8b5cf6" },
+      { name: "Esta semana", value: Math.max(0, thisWeek - today), fill: "#06b6d4" },
+      { name: "Este mes", value: Math.max(0, thisMonth - thisWeek), fill: "#10b981" },
+      { name: "Anteriores", value: older, fill: "#6b7280" }
+    ].filter(item => item.value > 0);
+  };
+
+  const chartData = processStatsData(statsData?.stats);
+  const pieData = preparePieData(statsData?.stats);
+  
+  const COLORS = ["#8b5cf6", "#06b6d4", "#10b981", "#f59e0b", "#ef4444"];
 
   const refreshData = () => {
     queryClient.invalidateQueries({ queryKey: ["/api/qr/history"] });
@@ -387,13 +451,17 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                         <BarChart3 className="w-4 h-4" />
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="bg-gray-900 border-gray-700">
+                    <DialogContent className="bg-gray-900 border-gray-700 max-w-4xl max-h-[80vh] overflow-y-auto">
                       <DialogHeader>
-                        <DialogTitle className="text-white">Estadísticas del QR</DialogTitle>
+                        <DialogTitle className="text-white flex items-center gap-2">
+                          <BarChart3 className="w-5 h-5" />
+                          Estadísticas Avanzadas del QR
+                        </DialogTitle>
                         <DialogDescription className="text-gray-400">
-                          Visualiza las estadísticas de uso de este código QR
+                          Análisis detallado del uso y rendimiento de tu código QR
                         </DialogDescription>
                       </DialogHeader>
+                      
                       <div className="py-4">
                         {statsLoading ? (
                           <div className="space-y-3">
@@ -402,38 +470,172 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                             <Skeleton className="h-4 w-1/2 bg-gray-800" />
                           </div>
                         ) : statsData?.stats ? (
-                          <div className="space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
-                              <div className="bg-gray-800 rounded-lg p-3">
-                                <p className="text-sm text-gray-400">Total de scans</p>
-                                <p className="text-2xl font-bold text-purple-400">{statsData.stats.total}</p>
+                          <div className="space-y-6">
+                            {/* Summary Cards */}
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                              <div className="bg-gradient-to-r from-purple-900/50 to-purple-800/50 rounded-lg p-4 border border-purple-700/50">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <TrendingUp className="w-4 h-4 text-purple-400" />
+                                  <p className="text-sm text-purple-300">Total</p>
+                                </div>
+                                <p className="text-3xl font-bold text-white">{statsData.stats.total}</p>
                               </div>
-                              <div className="bg-gray-800 rounded-lg p-3">
-                                <p className="text-sm text-gray-400">Hoy</p>
-                                <p className="text-2xl font-bold text-blue-400">{statsData.stats.today}</p>
+                              <div className="bg-gradient-to-r from-blue-900/50 to-blue-800/50 rounded-lg p-4 border border-blue-700/50">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <BarChart className="w-4 h-4 text-blue-400" />
+                                  <p className="text-sm text-blue-300">Hoy</p>
+                                </div>
+                                <p className="text-3xl font-bold text-white">{statsData.stats.today}</p>
                               </div>
-                              <div className="bg-gray-800 rounded-lg p-3">
-                                <p className="text-sm text-gray-400">Este mes</p>
-                                <p className="text-2xl font-bold text-green-400">{statsData.stats.thisMonth}</p>
+                              <div className="bg-gradient-to-r from-green-900/50 to-green-800/50 rounded-lg p-4 border border-green-700/50">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <BarChart className="w-4 h-4 text-green-400" />
+                                  <p className="text-sm text-green-300">Este mes</p>
+                                </div>
+                                <p className="text-3xl font-bold text-white">{statsData.stats.thisMonth}</p>
                               </div>
-                              <div className="bg-gray-800 rounded-lg p-3">
-                                <p className="text-sm text-gray-400">Este año</p>
-                                <p className="text-2xl font-bold text-orange-400">{statsData.stats.thisYear}</p>
+                              <div className="bg-gradient-to-r from-orange-900/50 to-orange-800/50 rounded-lg p-4 border border-orange-700/50">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <BarChart className="w-4 h-4 text-orange-400" />
+                                  <p className="text-sm text-orange-300">Este año</p>
+                                </div>
+                                <p className="text-3xl font-bold text-white">{statsData.stats.thisYear}</p>
                               </div>
                             </div>
-                            {statsData.stats.dailyStats && statsData.stats.dailyStats.length > 0 && (
-                              <div className="bg-gray-800 rounded-lg p-3">
-                                <p className="text-sm text-gray-400 mb-2">Últimos 7 días</p>
-                                <div className="space-y-1">
-                                  {statsData.stats.dailyStats.slice(-7).map((day: any) => (
-                                    <div key={day.date} className="flex justify-between text-sm">
-                                      <span className="text-gray-300">{format(new Date(day.date), 'dd/MM')}</span>
-                                      <span className="text-purple-400">{day.count} scans</span>
-                                    </div>
-                                  ))}
+
+                            {/* Controls */}
+                            <div className="flex flex-wrap gap-4 items-center justify-between p-4 bg-gray-800/50 rounded-lg border border-gray-700">
+                              <div className="flex items-center gap-2">
+                                <label className="text-sm text-gray-300">Rango:</label>
+                                <Select value={statsRange} onValueChange={(value: any) => setStatsRange(value)}>
+                                  <SelectTrigger className="w-32 bg-gray-700 border-gray-600 text-white">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent className="bg-gray-800 border-gray-700">
+                                    <SelectItem value="daily">Diario</SelectItem>
+                                    <SelectItem value="weekly">Semanal</SelectItem>
+                                    <SelectItem value="monthly">Mensual</SelectItem>
+                                    <SelectItem value="yearly">Anual</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              
+                              <div className="flex items-center gap-2">
+                                <label className="text-sm text-gray-300">Gráfico:</label>
+                                <div className="flex gap-1">
+                                  <Button
+                                    variant={chartType === "bar" ? "default" : "outline"}
+                                    size="sm"
+                                    onClick={() => setChartType("bar")}
+                                    className="px-3"
+                                  >
+                                    <BarChart className="w-4 h-4" />
+                                  </Button>
+                                  <Button
+                                    variant={chartType === "line" ? "default" : "outline"}
+                                    size="sm"
+                                    onClick={() => setChartType("line")}
+                                    className="px-3"
+                                  >
+                                    <TrendingUp className="w-4 h-4" />
+                                  </Button>
+                                  <Button
+                                    variant={chartType === "pie" ? "default" : "outline"}
+                                    size="sm"
+                                    onClick={() => setChartType("pie")}
+                                    className="px-3"
+                                  >
+                                    <PieChart className="w-4 h-4" />
+                                  </Button>
                                 </div>
                               </div>
-                            )}
+                            </div>
+
+                            {/* Charts */}
+                            <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+                              <h3 className="text-lg font-semibold text-white mb-4">
+                                Análisis de Scans - {statsRange === "daily" ? "Últimos 7 días" : 
+                                                     statsRange === "weekly" ? "Últimas 4 semanas" : 
+                                                     statsRange === "monthly" ? "Últimos 12 meses" : 
+                                                     "Últimos 3 años"}
+                              </h3>
+                              
+                              <div className="h-80">
+                                {chartType === "bar" && (
+                                  <ResponsiveContainer width="100%" height="100%">
+                                    <RechartsBarChart data={chartData}>
+                                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                                      <XAxis dataKey="date" stroke="#9CA3AF" />
+                                      <YAxis stroke="#9CA3AF" />
+                                      <Tooltip 
+                                        contentStyle={{ 
+                                          backgroundColor: '#1F2937', 
+                                          border: '1px solid #374151',
+                                          borderRadius: '8px',
+                                          color: '#F3F4F6'
+                                        }}
+                                      />
+                                      <Bar dataKey="count" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
+                                    </RechartsBarChart>
+                                  </ResponsiveContainer>
+                                )}
+                                
+                                {chartType === "line" && (
+                                  <ResponsiveContainer width="100%" height="100%">
+                                    <LineChart data={chartData}>
+                                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                                      <XAxis dataKey="date" stroke="#9CA3AF" />
+                                      <YAxis stroke="#9CA3AF" />
+                                      <Tooltip 
+                                        contentStyle={{ 
+                                          backgroundColor: '#1F2937', 
+                                          border: '1px solid #374151',
+                                          borderRadius: '8px',
+                                          color: '#F3F4F6'
+                                        }}
+                                      />
+                                      <Line 
+                                        type="monotone" 
+                                        dataKey="count" 
+                                        stroke="#8b5cf6" 
+                                        strokeWidth={3}
+                                        dot={{ fill: '#8b5cf6', strokeWidth: 2, r: 4 }}
+                                        activeDot={{ r: 6, stroke: '#8b5cf6', strokeWidth: 2 }}
+                                      />
+                                    </LineChart>
+                                  </ResponsiveContainer>
+                                )}
+                                
+                                {chartType === "pie" && (
+                                  <ResponsiveContainer width="100%" height="100%">
+                                    <RechartsPieChart>
+                                      <Pie
+                                        data={pieData}
+                                        cx="50%"
+                                        cy="50%"
+                                        labelLine={false}
+                                        label={({ name, value }) => `${name}: ${value}`}
+                                        outerRadius={80}
+                                        fill="#8884d8"
+                                        dataKey="value"
+                                      >
+                                        {pieData.map((entry, index) => (
+                                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                        ))}
+                                      </Pie>
+                                      <Tooltip 
+                                        contentStyle={{ 
+                                          backgroundColor: '#1F2937', 
+                                          border: '1px solid #374151',
+                                          borderRadius: '8px',
+                                          color: '#F3F4F6'
+                                        }}
+                                      />
+                                    </RechartsPieChart>
+                                  </ResponsiveContainer>
+                                )}
+                              </div>
+                            </div>
                           </div>
                         ) : (
                           <p className="text-gray-400">No hay estadísticas disponibles</p>

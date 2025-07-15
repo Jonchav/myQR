@@ -320,14 +320,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get QR code statistics
-  app.get("/api/qr/:id/stats", async (req, res) => {
+  app.get("/api/qr/:id/stats/:range?", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
+      const range = req.params.range || "daily";
       const stats = await storage.getQRScanStats(id);
       
       res.json({
         success: true,
-        stats
+        stats,
+        range
       });
     } catch (error) {
       res.status(500).json({
