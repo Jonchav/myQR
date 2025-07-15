@@ -161,18 +161,53 @@ function generateLogoSVG(logoType: string, size: number = 60, color: string = "#
   </svg>`;
 }
 
+// Function to get brand colors for QR code integration
+function getBrandColors(logoType: string): { primary: string; background?: string } | null {
+  const brandColors: { [key: string]: { primary: string; background?: string } } = {
+    facebook: { primary: "#1877F2", background: "#F0F2F5" },
+    twitter: { primary: "#000000", background: "#F7F9FA" },
+    instagram: { primary: "#E4405F", background: "#FAFAFA" },
+    tiktok: { primary: "#000000", background: "#F1F1F2" },
+    discord: { primary: "#5865F2", background: "#F2F3F5" },
+    snapchat: { primary: "#FFFC00", background: "#FFF" },
+    youtube: { primary: "#FF0000", background: "#F9F9F9" },
+    whatsapp: { primary: "#25D366", background: "#F0F2F5" },
+    behance: { primary: "#1769FF", background: "#F5F5F5" },
+    threads: { primary: "#000000", background: "#F8F9FA" },
+    linkedin: { primary: "#0A66C2", background: "#F3F2EF" },
+    dribbble: { primary: "#EA4C89", background: "#F8F7F4" },
+    pinterest: { primary: "#BD081C", background: "#F0F0F0" },
+    twitch: { primary: "#9146FF", background: "#F7F7F8" },
+    telegram: { primary: "#0088CC", background: "#F5F5F5" },
+  };
+
+  return brandColors[logoType] || null;
+}
+
 // Function to generate advanced QR code
 async function generateAdvancedQRCode(options: any): Promise<string> {
   const size = getQRSize(options.size);
   const errorCorrectionLevel = getErrorCorrectionLevel(options.errorCorrection);
   
-  // Basic QR code options
+  // Get brand colors if logo is specified
+  let qrForegroundColor = options.foregroundColor;
+  let qrBackgroundColor = options.backgroundColor;
+  
+  if (options.logo && options.logo !== "none") {
+    const brandColors = getBrandColors(options.logo);
+    if (brandColors) {
+      qrForegroundColor = brandColors.primary;
+      qrBackgroundColor = brandColors.background || options.backgroundColor;
+    }
+  }
+  
+  // Basic QR code options with brand colors
   const qrOptions = {
     width: size,
     margin: 2,
     color: {
-      dark: options.foregroundColor,
-      light: options.backgroundImage ? '#FFFFFF' : options.backgroundColor // White background for processing
+      dark: qrForegroundColor,
+      light: options.backgroundImage ? '#FFFFFF' : qrBackgroundColor
     },
     errorCorrectionLevel
   };
@@ -191,7 +226,7 @@ async function generateAdvancedQRCode(options: any): Promise<string> {
   // Add logo if specified
   if (options.logo && options.logo !== "none") {
     console.log('Adding logo to QR code...');
-    qrDataUrl = await addLogoToQR(qrDataUrl, options.logo, size, options.foregroundColor);
+    qrDataUrl = await addLogoToQR(qrDataUrl, options.logo, size, qrForegroundColor);
     console.log('Logo added successfully');
   }
   
@@ -201,7 +236,7 @@ async function generateAdvancedQRCode(options: any): Promise<string> {
 // Function to add logo to QR code
 async function addLogoToQR(qrDataUrl: string, logoType: string, qrSize: number, logoColor: string): Promise<string> {
   try {
-    const logoSize = Math.floor(qrSize * 0.35); // Logo is 35% of QR size (increased for better visibility)
+    const logoSize = Math.floor(qrSize * 0.2); // Logo is 20% of QR size (smaller for subtle integration)
     const logoSVG = generateLogoSVG(logoType, logoSize, logoColor);
     
     if (!logoSVG) return qrDataUrl;
@@ -210,10 +245,10 @@ async function addLogoToQR(qrDataUrl: string, logoType: string, qrSize: number, 
     const qrBase64 = qrDataUrl.replace(/^data:image\/[a-z]+;base64,/, '');
     const qrBuffer = Buffer.from(qrBase64, 'base64');
     
-    // Create white circular background for better contrast
-    const backgroundSize = Math.floor(logoSize * 1.15);
+    // Create white circular background for better contrast (smaller)
+    const backgroundSize = Math.floor(logoSize * 1.1);
     const backgroundSVG = `<svg width="${backgroundSize}" height="${backgroundSize}" viewBox="0 0 ${backgroundSize} ${backgroundSize}" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="${backgroundSize/2}" cy="${backgroundSize/2}" r="${backgroundSize/2}" fill="white" stroke="#E0E0E0" stroke-width="3"/>
+      <circle cx="${backgroundSize/2}" cy="${backgroundSize/2}" r="${backgroundSize/2}" fill="white" stroke="#E0E0E0" stroke-width="2"/>
     </svg>`;
     
     // Convert SVGs to buffers with higher quality
