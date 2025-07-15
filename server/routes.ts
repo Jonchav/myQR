@@ -15,11 +15,23 @@ const qrGenerationSchema = z.object({
   foregroundColor: z.string().default("#000000"),
   style: z.enum(["square", "rounded", "circle", "dots"]).default("square"),
   size: z.enum(["small", "medium", "large", "xlarge"]).default("medium"),
-  pattern: z.enum(["standard", "dots", "rounded", "heart"]).default("standard"),
-  frame: z.enum(["none", "simple", "decorative", "floral"]).default("none"),
-  gradient: z.enum(["none", "blue", "purple", "green", "sunset"]).default("none"),
+  pattern: z.enum([
+    "standard", "dots", "rounded", "heart", "star", "diamond", 
+    "hexagon", "triangle", "flower", "leaf"
+  ]).default("standard"),
+  frame: z.enum([
+    "none", "simple", "decorative", "floral", "tech", "elegant", 
+    "vintage", "modern", "corporate"
+  ]).default("none"),
+  gradient: z.enum([
+    "none", "blue", "purple", "green", "sunset", "rainbow", "fire", 
+    "ocean", "cosmic", "neon", "gold"
+  ]).default("none"),
   border: z.enum(["none", "thin", "thick", "double"]).default("none"),
-  logo: z.enum(["none", "replit", "custom"]).default("none"),
+  logo: z.enum([
+    "none", "replit", "custom", "star", "heart", "diamond", 
+    "crown", "shield", "rocket", "lightning", "check"
+  ]).default("none"),
   includeText: z.boolean().default(false),
   textContent: z.string().optional(),
   errorCorrection: z.enum(["L", "M", "Q", "H"]).default("M"),
