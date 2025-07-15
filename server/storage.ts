@@ -46,6 +46,7 @@ export interface IStorage {
     thisYear: number;
     dailyStats: Array<{ date: string; count: number }>;
   }>;
+  getQRScanRecords(qrCodeId: number): Promise<QRScan[]>;
   getQRCodeWithStats(id: number): Promise<QRCode & { scanStats: any } | undefined>;
   
   // User preferences operations
@@ -212,6 +213,14 @@ export class DatabaseStorage implements IStorage {
         scanCount: sql`${qrCodes.scanCount} + 1`,
       })
       .where(eq(qrCodes.id, qrCodeId));
+  }
+
+  async getQRScanRecords(qrCodeId: number): Promise<QRScan[]> {
+    return await db
+      .select()
+      .from(qrScans)
+      .where(eq(qrScans.qrCodeId, qrCodeId))
+      .orderBy(desc(qrScans.scannedAt));
   }
 
   async getQRScanStats(qrCodeId: number): Promise<{

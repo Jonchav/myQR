@@ -127,6 +127,13 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
     retry: false,
   });
 
+  // Fetch detailed scan records for the statistics modal
+  const { data: scanRecordsData, isLoading: scanRecordsLoading } = useQuery({
+    queryKey: ["/api/qr", showStats, "scans"],
+    enabled: showStats !== null,
+    retry: false,
+  });
+
   // Process stats data based on selected range
   const processStatsData = (stats: any) => {
     if (!stats || !stats.dailyStats) return [];
@@ -597,38 +604,71 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                             <Skeleton className="h-4 w-1/2 bg-gray-800" />
                           </div>
                         ) : statsData?.stats ? (
-                          <div className="space-y-6">
-                            {/* Summary Cards */}
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                              <div className="bg-gradient-to-r from-purple-900/50 to-purple-800/50 rounded-lg p-4 border border-purple-700/50">
-                                <div className="flex items-center gap-2 mb-2">
-                                  <TrendingUp className="w-4 h-4 text-purple-400" />
-                                  <p className="text-sm text-purple-300">Total</p>
+                          <Tabs defaultValue="overview" className="w-full">
+                            <TabsList className="grid w-full grid-cols-3 bg-gray-800 border-gray-700">
+                              <TabsTrigger value="overview" className="text-white data-[state=active]:bg-purple-600 data-[state=active]:text-white">
+                                <TrendingUp className="w-4 h-4 mr-2" />
+                                Resumen
+                              </TabsTrigger>
+                              <TabsTrigger value="analytics" className="text-white data-[state=active]:bg-purple-600 data-[state=active]:text-white">
+                                <BarChart className="w-4 h-4 mr-2" />
+                                Análisis
+                              </TabsTrigger>
+                              <TabsTrigger value="detailed" className="text-white data-[state=active]:bg-purple-600 data-[state=active]:text-white">
+                                <Eye className="w-4 h-4 mr-2" />
+                                Detallado
+                              </TabsTrigger>
+                            </TabsList>
+                            
+                            <TabsContent value="overview" className="mt-6 space-y-6">
+                              {/* Summary Cards */}
+                              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div className="bg-gradient-to-r from-purple-900/50 to-purple-800/50 rounded-lg p-4 border border-purple-700/50">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <TrendingUp className="w-4 h-4 text-purple-400" />
+                                    <p className="text-sm text-purple-300">Total</p>
+                                  </div>
+                                  <p className="text-3xl font-bold text-white">{statsData.stats.total}</p>
                                 </div>
-                                <p className="text-3xl font-bold text-white">{statsData.stats.total}</p>
-                              </div>
-                              <div className="bg-gradient-to-r from-blue-900/50 to-blue-800/50 rounded-lg p-4 border border-blue-700/50">
-                                <div className="flex items-center gap-2 mb-2">
-                                  <BarChart className="w-4 h-4 text-blue-400" />
-                                  <p className="text-sm text-blue-300">Hoy</p>
+                                <div className="bg-gradient-to-r from-blue-900/50 to-blue-800/50 rounded-lg p-4 border border-blue-700/50">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <BarChart className="w-4 h-4 text-blue-400" />
+                                    <p className="text-sm text-blue-300">Hoy</p>
+                                  </div>
+                                  <p className="text-3xl font-bold text-white">{statsData.stats.today}</p>
                                 </div>
-                                <p className="text-3xl font-bold text-white">{statsData.stats.today}</p>
-                              </div>
-                              <div className="bg-gradient-to-r from-green-900/50 to-green-800/50 rounded-lg p-4 border border-green-700/50">
-                                <div className="flex items-center gap-2 mb-2">
-                                  <BarChart className="w-4 h-4 text-green-400" />
-                                  <p className="text-sm text-green-300">Este mes</p>
+                                <div className="bg-gradient-to-r from-green-900/50 to-green-800/50 rounded-lg p-4 border border-green-700/50">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <BarChart className="w-4 h-4 text-green-400" />
+                                    <p className="text-sm text-green-300">Este mes</p>
+                                  </div>
+                                  <p className="text-3xl font-bold text-white">{statsData.stats.thisMonth}</p>
                                 </div>
-                                <p className="text-3xl font-bold text-white">{statsData.stats.thisMonth}</p>
-                              </div>
-                              <div className="bg-gradient-to-r from-orange-900/50 to-orange-800/50 rounded-lg p-4 border border-orange-700/50">
-                                <div className="flex items-center gap-2 mb-2">
-                                  <BarChart className="w-4 h-4 text-orange-400" />
-                                  <p className="text-sm text-orange-300">Este año</p>
+                                <div className="bg-gradient-to-r from-orange-900/50 to-orange-800/50 rounded-lg p-4 border border-orange-700/50">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <BarChart className="w-4 h-4 text-orange-400" />
+                                    <p className="text-sm text-orange-300">Este año</p>
+                                  </div>
+                                  <p className="text-3xl font-bold text-white">{statsData.stats.thisYear}</p>
                                 </div>
-                                <p className="text-3xl font-bold text-white">{statsData.stats.thisYear}</p>
                               </div>
-                            </div>
+
+                              {/* Daily Breakdown */}
+                              <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+                                <h3 className="text-lg font-semibold text-white mb-4">Desglose por Día</h3>
+                                <div className="space-y-2">
+                                  {statsData.stats.dailyStats.length > 0 ? (
+                                    statsData.stats.dailyStats.slice(-7).map((day: any, index: number) => (
+                                      <div key={index} className="flex justify-between items-center p-2 bg-gray-700/50 rounded">
+                                        <span className="text-gray-300">{day.date}</span>
+                                        <span className="text-purple-400 font-medium">{day.count} scans</span>
+                                      </div>
+                                    ))
+                                  ) : (
+                                    <p className="text-gray-400">No hay datos de scans por día</p>
+                                  )}
+                                </div>
+                              </div>
 
                             {/* Controls */}
                             <div className="flex flex-wrap gap-4 items-center justify-between p-4 bg-gray-800/50 rounded-lg border border-gray-700">
@@ -775,7 +815,235 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                                 )}
                               </div>
                             </div>
-                          </div>
+                            </TabsContent>
+                            
+                            <TabsContent value="analytics" className="mt-6 space-y-6">
+                              {/* Controls */}
+                              <div className="flex flex-wrap gap-4 items-center justify-between p-4 bg-gray-800/50 rounded-lg border border-gray-700">
+                                <div className="flex items-center gap-2">
+                                  <label className="text-sm text-gray-300">Rango:</label>
+                                  <Select value={statsRange} onValueChange={(value: any) => setStatsRange(value)}>
+                                    <SelectTrigger className="w-32 bg-gray-700 border-gray-600 text-white">
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-gray-800 border-gray-700">
+                                      <SelectItem value="daily" className="text-white hover:bg-gray-700 focus:bg-gray-700">Diario</SelectItem>
+                                      <SelectItem value="weekly" className="text-white hover:bg-gray-700 focus:bg-gray-700">Semanal</SelectItem>
+                                      <SelectItem value="monthly" className="text-white hover:bg-gray-700 focus:bg-gray-700">Mensual</SelectItem>
+                                      <SelectItem value="yearly" className="text-white hover:bg-gray-700 focus:bg-gray-700">Anual</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                                
+                                <div className="flex items-center gap-2">
+                                  <label className="text-sm text-gray-300">Gráfico:</label>
+                                  <div className="flex gap-1">
+                                    <Button
+                                      variant={chartType === "bar" ? "default" : "outline"}
+                                      size="sm"
+                                      onClick={() => setChartType("bar")}
+                                      className="px-3"
+                                    >
+                                      <BarChart className="w-4 h-4" />
+                                    </Button>
+                                    <Button
+                                      variant={chartType === "line" ? "default" : "outline"}
+                                      size="sm"
+                                      onClick={() => setChartType("line")}
+                                      className="px-3"
+                                    >
+                                      <TrendingUp className="w-4 h-4" />
+                                    </Button>
+                                    <Button
+                                      variant={chartType === "pie" ? "default" : "outline"}
+                                      size="sm"
+                                      onClick={() => setChartType("pie")}
+                                      className="px-3"
+                                    >
+                                      <PieChart className="w-4 h-4" />
+                                    </Button>
+                                  </div>
+                                </div>
+                                
+                                <div className="flex items-center gap-2">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => showStats && exportQRStatsToExcel(showStats)}
+                                    className="border-green-500 text-green-300 hover:text-green-200 hover:bg-green-800/30"
+                                  >
+                                    <FileSpreadsheet className="w-4 h-4 mr-2" />
+                                    Exportar Excel
+                                  </Button>
+                                </div>
+                              </div>
+
+                              {/* Charts */}
+                              <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+                                <h3 className="text-lg font-semibold text-white mb-4">
+                                  Análisis de Scans - {statsRange === "daily" ? "Últimos 7 días" : 
+                                                       statsRange === "weekly" ? "Últimas 4 semanas" : 
+                                                       statsRange === "monthly" ? "Últimos 12 meses" : 
+                                                       "Últimos 3 años"}
+                                </h3>
+                                <div className="h-64">
+                                  {statsData.stats.dailyStats.length > 0 ? (
+                                    <>
+                                      {chartType === "bar" && (
+                                        <ResponsiveContainer width="100%" height="100%">
+                                          <RechartsBarChart data={chartData}>
+                                            <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                                            <XAxis 
+                                              dataKey="date" 
+                                              stroke="#9CA3AF" 
+                                              fontSize={12}
+                                              tickLine={false}
+                                              axisLine={false}
+                                            />
+                                            <YAxis 
+                                              stroke="#9CA3AF" 
+                                              fontSize={12}
+                                              tickLine={false}
+                                              axisLine={false}
+                                            />
+                                            <Tooltip 
+                                              contentStyle={{ 
+                                                backgroundColor: '#1F2937', 
+                                                border: '1px solid #374151',
+                                                borderRadius: '8px',
+                                                color: '#F3F4F6'
+                                              }}
+                                            />
+                                            <Bar 
+                                              dataKey="count" 
+                                              fill="#8b5cf6"
+                                              radius={[4, 4, 0, 0]}
+                                              name="Scans"
+                                            />
+                                          </RechartsBarChart>
+                                        </ResponsiveContainer>
+                                      )}
+                                      
+                                      {chartType === "line" && (
+                                        <ResponsiveContainer width="100%" height="100%">
+                                          <LineChart data={chartData}>
+                                            <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                                            <XAxis 
+                                              dataKey="date" 
+                                              stroke="#9CA3AF" 
+                                              fontSize={12}
+                                              tickLine={false}
+                                              axisLine={false}
+                                            />
+                                            <YAxis 
+                                              stroke="#9CA3AF" 
+                                              fontSize={12}
+                                              tickLine={false}
+                                              axisLine={false}
+                                            />
+                                            <Tooltip 
+                                              contentStyle={{ 
+                                                backgroundColor: '#1F2937', 
+                                                border: '1px solid #374151',
+                                                borderRadius: '8px',
+                                                color: '#F3F4F6'
+                                              }}
+                                            />
+                                            <Line 
+                                              type="monotone" 
+                                              dataKey="count" 
+                                              stroke="#8b5cf6" 
+                                              strokeWidth={3}
+                                              dot={{ fill: '#8b5cf6', strokeWidth: 2, r: 4 }}
+                                              activeDot={{ r: 6, stroke: '#8b5cf6', strokeWidth: 2 }}
+                                            />
+                                          </LineChart>
+                                        </ResponsiveContainer>
+                                      )}
+                                      
+                                      {chartType === "pie" && (
+                                        <ResponsiveContainer width="100%" height="100%">
+                                          <RechartsPieChart>
+                                            <Pie
+                                              data={pieData}
+                                              cx="50%"
+                                              cy="50%"
+                                              labelLine={false}
+                                              label={({ name, value }) => `${name}: ${value}`}
+                                              outerRadius={80}
+                                              fill="#8884d8"
+                                              dataKey="value"
+                                            >
+                                              {pieData.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                              ))}
+                                            </Pie>
+                                            <Tooltip 
+                                              contentStyle={{ 
+                                                backgroundColor: '#1F2937', 
+                                                border: '1px solid #374151',
+                                                borderRadius: '8px',
+                                                color: '#F3F4F6'
+                                              }}
+                                            />
+                                          </RechartsPieChart>
+                                        </ResponsiveContainer>
+                                      )}
+                                    </>
+                                  ) : (
+                                    <div className="flex items-center justify-center h-full text-gray-400">
+                                      <p>No hay datos suficientes para mostrar gráficos</p>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </TabsContent>
+                            
+                            <TabsContent value="detailed" className="mt-6 space-y-6">
+                              {/* Detailed Scan Records */}
+                              <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+                                <h3 className="text-lg font-semibold text-white mb-4">Registros Detallados de Escaneos</h3>
+                                {scanRecordsLoading ? (
+                                  <div className="space-y-2">
+                                    <Skeleton className="h-4 w-full bg-gray-700" />
+                                    <Skeleton className="h-4 w-3/4 bg-gray-700" />
+                                    <Skeleton className="h-4 w-1/2 bg-gray-700" />
+                                  </div>
+                                ) : scanRecordsData?.scans?.length > 0 ? (
+                                  <div className="space-y-2 max-h-96 overflow-y-auto">
+                                    {scanRecordsData.scans.map((scan: any, index: number) => (
+                                      <div key={index} className="p-3 bg-gray-700/30 rounded-lg border border-gray-600/50">
+                                        <div className="flex justify-between items-start">
+                                          <div className="flex-1">
+                                            <div className="flex items-center gap-2 mb-1">
+                                              <span className="text-sm font-medium text-purple-300">
+                                                {format(new Date(scan.scannedAt), "dd/MM/yyyy HH:mm:ss")}
+                                              </span>
+                                              <Badge variant="outline" className="text-xs border-purple-500/50 text-purple-300">
+                                                Scan #{scanRecordsData.scans.length - index}
+                                              </Badge>
+                                            </div>
+                                            {scan.userAgent && (
+                                              <p className="text-xs text-gray-400 truncate">
+                                                {scan.userAgent}
+                                              </p>
+                                            )}
+                                          </div>
+                                          {scan.ipAddress && (
+                                            <div className="text-xs text-gray-500">
+                                              IP: {scan.ipAddress}
+                                            </div>
+                                          )}
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                ) : (
+                                  <p className="text-gray-400">No hay registros de escaneos disponibles</p>
+                                )}
+                              </div>
+                            </TabsContent>
+                          </Tabs>
                         ) : (
                           <p className="text-gray-400">No hay estadísticas disponibles</p>
                         )}

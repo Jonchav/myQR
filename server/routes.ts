@@ -349,6 +349,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get detailed scan records for a QR code (PRO-only)
+  app.get("/api/qr/:id/scans", isAuthenticated, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const userId = (req.user as any).claims.sub;
+      
+      // Verify QR code belongs to user
+      const qrCode = await storage.getQRCode(id);
+      if (!qrCode || qrCode.userId !== userId) {
+        return res.status(404).json({
+          success: false,
+          error: "Código QR no encontrado"
+        });
+      }
+      
+      const scans = await storage.getQRScanRecords(id);
+      res.json({
+        success: true,
+        scans
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: "Error al obtener los registros de scans"
+      });
+    }
+  });
+
   // Record QR scan
   app.post("/api/qr/:id/scan", async (req, res) => {
     try {
