@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { History, Download, Trash2, RefreshCw, Eye, Edit, BarChart3, Save, X, Copy, RotateCcw, TrendingUp, PieChart, BarChart, FileSpreadsheet } from "lucide-react";
+import { History, Download, Trash2, RefreshCw, Eye, Edit, BarChart3, Save, X, Copy, RotateCcw, TrendingUp, PieChart, BarChart, FileSpreadsheet, Search } from "lucide-react";
 import { format, subDays, startOfWeek, startOfMonth, startOfYear, endOfWeek, endOfMonth, endOfYear } from "date-fns";
 import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart as RechartsPieChart, Pie, Cell } from "recharts";
 
@@ -26,6 +26,7 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
   const [showStats, setShowStats] = useState<number | null>(null);
   const [statsRange, setStatsRange] = useState<"daily" | "weekly" | "monthly" | "yearly">("daily");
   const [chartType, setChartType] = useState<"bar" | "line" | "pie">("bar");
+  const [searchQuery, setSearchQuery] = useState("");
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -347,6 +348,20 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
   }
 
   const qrCodes = data?.qrCodes || [];
+  
+  // Filter QR codes based on search query
+  const filteredQRCodes = qrCodes.filter((qrCode: any) => {
+    if (!searchQuery) return true;
+    
+    const searchLower = searchQuery.toLowerCase();
+    const title = qrCode.title?.toLowerCase() || '';
+    const url = qrCode.url?.toLowerCase() || '';
+    const type = qrCode.type?.toLowerCase() || '';
+    
+    return title.includes(searchLower) || 
+           url.includes(searchLower) || 
+           type.includes(searchLower);
+  });
 
   return (
     <Card className="gradient-card elegant-border">
@@ -354,7 +369,7 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-white">
             <History className="w-5 h-5 text-purple-400" />
-            Historial de QR ({qrCodes.length})
+            Historial de QR ({filteredQRCodes.length}{qrCodes.length !== filteredQRCodes.length ? ` de ${qrCodes.length}` : ''})
           </CardTitle>
           <div className="flex items-center gap-2">
             <Button
@@ -392,6 +407,29 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
             )}
           </div>
         </div>
+        
+        {/* Search input */}
+        {qrCodes.length > 0 && (
+          <div className="mt-4 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Input
+              placeholder="Buscar por título, URL o tipo..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 pl-10"
+            />
+            {searchQuery && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSearchQuery("")}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white h-6 w-6 p-0"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            )}
+          </div>
+        )}
       </CardHeader>
       <CardContent>
         {qrCodes.length === 0 ? (
@@ -400,9 +438,15 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
             <p className="text-gray-400">No hay códigos QR en el historial</p>
             <p className="text-sm text-gray-500">Genera tu primer código QR para verlo aquí</p>
           </div>
+        ) : filteredQRCodes.length === 0 ? (
+          <div className="text-center py-8">
+            <History className="w-16 h-16 mx-auto text-gray-600 mb-4" />
+            <p className="text-gray-400">No se encontraron códigos QR que coincidan con "{searchQuery}"</p>
+            <p className="text-sm text-gray-500">Intenta con otro término de búsqueda</p>
+          </div>
         ) : (
           <div className="space-y-4 max-h-96 overflow-y-auto">
-            {qrCodes.map((qrCode: any) => (
+            {filteredQRCodes.map((qrCode: any) => (
               <div
                 key={qrCode.id}
                 className="flex items-center gap-4 p-4 border border-gray-700 rounded-lg hover:bg-gray-800 transition-colors"

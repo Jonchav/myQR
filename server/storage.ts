@@ -222,9 +222,10 @@ export class DatabaseStorage implements IStorage {
     dailyStats: Array<{ date: string; count: number }>;
   }> {
     const now = new Date();
-    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const startOfYear = new Date(now.getFullYear(), 0, 1);
+    // Use UTC to ensure consistent timezone handling
+    const startOfToday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+    const startOfMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
+    const startOfYear = new Date(Date.UTC(now.getUTCFullYear(), 0, 1));
     
     // Get total scans
     const [totalResult] = await db
@@ -232,14 +233,14 @@ export class DatabaseStorage implements IStorage {
       .from(qrScans)
       .where(eq(qrScans.qrCodeId, qrCodeId));
     
-    // Get today's scans
+    // Get today's scans (using UTC date comparison)
     const [todayResult] = await db
       .select({ count: count() })
       .from(qrScans)
       .where(
         and(
           eq(qrScans.qrCodeId, qrCodeId),
-          sql`${qrScans.scannedAt} >= ${startOfDay}`
+          sql`DATE(${qrScans.scannedAt}) = DATE(${startOfToday})`
         )
       );
     
