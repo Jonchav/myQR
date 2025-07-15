@@ -185,7 +185,7 @@ export default function Subscription() {
     {
       id: "weekly",
       name: "Semanal",
-      price: "$3.99",
+      price: "$3.45",
       period: "por semana",
       icon: Calendar,
       description: "Ideal para uso regular",
@@ -202,7 +202,7 @@ export default function Subscription() {
     {
       id: "monthly",
       name: "Mensual",
-      price: "$6.99",
+      price: "$6.45",
       period: "por mes",
       icon: Crown,
       description: "Máximo ahorro para usuarios frecuentes",

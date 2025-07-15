@@ -789,8 +789,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Price mapping in cents
       const priceMap = {
-        weekly: 399, // $3.99
-        monthly: 699 // $6.99
+        weekly: 345, // $3.45
+        monthly: 645 // $6.45
       };
       
       const price = priceMap[plan as keyof typeof priceMap];
