@@ -179,28 +179,28 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen gradient-bg flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-stone-50 to-emerald-50 dark:from-gray-900 dark:via-gray-800 dark:to-emerald-900 flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-purple-400" />
-          <p className="text-gray-300">Cargando...</p>
+          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-emerald-600" />
+          <p className="text-gray-600 dark:text-gray-300">Cargando...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen gradient-bg">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-stone-50 to-emerald-50 dark:from-gray-900 dark:via-gray-800 dark:to-emerald-900">
       {/* Header */}
-      <header className="glass-effect elegant-border sticky top-0 z-50">
+      <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 gradient-purple rounded-xl flex items-center justify-center neon-glow">
+              <div className="w-10 h-10 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-xl flex items-center justify-center">
                 <QrCode className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-white">myQR</h1>
-                <p className="text-sm text-gray-400">Generador Profesional</p>
+                <h1 className="text-xl font-bold text-gray-900 dark:text-white">myQR</h1>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Generador Profesional</p>
               </div>
             </div>
             
@@ -209,7 +209,7 @@ export default function Home() {
                 variant="ghost"
                 size="sm"
                 onClick={toggleTheme}
-                className="text-gray-400 hover:text-white"
+                className="rounded-full"
               >
                 {theme === "light" ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
               </Button>
@@ -217,21 +217,21 @@ export default function Home() {
               {isAuthenticated ? (
                 <div className="flex items-center space-x-3">
                   <div className="flex items-center space-x-2">
-                    <div className="w-8 h-8 gradient-purple rounded-full flex items-center justify-center">
+                    <div className="w-8 h-8 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-full flex items-center justify-center">
                       <User className="w-4 h-4 text-white" />
                     </div>
-                    <span className="text-sm font-medium text-white">
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">
                       {user?.firstName || user?.email || "Usuario"}
                     </span>
                   </div>
                   <Button variant="ghost" size="sm" asChild>
-                    <a href="/api/logout" className="text-gray-400 hover:text-white">
+                    <a href="/api/logout" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
                       <LogOut className="w-4 h-4" />
                     </a>
                   </Button>
                 </div>
               ) : (
-                <Button size="sm" className="gradient-purple" asChild>
+                <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground" asChild>
                   <a href="/api/login">Iniciar Sesión</a>
                 </Button>
               )}
@@ -243,16 +243,16 @@ export default function Home() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 glass-effect elegant-border">
-            <TabsTrigger value="generate" className="flex items-center gap-2 text-gray-400 data-[state=active]:text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-blue-600">
+          <TabsList className="grid w-full grid-cols-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
+            <TabsTrigger value="generate" className="flex items-center gap-2 text-gray-600 dark:text-gray-400 data-[state=active]:text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-600">
               <QrCode className="w-4 h-4" />
               Generar
             </TabsTrigger>
-            <TabsTrigger value="customize" className="flex items-center gap-2 text-gray-400 data-[state=active]:text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-blue-600">
+            <TabsTrigger value="customize" className="flex items-center gap-2 text-gray-600 dark:text-gray-400 data-[state=active]:text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-600">
               <Palette className="w-4 h-4" />
               Personalizar PRO
             </TabsTrigger>
-            <TabsTrigger value="history" className="flex items-center gap-2 text-gray-400 data-[state=active]:text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-blue-600">
+            <TabsTrigger value="history" className="flex items-center gap-2 text-gray-600 dark:text-gray-400 data-[state=active]:text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-600">
               <History className="w-4 h-4" />
               Historial
             </TabsTrigger>
@@ -262,16 +262,16 @@ export default function Home() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Input Section */}
               <div className="space-y-6">
-                <Card className="gradient-card elegant-border">
+                <Card className="border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
                   <CardHeader>
-                    <CardTitle className="text-lg text-white">Ingresa tu enlace</CardTitle>
-                    <p className="text-sm text-gray-400">
+                    <CardTitle className="text-lg text-gray-900 dark:text-white">Ingresa tu enlace</CardTitle>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
                       Introduce la URL para generar tu código QR
                     </p>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="url-input" className="text-gray-300">URL o enlace</Label>
+                      <Label htmlFor="url-input" className="text-gray-700 dark:text-gray-300">URL o enlace</Label>
                       <Input
                         id="url-input"
                         type="url"
@@ -283,14 +283,14 @@ export default function Home() {
                           setShowSuccess(false);
                         }}
                         onKeyPress={handleKeyPress}
-                        className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500 focus:ring-purple-500 transition-colors duration-200"
+                        className="bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-500 focus:border-emerald-500 focus:ring-emerald-500 transition-colors duration-200"
                       />
                     </div>
                     
                     <Button 
                       onClick={handleGenerate}
                       disabled={generateQRMutation.isPending}
-                      className="w-full gradient-purple"
+                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
                     >
                       {generateQRMutation.isPending ? (
                         <>
@@ -321,9 +321,9 @@ export default function Home() {
                 </Card>
 
                 {/* Features List */}
-                <Card className="gradient-card elegant-border">
+                <Card className="border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
                   <CardHeader>
-                    <CardTitle className="text-lg text-white">Características</CardTitle>
+                    <CardTitle className="text-lg text-gray-900 dark:text-white">Características</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
@@ -334,10 +334,10 @@ export default function Home() {
                         "Historial personal"
                       ].map((feature, index) => (
                         <div key={index} className="flex items-center space-x-3">
-                          <div className="w-5 h-5 gradient-emerald rounded-full flex items-center justify-center">
-                            <CheckCircle className="w-3 h-3 text-black" />
+                          <div className="w-5 h-5 bg-emerald-600 rounded-full flex items-center justify-center">
+                            <CheckCircle className="w-3 h-3 text-white" />
                           </div>
-                          <span className="text-sm text-gray-300">{feature}</span>
+                          <span className="text-sm text-gray-700 dark:text-gray-300">{feature}</span>
                         </div>
                       ))}
                     </div>
@@ -347,27 +347,27 @@ export default function Home() {
 
               {/* QR Display Section */}
               <div className="space-y-6">
-                <Card className="gradient-card elegant-border">
+                <Card className="border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
                   <CardHeader>
-                    <CardTitle className="text-lg text-center text-white">Tu código QR</CardTitle>
+                    <CardTitle className="text-lg text-center text-gray-900 dark:text-white">Tu código QR</CardTitle>
                   </CardHeader>
                   <CardContent className="text-center">
                     <div className="mb-6">
                       {qrCode ? (
                         <div className="space-y-4">
-                          <div className="p-4 bg-gray-900 rounded-lg elegant-border">
+                          <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
                             <img 
                               src={qrCode} 
                               alt="Código QR generado" 
-                              className="mx-auto border border-gray-700 rounded-lg shadow-2xl"
+                              className="mx-auto border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg"
                             />
                           </div>
                           
-                          <Alert className="glass-effect elegant-border">
-                            <Link className="h-4 w-4 text-purple-400" />
-                            <AlertDescription className="text-gray-300">
+                          <Alert className="bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-700">
+                            <Link className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                            <AlertDescription className="text-gray-700 dark:text-gray-300">
                               <span className="font-medium">Enlace:</span>{" "}
-                              <span className="font-mono text-sm break-all text-purple-300">{generatedUrl}</span>
+                              <span className="font-mono text-sm break-all text-emerald-700 dark:text-emerald-300">{generatedUrl}</span>
                             </AlertDescription>
                           </Alert>
 
@@ -375,7 +375,7 @@ export default function Home() {
                             <div className="flex gap-2">
                               <Button 
                                 onClick={handleDownload}
-                                className="flex-1 gradient-emerald"
+                                className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
                               >
                                 <Download className="w-4 h-4 mr-2" />
                                 Descargar
@@ -383,7 +383,7 @@ export default function Home() {
                               <Button 
                                 onClick={handleReset}
                                 variant="outline"
-                                className="flex-1 border-gray-700 text-gray-300 hover:bg-gray-800"
+                                className="flex-1 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                               >
                                 <RefreshCw className="w-4 h-4 mr-2" />
                                 Nuevo
@@ -391,29 +391,29 @@ export default function Home() {
                             </div>
                             
                             {/* PRO Customization CTA */}
-                            <Card className="gradient-card elegant-border neon-glow">
+                            <Card className="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 border-emerald-200 dark:border-emerald-700">
                               <CardContent className="p-4">
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 gradient-purple rounded-full flex items-center justify-center">
+                                    <div className="w-10 h-10 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-full flex items-center justify-center">
                                       <Sparkles className="w-5 h-5 text-white" />
                                     </div>
                                     <div>
-                                      <h3 className="font-semibold text-sm text-purple-300">
+                                      <h3 className="font-semibold text-sm text-emerald-700 dark:text-emerald-300">
                                         Personalización PRO
                                       </h3>
-                                      <p className="text-xs text-gray-400">
+                                      <p className="text-xs text-gray-600 dark:text-gray-400">
                                         Colores, estilos, logos y más
                                       </p>
                                     </div>
                                   </div>
-                                  <Badge className="gradient-gold text-black border-0">
+                                  <Badge className="bg-amber-400 text-amber-900 border-0">
                                     PRO
                                   </Badge>
                                 </div>
                                 <Button 
                                   onClick={() => setActiveTab("customize")}
-                                  className="w-full mt-3 gradient-purple neon-glow"
+                                  className="w-full mt-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white"
                                   size="sm"
                                 >
                                   <Sparkles className="w-4 h-4 mr-2" />
