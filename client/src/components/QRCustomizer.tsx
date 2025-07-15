@@ -21,7 +21,24 @@ interface QRCustomizerProps {
 
 export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onBackToHome, qrCode, onDownload }: QRCustomizerProps) {
   const updateSetting = (key: string, value: any) => {
-    onChange({ ...settings, [key]: value });
+    const newSettings = { ...settings, [key]: value };
+    onChange(newSettings);
+  };
+
+  // Función para aplicar cambios en tiempo real
+  const applyRealTimeChange = (key: string, value: any) => {
+    const newSettings = { ...settings, [key]: value };
+    onChange(newSettings);
+    
+    // Si hay una URL y el cambio es visual, regenerar automáticamente
+    if (settings.url && onGenerate && !isGenerating) {
+      const visualChanges = ['backgroundColor', 'foregroundColor', 'style', 'pattern', 'gradient', 'frame', 'size'];
+      if (visualChanges.includes(key)) {
+        setTimeout(() => {
+          onGenerate();
+        }, 300); // Delay para evitar múltiples llamadas
+      }
+    }
   };
 
   const colorPresets = [
@@ -196,6 +213,13 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
         style: theme.style
       };
       onChange(newSettings);
+      
+      // Si hay una URL, regenerar automáticamente el QR con el nuevo tema
+      if (settings.url && onGenerate) {
+        setTimeout(() => {
+          onGenerate();
+        }, 100); // Pequeño delay para que los settings se actualicen
+      }
     }
   };
 
@@ -493,8 +517,8 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                                 variant="outline"
                                 size="sm"
                                 onClick={() => {
-                                  updateSetting("backgroundColor", preset.bg);
-                                  updateSetting("foregroundColor", preset.fg);
+                                  applyRealTimeChange("backgroundColor", preset.bg);
+                                  applyRealTimeChange("foregroundColor", preset.fg);
                                 }}
                                 className="h-12 p-2 hover:scale-105 transition-transform"
                               >
@@ -522,12 +546,12 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                       id="backgroundColor"
                       type="color"
                       value={settings.backgroundColor}
-                      onChange={(e) => updateSetting("backgroundColor", e.target.value)}
+                      onChange={(e) => applyRealTimeChange("backgroundColor", e.target.value)}
                       className="w-12 h-10 p-1"
                     />
                     <Input
                       value={settings.backgroundColor}
-                      onChange={(e) => updateSetting("backgroundColor", e.target.value)}
+                      onChange={(e) => applyRealTimeChange("backgroundColor", e.target.value)}
                       className="flex-1"
                     />
                   </div>
@@ -540,12 +564,12 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                       id="foregroundColor"
                       type="color"
                       value={settings.foregroundColor}
-                      onChange={(e) => updateSetting("foregroundColor", e.target.value)}
+                      onChange={(e) => applyRealTimeChange("foregroundColor", e.target.value)}
                       className="w-12 h-10 p-1"
                     />
                     <Input
                       value={settings.foregroundColor}
-                      onChange={(e) => updateSetting("foregroundColor", e.target.value)}
+                      onChange={(e) => applyRealTimeChange("foregroundColor", e.target.value)}
                       className="flex-1"
                     />
                   </div>
@@ -554,7 +578,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
 
               <div className="space-y-2">
                 <Label>Gradientes Premium</Label>
-                <Select value={settings.gradient} onValueChange={(value) => updateSetting("gradient", value)}>
+                <Select value={settings.gradient} onValueChange={(value) => applyRealTimeChange("gradient", value)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -580,7 +604,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Estilo del QR</Label>
-                <Select value={settings.style} onValueChange={(value) => updateSetting("style", value)}>
+                <Select value={settings.style} onValueChange={(value) => applyRealTimeChange("style", value)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -595,7 +619,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
 
               <div className="space-y-2">
                 <Label>Tamaño</Label>
-                <Select value={settings.size} onValueChange={(value) => updateSetting("size", value)}>
+                <Select value={settings.size} onValueChange={(value) => applyRealTimeChange("size", value)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -611,7 +635,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
 
             <div className="space-y-2">
               <Label>Patrones Avanzados</Label>
-              <Select value={settings.pattern} onValueChange={(value) => updateSetting("pattern", value)}>
+              <Select value={settings.pattern} onValueChange={(value) => applyRealTimeChange("pattern", value)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
