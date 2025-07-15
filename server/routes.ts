@@ -59,14 +59,14 @@ const qrGenerationSchema = z.object({
   ]).default("modern_gradient"),
 });
 
-// Function to get QR code size in pixels
+// Function to get QR code size in pixels - Professional quality
 function getQRSize(size: string): number {
   switch (size) {
-    case "small": return 200;
-    case "medium": return 300;
-    case "large": return 400;
-    case "xlarge": return 500;
-    default: return 300;
+    case "small": return 800;    // 4x resolution
+    case "medium": return 1200;  // 4x resolution
+    case "large": return 1600;   // 4x resolution
+    case "xlarge": return 2000;  // 4x resolution
+    default: return 1200;
   }
 }
 
@@ -194,18 +194,19 @@ function getBrandColors(logoType: string): { primary: string; background?: strin
 
 // Function to get card dimensions for different social media platforms
 function getCardDimensions(template: string): { width: number; height: number } {
+  // Professional quality dimensions - 4K/2K resolution
   const dimensions: { [key: string]: { width: number; height: number } } = {
-    "instagram_post": { width: 1080, height: 1080 }, // Square
-    "instagram_story": { width: 1080, height: 1920 }, // 9:16
-    "facebook_post": { width: 1200, height: 630 }, // 1.9:1
-    "facebook_story": { width: 1080, height: 1920 }, // 9:16
-    "twitter_post": { width: 1200, height: 675 }, // 16:9
-    "linkedin_post": { width: 1200, height: 627 }, // 1.91:1
-    "youtube_thumbnail": { width: 1280, height: 720 }, // 16:9
-    "tiktok_video": { width: 1080, height: 1920 }, // 9:16
+    "instagram_post": { width: 2160, height: 2160 }, // 4K Square
+    "instagram_story": { width: 1080, height: 1920 }, // Full HD vertical
+    "facebook_post": { width: 2400, height: 1260 }, // 4K horizontal
+    "facebook_story": { width: 1080, height: 1920 }, // Full HD vertical
+    "twitter_post": { width: 2400, height: 1350 }, // 4K horizontal
+    "linkedin_post": { width: 2400, height: 1254 }, // 4K horizontal
+    "youtube_thumbnail": { width: 2560, height: 1440 }, // 2K resolution
+    "tiktok_video": { width: 1080, height: 1920 }, // Full HD vertical
   };
   
-  return dimensions[template] || { width: 800, height: 800 };
+  return dimensions[template] || { width: 2160, height: 2160 };
 }
 
 // Function to generate card background based on style
@@ -353,17 +354,33 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
     const qrBase64 = qrDataUrl.replace(/^data:image\/[a-z]+;base64,/, '');
     const qrBuffer = Buffer.from(qrBase64, 'base64');
     
-    // Create background from SVG
+    // Create background from SVG with high quality settings
     const backgroundBuffer = Buffer.from(cardBackgroundSVG);
     const backgroundImage = await sharp(backgroundBuffer)
-      .png()
-      .resize(width, height)
+      .png({
+        quality: 100,
+        compressionLevel: 0,
+        progressive: false,
+        force: true
+      })
+      .resize(width, height, {
+        kernel: sharp.kernel.lanczos3,
+        fit: 'fill'
+      })
       .toBuffer();
     
-    // Resize QR code to fit in the designated area
+    // Resize QR code with high quality resampling
     const resizedQRBuffer = await sharp(qrBuffer)
-      .resize(Math.floor(qrSize), Math.floor(qrSize))
-      .png()
+      .resize(Math.floor(qrSize), Math.floor(qrSize), {
+        kernel: sharp.kernel.lanczos3,
+        fit: 'fill'
+      })
+      .png({
+        quality: 100,
+        compressionLevel: 0,
+        progressive: false,
+        force: true
+      })
       .toBuffer();
     
     // Composite the background and QR code with higher quality settings
@@ -407,15 +424,20 @@ async function generateAdvancedQRCode(options: any): Promise<string> {
     }
   }
   
-  // Basic QR code options with brand colors
+  // Professional QR code options with brand colors
   const qrOptions = {
     width: size,
-    margin: 2,
+    margin: 1,
     color: {
       dark: qrForegroundColor,
       light: options.backgroundImage ? '#FFFFFF' : qrBackgroundColor
     },
-    errorCorrectionLevel
+    errorCorrectionLevel,
+    type: 'image/png',
+    quality: 1.0,
+    rendererOpts: {
+      quality: 1.0
+    }
   };
 
   // Generate the QR code
@@ -484,7 +506,9 @@ async function addLogoToQR(qrDataUrl: string, logoType: string, qrSize: number, 
       ])
       .png({
         quality: 100,
-        compressionLevel: 0
+        compressionLevel: 0,
+        progressive: false,
+        force: true
       })
       .toBuffer();
     
@@ -509,20 +533,34 @@ async function compositeQRWithBackground(qrDataUrl: string, backgroundImageDataU
     const bgBuffer = Buffer.from(bgBase64, 'base64');
     
     console.log('Processing background image...');
-    // Process the background image to fit QR size
+    // Process the background image to fit QR size with high quality
     const processedBackground = await sharp(bgBuffer)
-      .resize(size, size, { fit: 'cover' })
-      .png()
+      .resize(size, size, { 
+        fit: 'cover',
+        kernel: sharp.kernel.lanczos3
+      })
+      .png({
+        quality: 100,
+        compressionLevel: 0,
+        progressive: false,
+        force: true
+      })
       .toBuffer();
     
     console.log('Processing QR code...');
-    // Get the QR code resized to match - ensure proper padding
+    // Get the QR code resized to match - ensure proper padding with high quality
     const qrImage = await sharp(qrBuffer)
       .resize(size, size, { 
         fit: 'contain',
-        background: { r: 255, g: 255, b: 255, alpha: 1 }
+        background: { r: 255, g: 255, b: 255, alpha: 1 },
+        kernel: sharp.kernel.lanczos3
       })
-      .png()
+      .png({
+        quality: 100,
+        compressionLevel: 0,
+        progressive: false,
+        force: true
+      })
       .toBuffer();
     
     console.log('Creating improved composition...');
