@@ -148,11 +148,9 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
 
   const copyUrl = (url: string, qrId: number) => {
     navigator.clipboard.writeText(url);
-    // Record a scan when URL is copied (simulating actual usage)
-    recordScanMutation.mutate(qrId);
     toast({
       title: "URL copiada",
-      description: "La URL ha sido copiada al portapapeles y se registró un scan",
+      description: "La URL original ha sido copiada al portapapeles",
     });
   };
 
@@ -331,6 +329,9 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                   <p className="text-sm font-medium text-gray-300 truncate">
                     {qrCode.url}
                   </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Los scans se registran automáticamente cuando alguien escanea el código QR
+                  </p>
                   
                   <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
                     <span>
@@ -355,7 +356,7 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                     size="sm"
                     onClick={() => copyUrl(qrCode.url, qrCode.id)}
                     className="text-blue-400 hover:text-blue-300 hover:bg-blue-900/20"
-                    title="Copiar URL y registrar scan"
+                    title="Copiar URL original"
                   >
                     <Copy className="w-4 h-4" />
                   </Button>

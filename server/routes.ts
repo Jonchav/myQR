@@ -204,20 +204,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validatedData = qrGenerationSchema.parse(req.body);
       const userId = req.user ? (req.user as any).claims?.sub : undefined;
       
-      // Generate advanced QR code
-      const qrDataUrl = await generateAdvancedQRCode(validatedData);
-
-      // Store QR code record
+      // Store QR code record first to get the ID
       const qrRecord = await storage.createQRCode({
         ...validatedData,
         data: validatedData.data || validatedData.url,
-        qrDataUrl
+        qrDataUrl: '' // Temporary, will be updated after QR generation
       }, userId);
+
+      // Create tracking URL that will redirect to the actual URL
+      const trackingUrl = `${req.protocol}://${req.get('host')}/api/scan/${qrRecord.id}`;
+      
+      // Generate QR code with the tracking URL instead of the original URL
+      const qrDataUrl = await generateAdvancedQRCode({
+        ...validatedData,
+        url: trackingUrl,
+        data: trackingUrl
+      });
+
+      // Update the QR record with the generated QR code
+      await storage.updateQRCode(qrRecord.id, { qrDataUrl });
 
       res.json({
         success: true,
         qrCode: qrDataUrl,
         url: validatedData.url,
+        trackingUrl: trackingUrl,
         id: qrRecord.id,
         settings: validatedData,
         title: qrRecord.title
@@ -344,6 +355,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
         success: false,
         error: "Error al registrar scan"
       });
+    }
+  });
+
+  // Public scan redirect endpoint - this is what QR codes should point to
+  app.get("/api/scan/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const qrCode = await storage.getQRCode(id);
+      
+      if (!qrCode) {
+        return res.status(404).send("Código QR no encontrado");
+      }
+      
+      // Record the scan
+      const userAgent = req.headers['user-agent'];
+      const ipAddress = req.ip;
+      await storage.recordQRScan(id, userAgent, ipAddress);
+      
+      // Redirect to the actual URL
+      res.redirect(qrCode.url || qrCode.data);
+    } catch (error) {
+      console.error("Error processing scan:", error);
+      res.status(500).send("Error al procesar el scan");
     }
   });
 
