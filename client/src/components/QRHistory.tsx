@@ -245,9 +245,9 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
               size="sm"
               onClick={refreshData}
               className="border-purple-600 text-purple-300 hover:bg-purple-900/20"
+              title="Actualizar Estadísticas"
             >
-              <RotateCcw className="w-4 h-4 mr-2" />
-              Actualizar Estadísticas
+              <RotateCcw className="w-4 h-4" />
             </Button>
             {qrCodes.length > 0 && (
               <Button
