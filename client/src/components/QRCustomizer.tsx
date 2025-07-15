@@ -297,7 +297,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
             Ingresar Enlace
             <Badge variant="destructive" className="text-xs">Requerido</Badge>
           </Label>
-          <div className="space-y-2">
+          <div className="space-y-3">
             <Input
               type="url"
               placeholder="https://ejemplo.com"
@@ -316,6 +316,25 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                 URL requerida para generar el código QR
               </p>
             )}
+            
+            {/* Generate Button */}
+            <Button 
+              onClick={onGenerate} 
+              disabled={isGenerating || !settings.url} 
+              className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3"
+            >
+              {isGenerating ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Generando...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Generar QR PRO
+                </>
+              )}
+            </Button>
           </div>
         </div>
 
@@ -753,20 +772,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
           </CardContent>
         </Card>
 
-        <div className="flex gap-2 mt-6">
-          <Button onClick={onGenerate} disabled={isGenerating || !settings.url} className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
-            {isGenerating ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Generando...
-              </>
-            ) : (
-              <>
-                <Sparkles className="w-4 h-4 mr-2" />
-                Generar QR PRO
-              </>
-            )}
-          </Button>
+        <div className="flex justify-center mt-6">
           <Button
             variant="outline"
             onClick={() => {
@@ -787,8 +793,9 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                 errorCorrection: "M",
               });
             }}
+            className="border-gray-600 text-gray-300 hover:bg-gray-800"
           >
-            Restablecer
+            Restablecer Configuración
           </Button>
         </div>
       </CardContent>
