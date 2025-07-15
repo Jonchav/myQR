@@ -75,13 +75,13 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case "url": return "bg-blue-100 text-blue-800";
-      case "text": return "bg-green-100 text-green-800";
-      case "email": return "bg-purple-100 text-purple-800";
-      case "phone": return "bg-orange-100 text-orange-800";
-      case "sms": return "bg-pink-100 text-pink-800";
-      case "wifi": return "bg-cyan-100 text-cyan-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "url": return "bg-blue-900 text-blue-300";
+      case "text": return "bg-green-900 text-green-300";
+      case "email": return "bg-purple-900 text-purple-300";
+      case "phone": return "bg-orange-900 text-orange-300";
+      case "sms": return "bg-pink-900 text-pink-300";
+      case "wifi": return "bg-cyan-900 text-cyan-300";
+      default: return "bg-gray-800 text-gray-300";
     }
   };
 
@@ -97,10 +97,10 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
 
   if (isLoading) {
     return (
-      <Card>
+      <Card className="gradient-card elegant-border">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <History className="w-5 h-5" />
+          <CardTitle className="flex items-center gap-2 text-white">
+            <History className="w-5 h-5 text-purple-400" />
             Historial de QR
           </CardTitle>
         </CardHeader>
@@ -108,10 +108,10 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
               <div key={i} className="flex items-center space-x-4">
-                <Skeleton className="w-16 h-16 rounded-lg" />
+                <Skeleton className="w-16 h-16 rounded-lg bg-gray-800" />
                 <div className="flex-1 space-y-2">
-                  <Skeleton className="h-4 w-3/4" />
-                  <Skeleton className="h-3 w-1/2" />
+                  <Skeleton className="h-4 w-3/4 bg-gray-800" />
+                  <Skeleton className="h-3 w-1/2 bg-gray-800" />
                 </div>
               </div>
             ))}
@@ -123,16 +123,16 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
 
   if (error) {
     return (
-      <Card>
+      <Card className="gradient-card elegant-border">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <History className="w-5 h-5" />
+          <CardTitle className="flex items-center gap-2 text-white">
+            <History className="w-5 h-5 text-purple-400" />
             Historial de QR
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Alert variant="destructive">
-            <AlertDescription>
+          <Alert variant="destructive" className="bg-red-900/20 border-red-800">
+            <AlertDescription className="text-red-300">
               Error al cargar el historial. Inicia sesión para ver tu historial personal.
             </AlertDescription>
           </Alert>
@@ -144,11 +144,11 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
   const qrCodes = data?.qrCodes || [];
 
   return (
-    <Card>
+    <Card className="gradient-card elegant-border">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <History className="w-5 h-5" />
+          <CardTitle className="flex items-center gap-2 text-white">
+            <History className="w-5 h-5 text-purple-400" />
             Historial de QR ({qrCodes.length})
           </CardTitle>
           {qrCodes.length > 0 && (
@@ -157,6 +157,7 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
               size="sm"
               onClick={() => clearHistoryMutation.mutate()}
               disabled={clearHistoryMutation.isPending}
+              className="border-gray-700 text-gray-300 hover:bg-gray-800"
             >
               <Trash2 className="w-4 h-4 mr-2" />
               Limpiar
@@ -167,16 +168,16 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
       <CardContent>
         {qrCodes.length === 0 ? (
           <div className="text-center py-8">
-            <History className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-            <p className="text-gray-500">No hay códigos QR en el historial</p>
-            <p className="text-sm text-gray-400">Genera tu primer código QR para verlo aquí</p>
+            <History className="w-16 h-16 mx-auto text-gray-600 mb-4" />
+            <p className="text-gray-400">No hay códigos QR en el historial</p>
+            <p className="text-sm text-gray-500">Genera tu primer código QR para verlo aquí</p>
           </div>
         ) : (
           <div className="space-y-4 max-h-96 overflow-y-auto">
             {qrCodes.map((qrCode: any) => (
               <div
                 key={qrCode.id}
-                className="flex items-center gap-4 p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                className="flex items-center gap-4 p-4 border border-gray-700 rounded-lg hover:bg-gray-800 transition-colors"
               >
                 <div className="flex-shrink-0">
                   <img
@@ -199,7 +200,7 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                     </Badge>
                   </div>
                   
-                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                  <p className="text-sm font-medium text-gray-300 truncate">
                     {qrCode.url}
                   </p>
                   
@@ -226,7 +227,7 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                       variant="ghost"
                       size="sm"
                       onClick={() => onEditQR(qrCode)}
-                      className="text-blue-600 hover:text-blue-800"
+                      className="text-blue-400 hover:text-blue-300 hover:bg-blue-900/20"
                     >
                       <Edit className="w-4 h-4" />
                     </Button>
@@ -236,7 +237,7 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                     variant="ghost"
                     size="sm"
                     onClick={() => handleDownload(qrCode)}
-                    className="text-green-600 hover:text-green-800"
+                    className="text-green-400 hover:text-green-300 hover:bg-green-900/20"
                   >
                     <Download className="w-4 h-4" />
                   </Button>
@@ -246,7 +247,7 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                     size="sm"
                     onClick={() => deleteQRMutation.mutate(qrCode.id)}
                     disabled={deleteQRMutation.isPending}
-                    className="text-red-600 hover:text-red-800"
+                    className="text-red-400 hover:text-red-300 hover:bg-red-900/20"
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>
