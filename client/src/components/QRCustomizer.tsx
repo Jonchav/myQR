@@ -716,12 +716,21 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                 </div>
                 <div className="grid grid-cols-6 gap-2">
                   {[
-                    { value: "instagram", icon: "📷", name: "Instagram" },
                     { value: "facebook", icon: "📘", name: "Facebook" },
-                    { value: "twitter", icon: "🐦", name: "Twitter" },
-                    { value: "linkedin", icon: "💼", name: "LinkedIn" },
-                    { value: "youtube", icon: "▶️", name: "YouTube" },
+                    { value: "twitter", icon: "🐦", name: "Twitter/X" },
+                    { value: "instagram", icon: "📷", name: "Instagram" },
                     { value: "tiktok", icon: "🎵", name: "TikTok" },
+                    { value: "discord", icon: "🎮", name: "Discord" },
+                    { value: "snapchat", icon: "👻", name: "Snapchat" },
+                    { value: "youtube", icon: "▶️", name: "YouTube" },
+                    { value: "whatsapp", icon: "💬", name: "WhatsApp" },
+                    { value: "behance", icon: "🎨", name: "Behance" },
+                    { value: "threads", icon: "🧵", name: "Threads" },
+                    { value: "linkedin", icon: "💼", name: "LinkedIn" },
+                    { value: "dribbble", icon: "🏀", name: "Dribbble" },
+                    { value: "pinterest", icon: "📌", name: "Pinterest" },
+                    { value: "twitch", icon: "🎮", name: "Twitch" },
+                    { value: "telegram", icon: "✈️", name: "Telegram" },
                   ].map((social) => (
                     <Button
                       key={social.value}
