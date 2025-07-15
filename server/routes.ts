@@ -118,11 +118,28 @@ async function compositeQRWithBackground(qrDataUrl: string, backgroundImageDataU
       .png()
       .toBuffer();
     
-    console.log('Creating simple mask-based composition...');
-    // Simple approach: Start with white background, place background image where QR is black
+    console.log('Creating alpha channel based composition...');
+    // New approach: Use the QR code itself as an alpha mask
+    // Convert QR to grayscale and use as alpha channel
+    const qrAlpha = await sharp(qrImage)
+      .grayscale()
+      .negate() // Invert so black areas become white (opaque), white areas become black (transparent)
+      .png()
+      .toBuffer();
     
-    // Step 1: Create a white canvas
-    const whiteCanvas = await sharp({
+    // Create background with QR alpha mask
+    const backgroundWithAlpha = await sharp(processedBackground)
+      .composite([
+        {
+          input: qrAlpha,
+          blend: 'multiply'
+        }
+      ])
+      .png()
+      .toBuffer();
+    
+    // Create white background
+    const whiteBackground = await sharp({
       create: {
         width: size,
         height: size,
@@ -133,30 +150,27 @@ async function compositeQRWithBackground(qrDataUrl: string, backgroundImageDataU
     .png()
     .toBuffer();
     
-    // Step 2: Create a mask from QR - black areas should be white in mask, white areas should be black
-    const qrMask = await sharp(qrImage)
-      .threshold(128) // Binarize the QR code
-      .negate() // Invert: now black QR areas are white in mask, white QR areas are black in mask
+    // Create inverted alpha (white areas of QR should remain white)
+    const qrWhiteAreas = await sharp(qrImage)
+      .grayscale()
       .png()
       .toBuffer();
     
-    // Step 3: Apply background only where the mask allows (black areas of original QR)
-    // Use the mask to blend the background with the white canvas
-    const maskedBackground = await sharp(processedBackground)
+    const whiteAreasOnly = await sharp(whiteBackground)
       .composite([
         {
-          input: qrMask,
+          input: qrWhiteAreas,
           blend: 'multiply'
         }
       ])
       .png()
       .toBuffer();
     
-    // Step 4: Composite the masked background with the white canvas
-    const compositeBuffer = await sharp(whiteCanvas)
+    // Final composition: background in black areas + white in white areas
+    const compositeBuffer = await sharp(backgroundWithAlpha)
       .composite([
         {
-          input: maskedBackground,
+          input: whiteAreasOnly,
           blend: 'over'
         }
       ])
