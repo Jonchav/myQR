@@ -5,6 +5,7 @@ import { insertQRCodeSchema } from "@shared/schema";
 import { z } from "zod";
 import QRCode from "qrcode";
 import { setupAuth, isAuthenticated } from "./replitAuth";
+import sharp from "sharp";
 
 // Enhanced QR generation schema
 const qrGenerationSchema = z.object({
@@ -35,6 +36,7 @@ const qrGenerationSchema = z.object({
   includeText: z.boolean().default(false),
   textContent: z.string().optional(),
   errorCorrection: z.enum(["L", "M", "Q", "H"]).default("M"),
+  backgroundImage: z.string().optional(), // Data URL for background image
 });
 
 // Function to get QR code size in pixels
@@ -77,7 +79,68 @@ async function generateAdvancedQRCode(options: any): Promise<string> {
 
   // Generate the QR code
   const dataToEncode = options.data || options.url;
-  return await QRCode.toDataURL(dataToEncode, qrOptions);
+  let qrDataUrl = await QRCode.toDataURL(dataToEncode, qrOptions);
+  
+  // If there's a background image, composite it with the QR code
+  if (options.backgroundImage) {
+    qrDataUrl = await compositeQRWithBackground(qrDataUrl, options.backgroundImage, size);
+  }
+  
+  return qrDataUrl;
+}
+
+// Function to composite QR code with background image
+async function compositeQRWithBackground(qrDataUrl: string, backgroundImageDataUrl: string, size: number): Promise<string> {
+  try {
+    // Remove data URL prefixes
+    const qrBase64 = qrDataUrl.replace(/^data:image\/[a-z]+;base64,/, '');
+    const bgBase64 = backgroundImageDataUrl.replace(/^data:image\/[a-z]+;base64,/, '');
+    
+    // Create buffers from base64 strings
+    const qrBuffer = Buffer.from(qrBase64, 'base64');
+    const bgBuffer = Buffer.from(bgBase64, 'base64');
+    
+    // Process the background image
+    const processedBackground = await sharp(bgBuffer)
+      .resize(size, size, { fit: 'cover' })
+      .png()
+      .toBuffer();
+    
+    // Create a semi-transparent white overlay for QR code visibility
+    const whiteOverlay = await sharp({
+      create: {
+        width: size,
+        height: size,
+        channels: 4,
+        background: { r: 255, g: 255, b: 255, alpha: 0.8 }
+      }
+    })
+    .png()
+    .toBuffer();
+    
+    // Process the QR code
+    const processedQR = await sharp(qrBuffer)
+      .resize(size, size, { fit: 'contain' })
+      .png()
+      .toBuffer();
+    
+    // Composite the images: background + overlay + QR code
+    const compositeBuffer = await sharp(processedBackground)
+      .composite([
+        { input: whiteOverlay, blend: 'over' },
+        { input: processedQR, blend: 'over' }
+      ])
+      .png()
+      .toBuffer();
+    
+    // Convert to data URL
+    const base64String = compositeBuffer.toString('base64');
+    return `data:image/png;base64,${base64String}`;
+  } catch (error) {
+    console.error('Error compositing QR with background:', error);
+    // Return original QR code if compositing fails
+    return qrDataUrl;
+  }
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {

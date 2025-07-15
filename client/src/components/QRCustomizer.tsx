@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Palette, Settings, Layers, Frame, Sparkles, Type, Shield, Loader2, Home, ArrowLeft, Download } from "lucide-react";
+import { Palette, Settings, Layers, Frame, Sparkles, Type, Shield, Loader2, Home, ArrowLeft, Download, Upload, X } from "lucide-react";
 
 interface QRCustomizerProps {
   settings: any;
@@ -32,12 +32,37 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
     
     // Si hay una URL y el cambio es visual, regenerar automáticamente
     if (settings.url && onGenerate && !isGenerating) {
-      const visualChanges = ['backgroundColor', 'foregroundColor', 'style', 'pattern', 'gradient', 'frame', 'size'];
+      const visualChanges = ['backgroundColor', 'foregroundColor', 'style', 'pattern', 'gradient', 'frame', 'size', 'backgroundImage'];
       if (visualChanges.includes(key)) {
         setTimeout(() => {
           onGenerate();
         }, 300); // Delay para evitar múltiples llamadas
       }
+    }
+  };
+
+  // Función para manejar la carga de imagen de fondo
+  const handleBackgroundImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Validar tipo de archivo
+      if (!file.type.startsWith('image/')) {
+        alert('Por favor selecciona un archivo de imagen válido.');
+        return;
+      }
+
+      // Validar tamaño (máximo 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('La imagen debe ser menor a 5MB.');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        applyRealTimeChange("backgroundImage", result);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -596,6 +621,64 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                     <SelectItem value="gold">✨ Oro Premium</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+
+              {/* Background Image Section */}
+              <div className="space-y-3 p-4 bg-purple-900/20 border border-purple-700 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Badge className="gradient-gold text-black border-0 text-xs">
+                    PRO
+                  </Badge>
+                  <Label className="text-lg font-semibold text-white">Imagen de Fondo</Label>
+                </div>
+                
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleBackgroundImageUpload}
+                      className="hidden"
+                      id="backgroundImageInput"
+                    />
+                    <Button
+                      variant="outline"
+                      onClick={() => document.getElementById('backgroundImageInput')?.click()}
+                      className="flex items-center gap-2 border-purple-600 text-purple-300 hover:bg-purple-900/20"
+                    >
+                      <Upload className="w-4 h-4" />
+                      Subir Imagen
+                    </Button>
+                    
+                    {settings.backgroundImage && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => applyRealTimeChange("backgroundImage", null)}
+                        className="text-red-400 hover:text-red-300 hover:bg-red-900/20"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
+                  
+                  {settings.backgroundImage && (
+                    <div className="relative">
+                      <img
+                        src={settings.backgroundImage}
+                        alt="Imagen de fondo"
+                        className="w-full h-24 object-cover rounded-lg border border-purple-600"
+                      />
+                      <div className="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center">
+                        <span className="text-white text-sm font-medium">Vista previa</span>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <p className="text-sm text-gray-400">
+                    Sube una imagen para usar como fondo del código QR. Se combinará con los colores seleccionados.
+                  </p>
+                </div>
               </div>
             </div>
           </TabsContent>
