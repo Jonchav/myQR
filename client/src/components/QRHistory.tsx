@@ -512,10 +512,10 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                                     <SelectValue />
                                   </SelectTrigger>
                                   <SelectContent className="bg-gray-800 border-gray-700">
-                                    <SelectItem value="daily">Diario</SelectItem>
-                                    <SelectItem value="weekly">Semanal</SelectItem>
-                                    <SelectItem value="monthly">Mensual</SelectItem>
-                                    <SelectItem value="yearly">Anual</SelectItem>
+                                    <SelectItem value="daily" className="text-white hover:bg-gray-700 focus:bg-gray-700">Diario</SelectItem>
+                                    <SelectItem value="weekly" className="text-white hover:bg-gray-700 focus:bg-gray-700">Semanal</SelectItem>
+                                    <SelectItem value="monthly" className="text-white hover:bg-gray-700 focus:bg-gray-700">Mensual</SelectItem>
+                                    <SelectItem value="yearly" className="text-white hover:bg-gray-700 focus:bg-gray-700">Anual</SelectItem>
                                   </SelectContent>
                                 </Select>
                               </div>

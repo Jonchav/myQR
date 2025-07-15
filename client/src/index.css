@@ -244,4 +244,27 @@
     border: 1px solid hsl(158, 25%, 22%);
     box-shadow: inset 0 1px 0 hsla(158, 8%, 95%, 0.05);
   }
+
+  /* Estilos para mejorar visibilidad en elementos select */
+  [data-radix-select-content] {
+    background-color: #1f2937 !important;
+    border-color: #374151 !important;
+  }
+
+  [data-radix-select-item] {
+    color: #f3f4f6 !important;
+  }
+
+  [data-radix-select-item]:hover {
+    background-color: #374151 !important;
+  }
+
+  [data-radix-select-item]:focus {
+    background-color: #374151 !important;
+  }
+
+  [data-radix-select-item][data-highlighted] {
+    background-color: #374151 !important;
+    color: #f3f4f6 !important;
+  }
 }
