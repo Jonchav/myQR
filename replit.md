@@ -16,7 +16,9 @@ Preferred communication style: Simple, everyday language.
 - **Stripe Product Integration**: Connected to real Stripe products (prod_SgbM5d8WfUgLP6 for weekly, prod_SgbMQxYEXBZ0u5 for monthly)
 - **PRO Feature Gating**: Implemented proper authentication barriers for customization and history features
 - **Test Mode Support**: Added test card information display for Stripe test mode payments
-- **Scan Statistics Fix**: Fixed timezone handling for accurate daily scan counting using UTC date comparison
+- **Enhanced Scan Statistics**: Added detailed scan records endpoint with individual scan timestamps, user agents, and IP addresses
+- **Tabbed Statistics Interface**: Organized statistics modal into three tabs (Resumen, Análisis, Detallado) for better navigation
+- **Timezone Clarification**: Added UTC timezone indicators to statistics and detailed scan records to prevent confusion
 - **Search Functionality**: Added search capability for QR names, URLs, and types in history tab with real-time filtering
 - **PRO Status System**: Created subscription status tracking with badges and upgrade prompts in header
 - **Payment Processing**: Integrated Stripe Elements for secure payment processing and subscription management

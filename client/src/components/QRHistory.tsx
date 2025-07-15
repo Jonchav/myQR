@@ -633,9 +633,10 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                                 <div className="bg-gradient-to-r from-blue-900/50 to-blue-800/50 rounded-lg p-4 border border-blue-700/50">
                                   <div className="flex items-center gap-2 mb-2">
                                     <BarChart className="w-4 h-4 text-blue-400" />
-                                    <p className="text-sm text-blue-300">Hoy</p>
+                                    <p className="text-sm text-blue-300">Hoy (UTC)</p>
                                   </div>
                                   <p className="text-3xl font-bold text-white">{statsData.stats.today}</p>
+                                  <p className="text-xs text-blue-300/70">Fecha UTC</p>
                                 </div>
                                 <div className="bg-gradient-to-r from-green-900/50 to-green-800/50 rounded-lg p-4 border border-green-700/50">
                                   <div className="flex items-center gap-2 mb-2">
@@ -1003,6 +1004,9 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                               {/* Detailed Scan Records */}
                               <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
                                 <h3 className="text-lg font-semibold text-white mb-4">Registros Detallados de Escaneos</h3>
+                                <p className="text-xs text-gray-400 mb-4">
+                                  Nota: Las estadísticas se basan en fecha UTC. Los horarios mostrados se convierten a tu zona horaria local.
+                                </p>
                                 {scanRecordsLoading ? (
                                   <div className="space-y-2">
                                     <Skeleton className="h-4 w-full bg-gray-700" />

@@ -242,14 +242,15 @@ export class DatabaseStorage implements IStorage {
       .from(qrScans)
       .where(eq(qrScans.qrCodeId, qrCodeId));
     
-    // Get today's scans (using UTC date comparison)
+    // Get today's scans (using proper date comparison)
+    const todayDateStr = now.toISOString().split('T')[0]; // Get YYYY-MM-DD format
     const [todayResult] = await db
       .select({ count: count() })
       .from(qrScans)
       .where(
         and(
           eq(qrScans.qrCodeId, qrCodeId),
-          sql`DATE(${qrScans.scannedAt}) = DATE(${startOfToday})`
+          sql`DATE(${qrScans.scannedAt}) = ${todayDateStr}`
         )
       );
     
@@ -277,6 +278,7 @@ export class DatabaseStorage implements IStorage {
     
     // Get daily stats for the last 30 days
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    const thirtyDaysAgoStr = thirtyDaysAgo.toISOString().split('T')[0];
     const dailyStats = await db
       .select({
         date: sql`DATE(${qrScans.scannedAt})`.as('date'),
@@ -286,7 +288,7 @@ export class DatabaseStorage implements IStorage {
       .where(
         and(
           eq(qrScans.qrCodeId, qrCodeId),
-          sql`${qrScans.scannedAt} >= ${thirtyDaysAgo}`
+          sql`DATE(${qrScans.scannedAt}) >= ${thirtyDaysAgoStr}`
         )
       )
       .groupBy(sql`DATE(${qrScans.scannedAt})`)
