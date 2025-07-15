@@ -244,10 +244,10 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
               variant="outline"
               size="sm"
               onClick={refreshData}
-              className="border-gray-700 text-gray-300 hover:bg-gray-800"
+              className="border-purple-600 text-purple-300 hover:bg-purple-900/20"
             >
               <RotateCcw className="w-4 h-4 mr-2" />
-              Actualizar
+              Actualizar Estadísticas
             </Button>
             {qrCodes.length > 0 && (
               <Button
@@ -348,7 +348,7 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                     {qrCode.url}
                   </p>
                   <p className="text-xs text-gray-500 mt-1">
-                    Los scans se registran automáticamente cuando alguien escanea el código QR
+                    Los scans se registran automáticamente. Usa "Actualizar Estadísticas" para ver cambios.
                   </p>
                   
                   <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
@@ -377,16 +377,6 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                     title="Copiar URL original"
                   >
                     <Copy className="w-4 h-4" />
-                  </Button>
-                  
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={refreshData}
-                    className="text-blue-400 hover:text-blue-300 hover:bg-blue-900/20"
-                    title="Actualizar datos"
-                  >
-                    <RotateCcw className="w-4 h-4" />
                   </Button>
                   
                   <Button
