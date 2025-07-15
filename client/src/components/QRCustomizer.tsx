@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Palette, Settings, Layers, Frame, Sparkles, Type, Shield, Loader2, Home, ArrowLeft } from "lucide-react";
+import { Palette, Settings, Layers, Frame, Sparkles, Type, Shield, Loader2, Home, ArrowLeft, Download } from "lucide-react";
 
 interface QRCustomizerProps {
   settings: any;
@@ -15,9 +15,11 @@ interface QRCustomizerProps {
   onGenerate: () => void;
   isGenerating: boolean;
   onBackToHome?: () => void;
+  qrCode?: string | null;
+  onDownload?: () => void;
 }
 
-export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onBackToHome }: QRCustomizerProps) {
+export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onBackToHome, qrCode, onDownload }: QRCustomizerProps) {
   const updateSetting = (key: string, value: any) => {
     onChange({ ...settings, [key]: value });
   };
@@ -337,6 +339,35 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
             </Button>
           </div>
         </div>
+
+        {/* Vista Previa PRO */}
+        {qrCode && (
+          <div className="mb-6 p-4 bg-gray-900/50 border border-purple-700 rounded-lg">
+            <Label className="text-lg font-semibold text-white flex items-center gap-2 mb-4">
+              <Sparkles className="w-5 h-5 text-purple-400" />
+              Vista Previa PRO
+            </Label>
+            <div className="text-center space-y-4">
+              <div className="p-4 bg-gray-900 rounded-lg border-2 border-purple-800 neon-glow">
+                <img 
+                  src={qrCode} 
+                  alt="Vista previa QR personalizado" 
+                  className="mx-auto border border-gray-700 rounded-lg max-w-full h-auto shadow-2xl"
+                />
+              </div>
+              
+              {onDownload && (
+                <Button 
+                  onClick={onDownload}
+                  className="w-full gradient-purple neon-glow"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Descargar PRO
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
 
         <Tabs defaultValue="themes" className="w-full">
           <TabsList className="grid w-full grid-cols-5">

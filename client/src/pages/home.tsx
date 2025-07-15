@@ -441,91 +441,16 @@ export default function Home() {
           </TabsContent>
 
           <TabsContent value="customize" className="mt-8">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-2">
-                <QRCustomizer
-                  settings={qrSettings}
-                  onChange={handleSettingsChange}
-                  onGenerate={handleGenerate}
-                  isGenerating={generateQRMutation.isPending}
-                  onBackToHome={() => setActiveTab("generate")}
-                />
-              </div>
-              
-              <div className="space-y-6">
-                <Card className="gradient-card elegant-border">
-                  <CardHeader>
-                    <CardTitle className="text-lg flex items-center gap-2 text-white">
-                      <Sparkles className="w-5 h-5 text-purple-400" />
-                      Vista previa PRO
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="text-center">
-                    {qrCode ? (
-                      <div className="space-y-4">
-                        <div className="p-4 bg-gray-900 rounded-lg border-2 border-purple-800 neon-glow">
-                          <img 
-                            src={qrCode} 
-                            alt="Vista previa QR personalizado" 
-                            className="mx-auto border border-gray-700 rounded-lg max-w-full h-auto shadow-2xl"
-                          />
-                        </div>
-                        
-                        <div className="flex gap-2">
-                          <Button 
-                            onClick={handleDownload}
-                            className="flex-1 gradient-purple neon-glow"
-                          >
-                            <Download className="w-4 h-4 mr-2" />
-                            Descargar PRO
-                          </Button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="w-full h-48 bg-gray-900 border-2 border-dashed border-purple-600 rounded-lg flex items-center justify-center">
-                        <div className="text-center">
-                          <Sparkles className="w-12 h-12 text-purple-400 mx-auto mb-2" />
-                          <p className="text-purple-300 text-sm font-medium">
-                            Vista previa personalizada
-                          </p>
-                          <p className="text-gray-400 text-xs mt-1">
-                            Personaliza y regenera tu QR
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-                
-                <Card className="gradient-card elegant-border neon-glow">
-                  <CardHeader>
-                    <CardTitle className="text-lg flex items-center gap-2 text-white">
-                      <Badge className="gradient-gold text-black border-0">
-                        PRO
-                      </Badge>
-                      Características Premium
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      {[
-                        "Colores personalizados",
-                        "Estilos avanzados",
-                        "Logos y marcos",
-                        "Patrones únicos",
-                        "Gradientes especiales"
-                      ].map((feature, index) => (
-                        <div key={index} className="flex items-center space-x-3">
-                          <div className="w-5 h-5 gradient-purple rounded-full flex items-center justify-center">
-                            <CheckCircle className="w-3 h-3 text-white" />
-                          </div>
-                          <span className="text-sm text-purple-300">{feature}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+            <div className="max-w-4xl mx-auto">
+              <QRCustomizer
+                settings={qrSettings}
+                onChange={handleSettingsChange}
+                onGenerate={handleGenerate}
+                isGenerating={generateQRMutation.isPending}
+                onBackToHome={() => setActiveTab("generate")}
+                qrCode={qrCode}
+                onDownload={handleDownload}
+              />
             </div>
           </TabsContent>
 
