@@ -75,100 +75,73 @@ function getErrorCorrectionLevel(level: string): "L" | "M" | "Q" | "H" {
 
 
 
-// Function to generate colorful, recognizable logo SVGs
+
+
+// Function to generate simple, recognizable logo SVGs
 function generateLogoSVG(logoType: string, size: number = 60, color: string = "#000000"): string {
   const logoMap: { [key: string]: string } = {
     star: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.4}" fill="#FFD700"/>
-           <path d="M${size/2} ${size*0.15} L${size*0.618} ${size*0.382} L${size*0.9} ${size*0.382} L${size*0.691} ${size*0.618} L${size*0.809} ${size*0.85} L${size/2} ${size*0.764} L${size*0.191} ${size*0.85} L${size*0.309} ${size*0.618} L${size*0.1} ${size*0.382} L${size*0.382} ${size*0.382} Z" fill="#FFF"/>`,
+           <polygon points="${size/2},${size*0.2} ${size*0.6},${size*0.4} ${size*0.8},${size*0.4} ${size*0.65},${size*0.6} ${size*0.75},${size*0.8} ${size/2},${size*0.7} ${size*0.25},${size*0.8} ${size*0.35},${size*0.6} ${size*0.2},${size*0.4} ${size*0.4},${size*0.4}" fill="#FFF"/>`,
     
     heart: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.4}" fill="#FF1744"/>
-            <path d="M${size/2} ${size*0.75} C${size*0.25} ${size*0.6} ${size*0.25} ${size*0.35} ${size*0.375} ${size*0.35} C${size*0.425} ${size*0.35} ${size/2} ${size*0.45} ${size/2} ${size*0.45} C${size/2} ${size*0.45} ${size*0.575} ${size*0.35} ${size*0.625} ${size*0.35} C${size*0.75} ${size*0.35} ${size*0.75} ${size*0.6} ${size/2} ${size*0.75} Z" fill="#FFF"/>`,
+            <path d="M${size/2} ${size*0.7} C${size*0.3} ${size*0.55} ${size*0.3} ${size*0.35} ${size*0.4} ${size*0.35} C${size*0.45} ${size*0.35} ${size/2} ${size*0.45} ${size/2} ${size*0.45} C${size/2} ${size*0.45} ${size*0.55} ${size*0.35} ${size*0.6} ${size*0.35} C${size*0.7} ${size*0.35} ${size*0.7} ${size*0.55} ${size/2} ${size*0.7} Z" fill="#FFF"/>`,
     
     diamond: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.4}" fill="#00E676"/>
-              <path d="M${size/2} ${size*0.2} L${size*0.75} ${size*0.45} L${size/2} ${size*0.8} L${size*0.25} ${size*0.45} Z" fill="#FFF"/>`,
+              <polygon points="${size/2},${size*0.25} ${size*0.7},${size/2} ${size/2},${size*0.75} ${size*0.3},${size/2}" fill="#FFF"/>`,
     
     crown: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.4}" fill="#FF9800"/>
-            <path d="M${size*0.2} ${size*0.65} L${size*0.8} ${size*0.65} L${size*0.75} ${size*0.4} L${size*0.6} ${size*0.5} L${size/2} ${size*0.3} L${size*0.4} ${size*0.5} L${size*0.25} ${size*0.4} Z" fill="#FFF"/>`,
+            <polygon points="${size*0.25},${size*0.65} ${size*0.75},${size*0.65} ${size*0.7},${size*0.4} ${size*0.6},${size*0.5} ${size/2},${size*0.3} ${size*0.4},${size*0.5} ${size*0.3},${size*0.4}" fill="#FFF"/>`,
     
     check: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.4}" fill="#4CAF50"/>
-            <path d="M${size*0.3} ${size*0.5} L${size*0.45} ${size*0.65} L${size*0.7} ${size*0.35}" stroke="#FFF" stroke-width="6" fill="none" stroke-linecap="round"/>`,
+            <polyline points="${size*0.35},${size*0.5} ${size*0.45},${size*0.6} ${size*0.65},${size*0.4}" stroke="#FFF" stroke-width="5" fill="none" stroke-linecap="round"/>`,
     
-    // Social Media Logos con colores auténticos
-    instagram: `
-      <defs>
-        <linearGradient id="instagramGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:#f09433;stop-opacity:1" />
-          <stop offset="25%" style="stop-color:#e6683c;stop-opacity:1" />
-          <stop offset="50%" style="stop-color:#dc2743;stop-opacity:1" />
-          <stop offset="75%" style="stop-color:#cc2366;stop-opacity:1" />
-          <stop offset="100%" style="stop-color:#bc1888;stop-opacity:1" />
-        </linearGradient>
-      </defs>
-      <rect x="${size*0.1}" y="${size*0.1}" width="${size*0.8}" height="${size*0.8}" rx="${size*0.2}" fill="url(#instagramGradient)"/>
-      <rect x="${size*0.25}" y="${size*0.25}" width="${size*0.5}" height="${size*0.5}" rx="${size*0.125}" fill="none" stroke="#FFF" stroke-width="4"/>
-      <circle cx="${size/2}" cy="${size/2}" r="${size*0.12}" fill="none" stroke="#FFF" stroke-width="4"/>
-      <circle cx="${size*0.68}" cy="${size*0.32}" r="${size*0.06}" fill="#FFF"/>`,
+    // Logos simplificados y más reconocibles
+    instagram: `<rect x="${size*0.15}" y="${size*0.15}" width="${size*0.7}" height="${size*0.7}" rx="${size*0.15}" fill="#E4405F"/>
+                <rect x="${size*0.3}" y="${size*0.3}" width="${size*0.4}" height="${size*0.4}" rx="${size*0.1}" fill="none" stroke="#FFF" stroke-width="3"/>
+                <circle cx="${size/2}" cy="${size/2}" r="${size*0.08}" fill="none" stroke="#FFF" stroke-width="3"/>
+                <circle cx="${size*0.65}" cy="${size*0.35}" r="${size*0.04}" fill="#FFF"/>`,
     
-    facebook: `
-      <rect x="${size*0.1}" y="${size*0.1}" width="${size*0.8}" height="${size*0.8}" rx="${size*0.15}" fill="#1877F2"/>
-      <path d="M${size*0.55} ${size*0.9} L${size*0.55} ${size*0.58} L${size*0.7} ${size*0.58} L${size*0.72} ${size*0.45} L${size*0.55} ${size*0.45} L${size*0.55} ${size*0.4} C${size*0.55} ${size*0.32} ${size*0.6} ${size*0.28} ${size*0.68} ${size*0.28} L${size*0.72} ${size*0.28} L${size*0.72} ${size*0.15} L${size*0.65} ${size*0.15} C${size*0.5} ${size*0.15} ${size*0.42} ${size*0.23} ${size*0.42} ${size*0.38} L${size*0.42} ${size*0.45} L${size*0.35} ${size*0.45} L${size*0.35} ${size*0.58} L${size*0.42} ${size*0.58} L${size*0.42} ${size*0.9} Z" fill="#FFF"/>`,
+    facebook: `<rect x="${size*0.15}" y="${size*0.15}" width="${size*0.7}" height="${size*0.7}" rx="${size*0.1}" fill="#1877F2"/>
+               <path d="M${size*0.52} ${size*0.8} L${size*0.52} ${size*0.55} L${size*0.65} ${size*0.55} L${size*0.67} ${size*0.45} L${size*0.52} ${size*0.45} L${size*0.52} ${size*0.38} C${size*0.52} ${size*0.33} ${size*0.55} ${size*0.3} ${size*0.6} ${size*0.3} L${size*0.67} ${size*0.3} L${size*0.67} ${size*0.2} L${size*0.58} ${size*0.2} C${size*0.48} ${size*0.2} ${size*0.42} ${size*0.26} ${size*0.42} ${size*0.36} L${size*0.42} ${size*0.45} L${size*0.36} ${size*0.45} L${size*0.36} ${size*0.55} L${size*0.42} ${size*0.55} L${size*0.42} ${size*0.8} Z" fill="#FFF"/>`,
     
-    twitter: `
-      <circle cx="${size/2}" cy="${size/2}" r="${size*0.4}" fill="#1DA1F2"/>
-      <path d="M${size*0.75} ${size*0.35} C${size*0.72} ${size*0.38} ${size*0.68} ${size*0.39} ${size*0.64} ${size*0.4} C${size*0.68} ${size*0.37} ${size*0.71} ${size*0.33} ${size*0.72} ${size*0.28} C${size*0.69} ${size*0.29} ${size*0.66} ${size*0.31} ${size*0.62} ${size*0.32} C${size*0.58} ${size*0.29} ${size*0.53} ${size*0.27} ${size*0.48} ${size*0.27} C${size*0.38} ${size*0.27} ${size*0.3} ${size*0.35} ${size*0.3} ${size*0.45} C${size*0.3} ${size*0.47} ${size*0.31} ${size*0.49} ${size*0.32} ${size*0.51} C${size*0.26} ${size*0.5} ${size*0.21} ${size*0.47} ${size*0.18} ${size*0.43} C${size*0.18} ${size*0.53} ${size*0.24} ${size*0.62} ${size*0.32} ${size*0.66} C${size*0.3} ${size*0.67} ${size*0.28} ${size*0.67} ${size*0.26} ${size*0.66} C${size*0.27} ${size*0.72} ${size*0.32} ${size*0.76} ${size*0.38} ${size*0.78} C${size*0.35} ${size*0.79} ${size*0.31} ${size*0.8} ${size*0.27} ${size*0.79} C${size*0.34} ${size*0.84} ${size*0.43} ${size*0.86} ${size*0.52} ${size*0.86} C${size*0.65} ${size*0.86} ${size*0.75} ${size*0.76} ${size*0.75} ${size*0.6} Z" fill="#FFF"/>`,
+    twitter: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.35}" fill="#1DA1F2"/>
+              <path d="M${size*0.7} ${size*0.4} C${size*0.68} ${size*0.42} ${size*0.65} ${size*0.43} ${size*0.62} ${size*0.43} C${size*0.65} ${size*0.41} ${size*0.67} ${size*0.38} ${size*0.68} ${size*0.35} C${size*0.66} ${size*0.36} ${size*0.63} ${size*0.37} ${size*0.6} ${size*0.38} C${size*0.57} ${size*0.36} ${size*0.54} ${size*0.34} ${size*0.5} ${size*0.34} C${size*0.42} ${size*0.34} ${size*0.36} ${size*0.4} ${size*0.36} ${size*0.47} C${size*0.31} ${size*0.46} ${size*0.27} ${size*0.44} ${size*0.25} ${size*0.41} C${size*0.25} ${size*0.48} ${size*0.29} ${size*0.54} ${size*0.35} ${size*0.57} C${size*0.33} ${size*0.58} ${size*0.31} ${size*0.58} ${size*0.29} ${size*0.57} C${size*0.3} ${size*0.61} ${size*0.34} ${size*0.64} ${size*0.38} ${size*0.65} C${size*0.36} ${size*0.66} ${size*0.33} ${size*0.66} ${size*0.31} ${size*0.65} C${size*0.36} ${size*0.69} ${size*0.43} ${size*0.7} ${size*0.5} ${size*0.7} C${size*0.6} ${size*0.7} ${size*0.7} ${size*0.62} ${size*0.7} ${size*0.5} Z" fill="#FFF"/>`,
     
-    linkedin: `
-      <rect x="${size*0.1}" y="${size*0.1}" width="${size*0.8}" height="${size*0.8}" rx="${size*0.15}" fill="#0A66C2"/>
-      <rect x="${size*0.22}" y="${size*0.45}" width="${size*0.15}" height="${size*0.33}" fill="#FFF"/>
-      <rect x="${size*0.63}" y="${size*0.5}" width="${size*0.15}" height="${size*0.28}" fill="#FFF"/>
-      <circle cx="${size*0.295}" cy="${size*0.35}" r="${size*0.06}" fill="#FFF"/>
-      <path d="M${size*0.63} ${size*0.45} C${size*0.58} ${size*0.45} ${size*0.54} ${size*0.48} ${size*0.54} ${size*0.52} L${size*0.54} ${size*0.5} L${size*0.63} ${size*0.5}" fill="#FFF"/>`,
+    linkedin: `<rect x="${size*0.15}" y="${size*0.15}" width="${size*0.7}" height="${size*0.7}" rx="${size*0.1}" fill="#0A66C2"/>
+               <rect x="${size*0.27}" y="${size*0.45}" width="${size*0.12}" height="${size*0.27}" fill="#FFF"/>
+               <rect x="${size*0.6}" y="${size*0.5}" width="${size*0.12}" height="${size*0.22}" fill="#FFF"/>
+               <circle cx="${size*0.33}" cy="${size*0.35}" r="${size*0.05}" fill="#FFF"/>`,
     
-    youtube: `
-      <rect x="${size*0.1}" y="${size*0.25}" width="${size*0.8}" height="${size*0.5}" rx="${size*0.08}" fill="#FF0000"/>
-      <path d="M${size*0.42} ${size*0.4} L${size*0.58} ${size*0.5} L${size*0.42} ${size*0.6} Z" fill="#FFF"/>`,
+    youtube: `<rect x="${size*0.15}" y="${size*0.3}" width="${size*0.7}" height="${size*0.4}" rx="${size*0.05}" fill="#FF0000"/>
+              <polygon points="${size*0.42},${size*0.42} ${size*0.58},${size/2} ${size*0.42},${size*0.58}" fill="#FFF"/>`,
     
-    tiktok: `
-      <circle cx="${size/2}" cy="${size/2}" r="${size*0.4}" fill="#000"/>
-      <path d="M${size*0.55} ${size*0.3} C${size*0.55} ${size*0.25} ${size*0.6} ${size*0.2} ${size*0.65} ${size*0.2} C${size*0.7} ${size*0.2} ${size*0.75} ${size*0.25} ${size*0.75} ${size*0.3} C${size*0.75} ${size*0.35} ${size*0.7} ${size*0.4} ${size*0.65} ${size*0.4} C${size*0.6} ${size*0.4} ${size*0.55} ${size*0.35} ${size*0.55} ${size*0.3} Z" fill="#FF0050"/>
-      <path d="M${size*0.45} ${size*0.35} C${size*0.45} ${size*0.3} ${size*0.5} ${size*0.25} ${size*0.55} ${size*0.25} C${size*0.6} ${size*0.25} ${size*0.65} ${size*0.3} ${size*0.65} ${size*0.35} C${size*0.65} ${size*0.4} ${size*0.6} ${size*0.45} ${size*0.55} ${size*0.45} L${size*0.55} ${size*0.7} C${size*0.5} ${size*0.7} ${size*0.45} ${size*0.65} ${size*0.45} ${size*0.6} Z" fill="#25F4EE"/>`,
+    tiktok: `<rect x="${size*0.15}" y="${size*0.15}" width="${size*0.7}" height="${size*0.7}" rx="${size*0.15}" fill="#000"/>
+             <text x="${size/2}" y="${size*0.65}" text-anchor="middle" fill="#FF0050" font-size="${size*0.4}" font-weight="bold">♪</text>`,
     
-    // Streaming & Entertainment
-    spotify: `
-      <circle cx="${size/2}" cy="${size/2}" r="${size*0.4}" fill="#1DB954"/>
-      <path d="M${size*0.3} ${size*0.42} Q${size/2} ${size*0.35} ${size*0.7} ${size*0.42}" stroke="#FFF" stroke-width="3" fill="none" stroke-linecap="round"/>
-      <path d="M${size*0.32} ${size*0.5} Q${size/2} ${size*0.45} ${size*0.68} ${size*0.5}" stroke="#FFF" stroke-width="3" fill="none" stroke-linecap="round"/>
-      <path d="M${size*0.35} ${size*0.58} Q${size/2} ${size*0.55} ${size*0.65} ${size*0.58}" stroke="#FFF" stroke-width="3" fill="none" stroke-linecap="round"/>`,
+    spotify: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.35}" fill="#1DB954"/>
+              <path d="M${size*0.35} ${size*0.45} Q${size/2} ${size*0.4} ${size*0.65} ${size*0.45}" stroke="#FFF" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <path d="M${size*0.37} ${size*0.52} Q${size/2} ${size*0.48} ${size*0.63} ${size*0.52}" stroke="#FFF" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <path d="M${size*0.4} ${size*0.59} Q${size/2} ${size*0.56} ${size*0.6} ${size*0.59}" stroke="#FFF" stroke-width="3" fill="none" stroke-linecap="round"/>`,
     
-    netflix: `
-      <rect x="${size*0.1}" y="${size*0.1}" width="${size*0.8}" height="${size*0.8}" rx="${size*0.05}" fill="#E50914"/>
-      <rect x="${size*0.25}" y="${size*0.25}" width="${size*0.12}" height="${size*0.5}" fill="#FFF"/>
-      <rect x="${size*0.44}" y="${size*0.25}" width="${size*0.12}" height="${size*0.5}" fill="#FFF"/>
-      <rect x="${size*0.63}" y="${size*0.25}" width="${size*0.12}" height="${size*0.5}" fill="#FFF"/>
-      <path d="M${size*0.25} ${size*0.25} L${size*0.63} ${size*0.75} L${size*0.75} ${size*0.75} L${size*0.37} ${size*0.25} Z" fill="#FFF"/>`,
+    netflix: `<rect x="${size*0.15}" y="${size*0.15}" width="${size*0.7}" height="${size*0.7}" rx="${size*0.05}" fill="#E50914"/>
+              <text x="${size/2}" y="${size*0.65}" text-anchor="middle" fill="#FFF" font-size="${size*0.35}" font-weight="bold">N</text>`,
     
-    twitch: `
-      <rect x="${size*0.1}" y="${size*0.1}" width="${size*0.8}" height="${size*0.8}" rx="${size*0.1}" fill="#9146FF"/>
-      <rect x="${size*0.32}" y="${size*0.3}" width="${size*0.08}" height="${size*0.25}" fill="#FFF"/>
-      <rect x="${size*0.52}" y="${size*0.3}" width="${size*0.08}" height="${size*0.25}" fill="#FFF"/>
-      <path d="M${size*0.15} ${size*0.15} L${size*0.15} ${size*0.7} L${size*0.3} ${size*0.7} L${size*0.3} ${size*0.8} L${size*0.4} ${size*0.8} L${size*0.45} ${size*0.75} L${size*0.7} ${size*0.75} L${size*0.85} ${size*0.6} L${size*0.85} ${size*0.15} Z" fill="#FFF"/>`,
+    twitch: `<rect x="${size*0.15}" y="${size*0.15}" width="${size*0.7}" height="${size*0.7}" rx="${size*0.1}" fill="#9146FF"/>
+             <rect x="${size*0.35}" y="${size*0.35}" width="${size*0.08}" height="${size*0.2}" fill="#FFF"/>
+             <rect x="${size*0.5}" y="${size*0.35}" width="${size*0.08}" height="${size*0.2}" fill="#FFF"/>
+             <rect x="${size*0.4}" y="${size*0.65}" width="${size*0.2}" height="${size*0.08}" fill="#FFF"/>`,
     
-    discord: `
-      <rect x="${size*0.1}" y="${size*0.1}" width="${size*0.8}" height="${size*0.8}" rx="${size*0.2}" fill="#5865F2"/>
-      <ellipse cx="${size/2}" cy="${size*0.48}" rx="${size*0.22}" ry="${size*0.18}" fill="#FFF"/>
-      <circle cx="${size*0.42}" cy="${size*0.45}" r="${size*0.04}" fill="#5865F2"/>
-      <circle cx="${size*0.58}" cy="${size*0.45}" r="${size*0.04}" fill="#5865F2"/>
-      <path d="M${size*0.35} ${size*0.28} Q${size*0.28} ${size*0.32} ${size*0.32} ${size*0.4}" stroke="#FFF" stroke-width="4" fill="none" stroke-linecap="round"/>
-      <path d="M${size*0.65} ${size*0.28} Q${size*0.72} ${size*0.32} ${size*0.68} ${size*0.4}" stroke="#FFF" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+    discord: `<rect x="${size*0.15}" y="${size*0.15}" width="${size*0.7}" height="${size*0.7}" rx="${size*0.15}" fill="#5865F2"/>
+              <ellipse cx="${size/2}" cy="${size*0.45}" rx="${size*0.18}" ry="${size*0.12}" fill="#FFF"/>
+              <circle cx="${size*0.45}" cy="${size*0.43}" r="${size*0.03}" fill="#5865F2"/>
+              <circle cx="${size*0.55}" cy="${size*0.43}" r="${size*0.03}" fill="#5865F2"/>`,
     
-    whatsapp: `
-      <circle cx="${size/2}" cy="${size/2}" r="${size*0.4}" fill="#25D366"/>
-      <path d="M${size*0.3} ${size*0.65} L${size*0.32} ${size*0.58} Q${size*0.32} ${size*0.45} ${size*0.42} ${size*0.42} Q${size*0.52} ${size*0.42} ${size*0.58} ${size*0.48} Q${size*0.58} ${size*0.58} ${size*0.52} ${size*0.62} Q${size*0.48} ${size*0.65} ${size*0.42} ${size*0.62} L${size*0.35} ${size*0.68} Z" fill="#FFF"/>
-      <circle cx="${size*0.42}" cy="${size*0.48}" r="${size*0.08}" fill="none" stroke="#25D366" stroke-width="2"/>`,
+    whatsapp: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.35}" fill="#25D366"/>
+               <circle cx="${size/2}" cy="${size/2}" r="${size*0.18}" fill="none" stroke="#FFF" stroke-width="3"/>
+               <path d="M${size*0.35} ${size*0.6} L${size*0.4} ${size*0.55} L${size*0.6} ${size*0.55} L${size*0.65} ${size*0.6}" stroke="#FFF" stroke-width="3" fill="none" stroke-linecap="round"/>`,
     
-    telegram: `
-      <circle cx="${size/2}" cy="${size/2}" r="${size*0.4}" fill="#0088CC"/>
-      <path d="M${size*0.28} ${size*0.52} L${size*0.65} ${size*0.35} Q${size*0.7} ${size*0.33} ${size*0.68} ${size*0.38} L${size*0.58} ${size*0.7} Q${size*0.56} ${size*0.75} ${size*0.52} ${size*0.72} L${size*0.45} ${size*0.55} L${size*0.3} ${size*0.58} Q${size*0.25} ${size*0.6} ${size*0.28} ${size*0.52} Z" fill="#FFF"/>`,
+    telegram: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.35}" fill="#0088CC"/>
+               <polygon points="${size*0.35},${size*0.55} ${size*0.65},${size*0.4} ${size*0.5},${size*0.5} ${size*0.45},${size*0.65}" fill="#FFF"/>`,
   };
 
   const logoPath = logoMap[logoType];
