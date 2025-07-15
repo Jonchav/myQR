@@ -173,15 +173,7 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
     }
   };
 
-  const getStyleDisplay = (style: string) => {
-    switch (style) {
-      case "square": return "Cuadrado";
-      case "rounded": return "Redondeado";
-      case "circle": return "Circular";
-      case "dots": return "Puntos";
-      default: return style;
-    }
-  };
+
 
   if (isLoading) {
     return (
@@ -290,12 +282,6 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                   <div className="flex items-center gap-2 mb-1">
                     <Badge className={getTypeColor(qrCode.type)}>
                       {qrCode.type.toUpperCase()}
-                    </Badge>
-                    <Badge variant="outline" className="text-xs">
-                      {getStyleDisplay(qrCode.style)}
-                    </Badge>
-                    <Badge variant="outline" className="text-xs">
-                      {qrCode.size}
                     </Badge>
                     <Badge variant="outline" className="border-gray-600 text-gray-300">
                       {qrCode.scanCount || 0} scans
