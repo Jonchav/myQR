@@ -105,54 +105,64 @@ async function compositeQRWithBackground(qrDataUrl: string, backgroundImageDataU
     const bgBuffer = Buffer.from(bgBase64, 'base64');
     
     console.log('Processing background image...');
-    // Process the background image with blur and darker tone
+    // Process the background image to fit QR size
     const processedBackground = await sharp(bgBuffer)
       .resize(size, size, { fit: 'cover' })
-      .blur(2) // Slight blur for better QR visibility
-      .modulate({ brightness: 0.4, saturation: 0.8 }) // Darken and desaturate
       .png()
       .toBuffer();
     
-    console.log('Processing QR code with mask...');
-    // Create a mask from the QR code to identify white areas
-    const qrMask = await sharp(qrBuffer)
+    console.log('Processing QR code for masking...');
+    // Get the QR code and create a mask for white areas
+    const qrImage = await sharp(qrBuffer)
       .resize(size, size, { fit: 'contain' })
-      .threshold(128) // Convert to black and white
-      .negate() // Invert so white areas become black
       .png()
       .toBuffer();
     
-    // Create a white overlay for QR background areas
-    const whiteOverlay = await sharp({
-      create: {
-        width: size,
-        height: size,
-        channels: 4,
-        background: { r: 255, g: 255, b: 255, alpha: 1 }
-      }
-    })
-    .png()
-    .toBuffer();
+    // Create a mask that identifies white areas (background) of the QR
+    // White areas in QR should show background, black areas should stay black
+    const whiteMask = await sharp(qrImage)
+      .threshold(200) // Identify white/light areas
+      .png()
+      .toBuffer();
     
-    console.log('Compositing layers...');
-    // Step 1: Apply white overlay only where QR background should be
-    const backgroundWithOverlay = await sharp(processedBackground)
+    // Create inverted mask for black areas
+    const blackMask = await sharp(qrImage)
+      .threshold(200) // Identify white/light areas
+      .negate() // Invert to get black areas
+      .png()
+      .toBuffer();
+    
+    console.log('Creating composite with selective background...');
+    // Step 1: Start with the background image
+    let result = await sharp(processedBackground);
+    
+    // Step 2: Apply white mask to show background only in white QR areas
+    const backgroundInWhiteAreas = await sharp(processedBackground)
       .composite([
-        { input: whiteOverlay, blend: 'over' }
+        { input: whiteMask, blend: 'multiply' }
       ])
       .png()
       .toBuffer();
     
-    // Step 2: Apply the QR code on top
-    const finalQR = await sharp(qrBuffer)
-      .resize(size, size, { fit: 'contain' })
-      .png()
-      .toBuffer();
+    // Step 3: Create black QR areas
+    const blackQRAreas = await sharp({
+      create: {
+        width: size,
+        height: size,
+        channels: 4,
+        background: { r: 0, g: 0, b: 0, alpha: 1 }
+      }
+    })
+    .composite([
+      { input: blackMask, blend: 'multiply' }
+    ])
+    .png()
+    .toBuffer();
     
-    // Step 3: Final composition
-    const compositeBuffer = await sharp(backgroundWithOverlay)
+    // Step 4: Final composition: background in white areas + black QR areas
+    const compositeBuffer = await sharp(backgroundInWhiteAreas)
       .composite([
-        { input: finalQR, blend: 'over' }
+        { input: blackQRAreas, blend: 'over' }
       ])
       .png()
       .toBuffer();
