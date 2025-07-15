@@ -41,7 +41,9 @@ const qrGenerationSchema = z.object({
   border: z.enum(["none", "thin", "thick", "double"]).default("none"),
   logo: z.enum([
     "none", "replit", "custom", "star", "heart", "diamond", 
-    "crown", "shield", "rocket", "lightning", "check"
+    "crown", "shield", "rocket", "lightning", "check",
+    "instagram", "facebook", "twitter", "linkedin", "youtube", "tiktok",
+    "spotify", "netflix", "twitch", "discord", "whatsapp", "telegram"
   ]).default("none"),
   includeText: z.boolean().default(false),
   textContent: z.string().optional(),
@@ -71,6 +73,62 @@ function getErrorCorrectionLevel(level: string): "L" | "M" | "Q" | "H" {
   }
 }
 
+// Function to generate logo SVG
+function generateLogoSVG(logoType: string, size: number = 60, color: string = "#000000"): string {
+  const logoMap: { [key: string]: string } = {
+    star: `<path d="M${size/2} ${size*0.1} L${size*0.618} ${size*0.382} L${size*0.95} ${size*0.382} L${size*0.691} ${size*0.618} L${size*0.809} ${size*0.9} L${size/2} ${size*0.764} L${size*0.191} ${size*0.9} L${size*0.309} ${size*0.618} L${size*0.05} ${size*0.382} L${size*0.382} ${size*0.382} Z" fill="${color}"/>`,
+    heart: `<path d="M${size/2} ${size*0.8} C${size*0.2} ${size*0.6} ${size*0.2} ${size*0.3} ${size*0.35} ${size*0.3} C${size*0.425} ${size*0.3} ${size/2} ${size*0.4} ${size/2} ${size*0.4} C${size/2} ${size*0.4} ${size*0.575} ${size*0.3} ${size*0.65} ${size*0.3} C${size*0.8} ${size*0.3} ${size*0.8} ${size*0.6} ${size/2} ${size*0.8} Z" fill="${color}"/>`,
+    diamond: `<path d="M${size/2} ${size*0.1} L${size*0.8} ${size*0.4} L${size/2} ${size*0.9} L${size*0.2} ${size*0.4} Z" fill="${color}"/>`,
+    crown: `<path d="M${size*0.1} ${size*0.7} L${size*0.9} ${size*0.7} L${size*0.85} ${size*0.3} L${size*0.65} ${size*0.45} L${size/2} ${size*0.2} L${size*0.35} ${size*0.45} L${size*0.15} ${size*0.3} Z" fill="${color}"/>`,
+    check: `<path d="M${size*0.2} ${size*0.5} L${size*0.4} ${size*0.7} L${size*0.8} ${size*0.3}" stroke="${color}" stroke-width="6" fill="none" stroke-linecap="round"/>`,
+    
+    // Social Media Logos (simplified SVG shapes)
+    instagram: `<rect x="${size*0.2}" y="${size*0.2}" width="${size*0.6}" height="${size*0.6}" rx="${size*0.15}" fill="none" stroke="${color}" stroke-width="4"/>
+                <circle cx="${size/2}" cy="${size/2}" r="${size*0.15}" fill="none" stroke="${color}" stroke-width="4"/>
+                <circle cx="${size*0.7}" cy="${size*0.3}" r="${size*0.05}" fill="${color}"/>`,
+    facebook: `<path d="M${size*0.3} ${size*0.9} L${size*0.3} ${size*0.55} L${size*0.2} ${size*0.55} L${size*0.2} ${size*0.4} L${size*0.3} ${size*0.4} L${size*0.3} ${size*0.35} C${size*0.3} ${size*0.2} ${size*0.4} ${size*0.1} ${size*0.55} ${size*0.1} L${size*0.65} ${size*0.1} L${size*0.65} ${size*0.25} L${size*0.55} ${size*0.25} C${size*0.5} ${size*0.25} ${size*0.45} ${size*0.3} ${size*0.45} ${size*0.35} L${size*0.45} ${size*0.4} L${size*0.6} ${size*0.4} L${size*0.58} ${size*0.55} L${size*0.45} ${size*0.55} L${size*0.45} ${size*0.9} Z" fill="${color}"/>`,
+    twitter: `<path d="M${size*0.9} ${size*0.25} C${size*0.85} ${size*0.3} ${size*0.8} ${size*0.32} ${size*0.74} ${size*0.33} C${size*0.8} ${size*0.29} ${size*0.84} ${size*0.23} ${size*0.86} ${size*0.16} C${size*0.82} ${size*0.18} ${size*0.77} ${size*0.21} ${size*0.72} ${size*0.23} C${size*0.67} ${size*0.19} ${size*0.6} ${size*0.17} ${size*0.53} ${size*0.17} C${size*0.38} ${size*0.17} ${size*0.26} ${size*0.29} ${size*0.26} ${size*0.44} C${size*0.26} ${size*0.47} ${size*0.27} ${size*0.5} ${size*0.28} ${size*0.53} C${size*0.19} ${size*0.52} ${size*0.11} ${size*0.47} ${size*0.06} ${size*0.4} C${size*0.06} ${size*0.54} ${size*0.15} ${size*0.66} ${size*0.27} ${size*0.72} C${size*0.24} ${size*0.73} ${size*0.21} ${size*0.73} ${size*0.18} ${size*0.72} C${size*0.2} ${size*0.8} ${size*0.28} ${size*0.86} ${size*0.37} ${size*0.88} C${size*0.32} ${size*0.9} ${size*0.26} ${size*0.91} ${size*0.2} ${size*0.9} C${size*0.3} ${size*0.97} ${size*0.43} ${size} ${size*0.57} ${size} C${size*0.76} ${size} ${size*0.9} ${size*0.86} ${size*0.9} ${size*0.63} Z" fill="${color}"/>`,
+    linkedin: `<rect x="${size*0.15}" y="${size*0.15}" width="${size*0.7}" height="${size*0.7}" rx="${size*0.1}" fill="none" stroke="${color}" stroke-width="3"/>
+               <rect x="${size*0.25}" y="${size*0.4}" width="${size*0.15}" height="${size*0.35}" fill="${color}"/>
+               <rect x="${size*0.6}" y="${size*0.45}" width="${size*0.15}" height="${size*0.3}" fill="${color}"/>
+               <circle cx="${size*0.325}" cy="${size*0.3}" r="${size*0.05}" fill="${color}"/>`,
+    youtube: `<rect x="${size*0.1}" y="${size*0.3}" width="${size*0.8}" height="${size*0.4}" rx="${size*0.05}" fill="none" stroke="${color}" stroke-width="3"/>
+              <path d="M${size*0.4} ${size*0.42} L${size*0.65} ${size*0.5} L${size*0.4} ${size*0.58} Z" fill="${color}"/>`,
+    tiktok: `<circle cx="${size*0.4}" cy="${size*0.45}" r="${size*0.15}" fill="none" stroke="${color}" stroke-width="3"/>
+             <circle cx="${size*0.55}" cy="${size*0.35}" r="${size*0.1}" fill="none" stroke="${color}" stroke-width="3"/>
+             <path d="M${size*0.35} ${size*0.6} L${size*0.35} ${size*0.85}" stroke="${color}" stroke-width="4" stroke-linecap="round"/>`,
+    
+    // Streaming & Entertainment
+    spotify: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.35}" fill="none" stroke="${color}" stroke-width="4"/>
+              <path d="M${size*0.25} ${size*0.4} Q${size*0.5} ${size*0.3} ${size*0.75} ${size*0.4}" stroke="${color}" stroke-width="3" fill="none"/>
+              <path d="M${size*0.3} ${size*0.5} Q${size*0.5} ${size*0.45} ${size*0.7} ${size*0.5}" stroke="${color}" stroke-width="3" fill="none"/>
+              <path d="M${size*0.35} ${size*0.6} Q${size*0.5} ${size*0.55} ${size*0.65} ${size*0.6}" stroke="${color}" stroke-width="3" fill="none"/>`,
+    netflix: `<rect x="${size*0.2}" y="${size*0.15}" width="${size*0.6}" height="${size*0.7}" rx="${size*0.05}" fill="none" stroke="${color}" stroke-width="3"/>
+              <rect x="${size*0.25}" y="${size*0.25}" width="${size*0.5}" height="${size*0.15}" fill="${color}"/>
+              <rect x="${size*0.25}" y="${size*0.45}" width="${size*0.5}" height="${size*0.05}" fill="${color}"/>
+              <rect x="${size*0.25}" y="${size*0.55}" width="${size*0.5}" height="${size*0.05}" fill="${color}"/>`,
+    twitch: `<rect x="${size*0.2}" y="${size*0.2}" width="${size*0.6}" height="${size*0.6}" rx="${size*0.1}" fill="none" stroke="${color}" stroke-width="3"/>
+             <rect x="${size*0.35}" y="${size*0.3}" width="${size*0.08}" height="${size*0.25}" fill="${color}"/>
+             <rect x="${size*0.55}" y="${size*0.3}" width="${size*0.08}" height="${size*0.25}" fill="${color}"/>`,
+    discord: `<ellipse cx="${size/2}" cy="${size*0.45}" rx="${size*0.25}" ry="${size*0.2}" fill="none" stroke="${color}" stroke-width="3"/>
+              <circle cx="${size*0.4}" cy="${size*0.42}" r="${size*0.04}" fill="${color}"/>
+              <circle cx="${size*0.6}" cy="${size*0.42}" r="${size*0.04}" fill="${color}"/>
+              <path d="M${size*0.35} ${size*0.25} Q${size*0.25} ${size*0.3} ${size*0.3} ${size*0.4}" stroke="${color}" stroke-width="3" fill="none"/>
+              <path d="M${size*0.65} ${size*0.25} Q${size*0.75} ${size*0.3} ${size*0.7} ${size*0.4}" stroke="${color}" stroke-width="3" fill="none"/>`,
+    whatsapp: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.35}" fill="none" stroke="${color}" stroke-width="3"/>
+               <path d="M${size*0.3} ${size*0.7} L${size*0.35} ${size*0.6} Q${size*0.35} ${size*0.4} ${size*0.5} ${size*0.35} Q${size*0.65} ${size*0.35} ${size*0.7} ${size*0.5} Q${size*0.7} ${size*0.6} ${size*0.6} ${size*0.65}" stroke="${color}" stroke-width="2" fill="none"/>`,
+    telegram: `<circle cx="${size/2}" cy="${size/2}" r="${size*0.35}" fill="none" stroke="${color}" stroke-width="3"/>
+               <path d="M${size*0.25} ${size*0.55} L${size*0.7} ${size*0.3} L${size*0.5} ${size*0.45} L${size*0.4} ${size*0.7} Z" fill="${color}"/>`,
+  };
+
+  const logoPath = logoMap[logoType];
+  if (!logoPath) return "";
+
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
+    ${logoPath}
+  </svg>`;
+}
+
 // Function to generate advanced QR code
 async function generateAdvancedQRCode(options: any): Promise<string> {
   const size = getQRSize(options.size);
@@ -98,7 +156,46 @@ async function generateAdvancedQRCode(options: any): Promise<string> {
     console.log('Background image processed successfully');
   }
   
+  // Add logo if specified
+  if (options.logo && options.logo !== "none") {
+    console.log('Adding logo to QR code...');
+    qrDataUrl = await addLogoToQR(qrDataUrl, options.logo, size, options.foregroundColor);
+    console.log('Logo added successfully');
+  }
+  
   return qrDataUrl;
+}
+
+// Function to add logo to QR code
+async function addLogoToQR(qrDataUrl: string, logoType: string, qrSize: number, logoColor: string): Promise<string> {
+  try {
+    const logoSize = Math.floor(qrSize * 0.2); // Logo is 20% of QR size
+    const logoSVG = generateLogoSVG(logoType, logoSize, logoColor);
+    
+    if (!logoSVG) return qrDataUrl;
+    
+    // Convert QR code to buffer
+    const qrBase64 = qrDataUrl.replace(/^data:image\/[a-z]+;base64,/, '');
+    const qrBuffer = Buffer.from(qrBase64, 'base64');
+    
+    // Convert SVG to buffer
+    const logoBuffer = Buffer.from(logoSVG);
+    
+    // Create composite image with logo centered
+    const result = await sharp(qrBuffer)
+      .composite([{
+        input: logoBuffer,
+        top: Math.floor((qrSize - logoSize) / 2),
+        left: Math.floor((qrSize - logoSize) / 2),
+      }])
+      .png()
+      .toBuffer();
+    
+    return `data:image/png;base64,${result.toString('base64')}`;
+  } catch (error) {
+    console.error('Error adding logo to QR:', error);
+    return qrDataUrl; // Return original QR if logo fails
+  }
 }
 
 // Function to composite QR code with background image

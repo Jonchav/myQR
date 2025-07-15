@@ -413,7 +413,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
         )}
 
         <Tabs defaultValue="themes" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="themes" className="flex items-center gap-1">
               <Sparkles className="w-4 h-4" />
               <span className="hidden sm:inline">Temas</span>
@@ -422,13 +422,9 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
               <Palette className="w-4 h-4" />
               <span className="hidden sm:inline">Colores</span>
             </TabsTrigger>
-            <TabsTrigger value="style" className="flex items-center gap-1">
+            <TabsTrigger value="design" className="flex items-center gap-1">
               <Layers className="w-4 h-4" />
-              <span className="hidden sm:inline">Estilo</span>
-            </TabsTrigger>
-            <TabsTrigger value="frame" className="flex items-center gap-1">
-              <Frame className="w-4 h-4" />
-              <span className="hidden sm:inline">Marco</span>
+              <span className="hidden sm:inline">Diseño</span>
             </TabsTrigger>
             <TabsTrigger value="advanced" className="flex items-center gap-1">
               <Settings className="w-4 h-4" />
@@ -621,7 +617,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
             </div>
           </TabsContent>
 
-          <TabsContent value="style" className="space-y-6">
+          <TabsContent value="design" className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Estilo del QR</Label>
@@ -630,10 +626,10 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="square">Cuadrado</SelectItem>
-                    <SelectItem value="rounded">Redondeado</SelectItem>
-                    <SelectItem value="circle">Circular</SelectItem>
-                    <SelectItem value="dots">Puntos</SelectItem>
+                    <SelectItem value="square">◼️ Cuadrado Clásico</SelectItem>
+                    <SelectItem value="rounded">🔵 Redondeado Suave</SelectItem>
+                    <SelectItem value="circle">⭕ Circular Moderno</SelectItem>
+                    <SelectItem value="dots">⚫ Puntos Elegantes</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -645,10 +641,10 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="small">Pequeño (200px)</SelectItem>
-                    <SelectItem value="medium">Mediano (300px)</SelectItem>
-                    <SelectItem value="large">Grande (400px)</SelectItem>
-                    <SelectItem value="xlarge">Extra Grande (500px)</SelectItem>
+                    <SelectItem value="small">📱 Pequeño (200px)</SelectItem>
+                    <SelectItem value="medium">💻 Mediano (300px)</SelectItem>
+                    <SelectItem value="large">🖥️ Grande (400px)</SelectItem>
+                    <SelectItem value="xlarge">📺 Extra Grande (500px)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -674,12 +670,10 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                 </SelectContent>
               </Select>
             </div>
-          </TabsContent>
 
-          <TabsContent value="frame" className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Marco</Label>
+                <Label>Marco Decorativo</Label>
                 <Select value={settings.frame} onValueChange={(value) => applyRealTimeChange("frame", value)}>
                   <SelectTrigger>
                     <SelectValue />
@@ -687,12 +681,9 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                   <SelectContent>
                     <SelectItem value="none">Sin marco</SelectItem>
                     <SelectItem value="simple">📱 Simple</SelectItem>
-                    <SelectItem value="decorative">🎨 Decorativo</SelectItem>
-                    <SelectItem value="floral">🌸 Floral</SelectItem>
-                    <SelectItem value="tech">💻 Tecnológico</SelectItem>
                     <SelectItem value="elegant">✨ Elegante</SelectItem>
-                    <SelectItem value="vintage">🏛️ Vintage</SelectItem>
                     <SelectItem value="modern">🔮 Moderno</SelectItem>
+                    <SelectItem value="tech">💻 Tecnológico</SelectItem>
                     <SelectItem value="corporate">🏢 Corporativo</SelectItem>
                   </SelectContent>
                 </Select>
@@ -714,26 +705,94 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label>Logo Central</Label>
-              <Select value={settings.logo} onValueChange={(value) => applyRealTimeChange("logo", value)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">Sin logo</SelectItem>
-                  <SelectItem value="replit">🟢 Replit</SelectItem>
-                  <SelectItem value="custom">🎨 Personalizado</SelectItem>
-                  <SelectItem value="star">⭐ Estrella</SelectItem>
-                  <SelectItem value="heart">❤️ Corazón</SelectItem>
-                  <SelectItem value="diamond">💎 Diamante</SelectItem>
-                  <SelectItem value="crown">👑 Corona</SelectItem>
-                  <SelectItem value="shield">🛡️ Escudo</SelectItem>
-                  <SelectItem value="rocket">🚀 Cohete</SelectItem>
-                  <SelectItem value="lightning">⚡ Rayo</SelectItem>
-                  <SelectItem value="check">✅ Check</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="space-y-4">
+              <Label className="text-base font-semibold">Logo Central</Label>
+              
+              {/* Logos de Apps y Redes Sociales */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Label className="text-sm font-medium">Redes Sociales</Label>
+                  <Badge variant="outline" className="text-xs">Popular</Badge>
+                </div>
+                <div className="grid grid-cols-6 gap-2">
+                  {[
+                    { value: "instagram", icon: "📷", name: "Instagram" },
+                    { value: "facebook", icon: "📘", name: "Facebook" },
+                    { value: "twitter", icon: "🐦", name: "Twitter" },
+                    { value: "linkedin", icon: "💼", name: "LinkedIn" },
+                    { value: "youtube", icon: "▶️", name: "YouTube" },
+                    { value: "tiktok", icon: "🎵", name: "TikTok" },
+                  ].map((social) => (
+                    <Button
+                      key={social.value}
+                      variant={settings.logo === social.value ? "default" : "outline"}
+                      size="sm"
+                      className="h-12 p-2 flex flex-col items-center gap-1"
+                      onClick={() => applyRealTimeChange("logo", social.value)}
+                    >
+                      <span className="text-lg">{social.icon}</span>
+                      <span className="text-xs">{social.name}</span>
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Logos de Streaming */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Label className="text-sm font-medium">Streaming & Entretenimiento</Label>
+                  <Badge variant="outline" className="text-xs">Trending</Badge>
+                </div>
+                <div className="grid grid-cols-6 gap-2">
+                  {[
+                    { value: "spotify", icon: "🎵", name: "Spotify" },
+                    { value: "netflix", icon: "🎬", name: "Netflix" },
+                    { value: "twitch", icon: "🎮", name: "Twitch" },
+                    { value: "discord", icon: "🎯", name: "Discord" },
+                    { value: "whatsapp", icon: "💬", name: "WhatsApp" },
+                    { value: "telegram", icon: "📨", name: "Telegram" },
+                  ].map((app) => (
+                    <Button
+                      key={app.value}
+                      variant={settings.logo === app.value ? "default" : "outline"}
+                      size="sm"
+                      className="h-12 p-2 flex flex-col items-center gap-1"
+                      onClick={() => applyRealTimeChange("logo", app.value)}
+                    >
+                      <span className="text-lg">{app.icon}</span>
+                      <span className="text-xs">{app.name}</span>
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Logos Generales */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Label className="text-sm font-medium">Iconos Generales</Label>
+                </div>
+                <div className="grid grid-cols-6 gap-2">
+                  {[
+                    { value: "none", icon: "🚫", name: "Sin logo" },
+                    { value: "star", icon: "⭐", name: "Estrella" },
+                    { value: "heart", icon: "❤️", name: "Corazón" },
+                    { value: "diamond", icon: "💎", name: "Diamante" },
+                    { value: "crown", icon: "👑", name: "Corona" },
+                    { value: "check", icon: "✅", name: "Check" },
+                  ].map((icon) => (
+                    <Button
+                      key={icon.value}
+                      variant={settings.logo === icon.value ? "default" : "outline"}
+                      size="sm"
+                      className="h-12 p-2 flex flex-col items-center gap-1"
+                      onClick={() => applyRealTimeChange("logo", icon.value)}
+                    >
+                      <span className="text-lg">{icon.icon}</span>
+                      <span className="text-xs">{icon.name}</span>
+                    </Button>
+                  ))}
+                </div>
+              </div>
             </div>
           </TabsContent>
 
