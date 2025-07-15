@@ -15,7 +15,7 @@ export default function Landing() {
                 <QrCode className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900 dark:text-white">QR Pro</h1>
+                <h1 className="text-xl font-bold text-gray-900 dark:text-white">myQR</h1>
                 <p className="text-sm text-gray-600 dark:text-gray-400">Generador Profesional</p>
               </div>
             </div>

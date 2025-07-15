@@ -1,8 +1,8 @@
-# QR Code Generator Application
+# myQR - QR Code Generator Application
 
 ## Overview
 
-This is a full-stack web application built with React and Express that allows users to generate QR codes from URLs. The application features a clean, modern interface using shadcn/ui components and provides immediate QR code generation with download capabilities.
+This is a full-stack web application built with React and Express that allows users to generate QR codes from URLs. The application features a clean, modern interface using shadcn/ui components and provides immediate QR code generation with download capabilities. The app is branded as "myQR" with a professional, elegant design.
 
 ## User Preferences
 
@@ -16,6 +16,7 @@ Preferred communication style: Simple, everyday language.
 - **Enhanced Landing Page**: Created professional landing page with features showcase for non-authenticated users
 - **Dark Mode Support**: Added complete dark/light theme system with toggle functionality
 - **Replit Authentication**: Integrated full authentication system with user sessions, profile management, and logout functionality
+- **Brand Update**: Changed app name from "QR Pro" to "myQR" across all interfaces and documentation
 
 ## System Architecture
 

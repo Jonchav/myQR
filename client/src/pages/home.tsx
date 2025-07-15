@@ -199,7 +199,7 @@ export default function Home() {
                 <QrCode className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-white">QR Pro</h1>
+                <h1 className="text-xl font-bold text-white">myQR</h1>
                 <p className="text-sm text-gray-400">Generador Profesional</p>
               </div>
             </div>
