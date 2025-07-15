@@ -183,7 +183,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating }: Q
   const applyTheme = (themeKey: string) => {
     const theme = themeStyles[themeKey];
     if (theme) {
-      onChange({
+      const newSettings = {
         ...settings,
         backgroundColor: theme.colors.bg,
         foregroundColor: theme.colors.fg,
@@ -191,8 +191,80 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating }: Q
         pattern: theme.pattern,
         frame: theme.frame,
         style: theme.style
-      });
+      };
+      onChange(newSettings);
     }
+  };
+
+  // Función para crear una vista previa visual simple del QR
+  const createQRPreview = (theme: any) => {
+    const patternClass = theme.pattern === "rounded" ? "rounded-sm" : 
+                        theme.pattern === "heart" ? "rounded-full" : 
+                        theme.pattern === "star" ? "transform rotate-45" : 
+                        theme.pattern === "diamond" ? "transform rotate-45" : 
+                        theme.pattern === "hexagon" ? "clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)" : "";
+    
+    // Crear patrón más realista del QR
+    const qrPattern = [
+      1,1,1,0,1,1,1,
+      1,0,0,0,0,0,1,
+      1,0,1,1,1,0,1,
+      0,0,0,1,0,0,0,
+      1,1,1,0,1,1,1,
+      1,0,0,0,0,0,1,
+      1,1,1,1,1,1,1,
+    ];
+
+    return (
+      <div 
+        className="w-16 h-16 border-2 rounded-lg p-1 shadow-sm relative overflow-hidden"
+        style={{ 
+          backgroundColor: theme.colors.bg,
+          borderColor: theme.colors.fg 
+        }}
+      >
+        <div className="grid grid-cols-7 gap-0.5 h-full">
+          {qrPattern.map((cell, i) => (
+            <div
+              key={i}
+              className={`${patternClass} transition-all duration-200`}
+              style={{
+                backgroundColor: cell ? theme.colors.fg : theme.colors.bg,
+                width: "100%",
+                height: "100%",
+                opacity: cell ? 1 : 0.3
+              }}
+            />
+          ))}
+        </div>
+        
+        {/* Indicador de gradiente */}
+        {theme.gradient !== "none" && (
+          <div 
+            className="absolute inset-0 rounded-lg opacity-30"
+            style={{
+              background: theme.gradient === "rainbow" ? "linear-gradient(135deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3)" :
+                         theme.gradient === "fire" ? "linear-gradient(135deg, #ff4500, #ff6347, #ffa500)" :
+                         theme.gradient === "ocean" ? "linear-gradient(135deg, #006994, #0080ff, #00bfff)" :
+                         theme.gradient === "cosmic" ? "linear-gradient(135deg, #1a1a2e, #16213e, #0f3460)" :
+                         theme.gradient === "neon" ? "linear-gradient(135deg, #00ff88, #00d4ff, #ff00ff)" :
+                         theme.gradient === "gold" ? "linear-gradient(135deg, #ffd700, #ffb347, #ff8c00)" :
+                         `linear-gradient(135deg, ${theme.colors.bg}, ${theme.colors.fg})`
+            }}
+          />
+        )}
+      </div>
+    );
+  };
+
+  // Función para verificar si un tema está activo
+  const isThemeActive = (theme: any) => {
+    return settings.backgroundColor === theme.colors.bg && 
+           settings.foregroundColor === theme.colors.fg &&
+           settings.gradient === theme.gradient &&
+           settings.pattern === theme.pattern &&
+           settings.frame === theme.frame &&
+           settings.style === theme.style;
   };
 
   return (
@@ -238,13 +310,24 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating }: Q
               </div>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {Object.entries(themeStyles).map(([key, theme]) => (
-                  <Card 
-                    key={key} 
-                    className="cursor-pointer hover:shadow-lg transition-all duration-200 border-2 hover:border-purple-300 dark:hover:border-purple-600"
-                    onClick={() => applyTheme(key)}
-                  >
-                    <CardContent className="p-4">
+                {Object.entries(themeStyles).map(([key, theme]) => {
+                  const isActive = isThemeActive(theme);
+                  return (
+                    <Card 
+                      key={key} 
+                      className={`cursor-pointer hover:shadow-lg transition-all duration-200 border-2 ${
+                        isActive 
+                          ? "border-purple-500 bg-purple-50 dark:bg-purple-900/20 shadow-lg" 
+                          : "hover:border-purple-300 dark:hover:border-purple-600"
+                      }`}
+                      onClick={() => applyTheme(key)}
+                    >
+                    <CardContent className="p-4 relative">
+                      {isActive && (
+                        <div className="absolute top-2 right-2 w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center">
+                          <div className="w-3 h-3 bg-white rounded-full"></div>
+                        </div>
+                      )}
                       <div className="flex items-center gap-3 mb-3">
                         <div className="text-2xl">{theme.icon}</div>
                         <div>
@@ -253,16 +336,10 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating }: Q
                         </div>
                       </div>
                       
-                      <div className="flex items-center gap-2 mb-3">
-                        <div
-                          className="w-8 h-8 rounded-lg border-2 shadow-sm"
-                          style={{
-                            backgroundColor: theme.colors.bg,
-                            borderColor: theme.colors.fg,
-                          }}
-                        />
-                        <div className="text-xs space-y-1">
-                          <div className="flex gap-2">
+                      <div className="flex items-center gap-3 mb-3">
+                        {createQRPreview(theme)}
+                        <div className="text-xs space-y-1 flex-1">
+                          <div className="flex gap-2 flex-wrap">
                             <Badge variant="secondary" className="text-xs">
                               {theme.style}
                             </Badge>
@@ -291,7 +368,8 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating }: Q
                       </Button>
                     </CardContent>
                   </Card>
-                ))}
+                );
+                })}
               </div>
             </div>
           </TabsContent>
