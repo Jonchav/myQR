@@ -14,18 +14,18 @@ export function StyleCatalog({ onStyleSelect, selectedStyle, isGenerating }: Sty
 
   const styles = [
     { id: 'classic', name: 'Clásico', colors: ['#000000'] },
-    { id: 'vibrant_rainbow', name: 'Arcoíris Vibrante', colors: ['#FF0080', '#FF6400', '#FFFF00', '#00FF80', '#0080FF'] },
-    { id: 'neon_cyber', name: 'Neón Cyber', colors: ['#00FFFF', '#FF00FF', '#00FF00', '#FFFF00'] },
-    { id: 'electric_blue', name: 'Azul Eléctrico', colors: ['#0066FF', '#0099FF', '#00CCFF', '#0080FF'] },
-    { id: 'sunset_fire', name: 'Fuego del Atardecer', colors: ['#FF4500', '#FF6347', '#FFA500', '#FFD700'] },
+    { id: 'vibrant_rainbow', name: 'Arcoíris Vibrante', colors: ['#FF4080', '#FF6400', '#FFFF00', '#00FF80', '#8040FF'] },
+    { id: 'neon_cyber', name: 'Neón Cyber', colors: ['#00FFFF', '#40E0D0', '#00CED1', '#20B2AA'] },
+    { id: 'electric_blue', name: 'Azul Eléctrico', colors: ['#0064FF', '#1E90FF', '#00BFFF', '#4169E1'] },
+    { id: 'sunset_fire', name: 'Fuego del Atardecer', colors: ['#FF8C00', '#FF4500', '#FF6347', '#FFA500'] },
     { id: 'forest_nature', name: 'Bosque Natural', colors: ['#228B22', '#32CD32', '#90EE90', '#006400'] },
-    { id: 'ocean_waves', name: 'Ondas del Océano', colors: ['#0077BE', '#0099CC', '#00BFFF', '#1E90FF'] },
-    { id: 'multicolor_blocks', name: 'Bloques Multicolor', colors: ['#FF4757', '#5352ED', '#2ED573', '#FFA726'] },
-    { id: 'purple_galaxy', name: 'Galaxia Púrpura', colors: ['#8A2BE2', '#9370DB', '#9400D3', '#8B008B'] },
+    { id: 'ocean_waves', name: 'Ondas del Océano', colors: ['#0077BE', '#4682B4', '#5F9EA0', '#87CEEB'] },
+    { id: 'multicolor_blocks', name: 'Bloques Multicolor', colors: ['#FF1493', '#FF69B4', '#FF20B2', '#DC143C'] },
+    { id: 'purple_galaxy', name: 'Galaxia Púrpura', colors: ['#8A2BE2', '#9370DB', '#9932CC', '#8B008B'] },
     { id: 'golden_sunset', name: 'Atardecer Dorado', colors: ['#FFD700', '#FFA500', '#FF8C00', '#DAA520'] },
     { id: 'mint_fresh', name: 'Menta Fresca', colors: ['#00FA9A', '#40E0D0', '#48D1CC', '#20B2AA'] },
     { id: 'coral_reef', name: 'Arrecife de Coral', colors: ['#FF7F50', '#FFB347', '#FFA07A', '#FF6347'] },
-    { id: 'volcano_red', name: 'Rojo Volcánico', colors: ['#FF3300', '#FF6600', '#FF0000', '#CC0000'] },
+    { id: 'volcano_red', name: 'Rojo Volcánico', colors: ['#DC143C', '#B22222', '#FF0000', '#8B0000'] },
     { id: 'autumn_leaves', name: 'Hojas de Otoño', colors: ['#8B4513', '#A0522D', '#CD853F', '#D2691E'] },
     { id: 'monochrome_red', name: 'Rojo Monocromático', colors: ['#DC143C', '#B22222', '#FF0000', '#FF6347'] },
     { id: 'pastel_dream', name: 'Sueño Pastel', colors: ['#FFB3BA', '#BAFFC9', '#BAE1FF', '#FFFFBA'] }
@@ -61,9 +61,9 @@ export function StyleCatalog({ onStyleSelect, selectedStyle, isGenerating }: Sty
     setIsLoading(true);
     const newPreviews: { [key: string]: string } = {};
     
-    // Generate previews in batches of 3 to avoid overwhelming the server
-    for (let i = 0; i < styles.length; i += 3) {
-      const batch = styles.slice(i, i + 3);
+    // Generate previews in batches of 4 to avoid overwhelming the server
+    for (let i = 0; i < styles.length; i += 4) {
+      const batch = styles.slice(i, i + 4);
       const batchPromises = batch.map(style => generateQRPreview(style.id));
       const batchResults = await Promise.all(batchPromises);
       
