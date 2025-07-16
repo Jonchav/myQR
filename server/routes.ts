@@ -832,61 +832,61 @@ function getSaturation(style: string): number {
 
 // Individual effect functions for intense creative styling
 async function applyRainbowEffect(qrBuffer: Buffer): Promise<Buffer> {
-  // Crea un efecto arcoíris multicolor vibrante
+  // Crea un efecto arcoíris multicolor vibrante - ROSA/MAGENTA INTENSO
   return await sharp(qrBuffer)
     .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
-    .modulate({ brightness: 1.4, saturation: 3.0, hue: 45 })
-    .tint({ r: 255, g: 64, b: 128 })
+    .modulate({ brightness: 1.0, saturation: 2.0, hue: 0 })
+    .tint({ r: 255, g: 0, b: 128 })
     .png({ quality: 100, compressionLevel: 0, progressive: false, force: true })
     .toBuffer();
 }
 
 async function applyNeonCyberEffect(qrBuffer: Buffer): Promise<Buffer> {
-  // Cian brillante eléctrico como en la imagen
+  // Cian brillante eléctrico como en la imagen - TURQUESA VIBRANTE
   return await sharp(qrBuffer)
     .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
-    .modulate({ brightness: 1.6, saturation: 4.0, hue: 180 })
+    .modulate({ brightness: 1.0, saturation: 2.5, hue: 0 })
     .tint({ r: 0, g: 255, b: 255 })
     .png({ quality: 100, compressionLevel: 0, progressive: false, force: true })
     .toBuffer();
 }
 
 async function applySunsetFireEffect(qrBuffer: Buffer): Promise<Buffer> {
-  // Naranja vibrante como en la imagen
+  // Naranja vibrante como en la imagen - NARANJA INTENSO
   return await sharp(qrBuffer)
     .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
-    .modulate({ brightness: 1.3, saturation: 3.5, hue: -45 })
-    .tint({ r: 255, g: 140, b: 0 })
+    .modulate({ brightness: 1.0, saturation: 2.0, hue: 0 })
+    .tint({ r: 255, g: 165, b: 0 })
     .png({ quality: 100, compressionLevel: 0, progressive: false, force: true })
     .toBuffer();
 }
 
 async function applyForestNatureEffect(qrBuffer: Buffer): Promise<Buffer> {
-  // Verde intenso como en la imagen
+  // Verde intenso como en la imagen - VERDE BRILLANTE
   return await sharp(qrBuffer)
     .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
-    .modulate({ brightness: 1.2, saturation: 3.2, hue: -90 })
-    .tint({ r: 34, g: 139, b: 34 })
+    .modulate({ brightness: 1.0, saturation: 2.0, hue: 0 })
+    .tint({ r: 0, g: 255, b: 0 })
     .png({ quality: 100, compressionLevel: 0, progressive: false, force: true })
     .toBuffer();
 }
 
 async function applyOceanWavesEffect(qrBuffer: Buffer): Promise<Buffer> {
-  // Azul océano vibrante
+  // Azul océano vibrante - AZUL PROFUNDO
   return await sharp(qrBuffer)
     .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
-    .modulate({ brightness: 1.4, saturation: 3.8, hue: 90 })
-    .tint({ r: 0, g: 119, b: 190 })
+    .modulate({ brightness: 1.0, saturation: 2.0, hue: 0 })
+    .tint({ r: 0, g: 100, b: 255 })
     .png({ quality: 100, compressionLevel: 0, progressive: false, force: true })
     .toBuffer();
 }
 
 async function applyMulticolorBlocksEffect(qrBuffer: Buffer): Promise<Buffer> {
-  // Rosa magenta intenso
+  // Rosa magenta intenso - PÚRPURA VIBRANTE
   return await sharp(qrBuffer)
     .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
-    .modulate({ brightness: 1.5, saturation: 3.5, hue: 320 })
-    .tint({ r: 255, g: 20, b: 147 })
+    .modulate({ brightness: 1.0, saturation: 2.0, hue: 0 })
+    .tint({ r: 148, g: 0, b: 211 })
     .png({ quality: 100, compressionLevel: 0, progressive: false, force: true })
     .toBuffer();
 }
@@ -919,30 +919,30 @@ async function applyAutumnLeavesEffect(qrBuffer: Buffer): Promise<Buffer> {
 }
 
 async function applyElectricBlueEffect(qrBuffer: Buffer): Promise<Buffer> {
-  // Azul eléctrico intenso como en la imagen
+  // Azul eléctrico intenso como en la imagen - AZUL COBALTO
   return await sharp(qrBuffer)
     .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
-    .modulate({ brightness: 1.4, saturation: 4.2, hue: 120 })
-    .tint({ r: 0, g: 100, b: 255 })
+    .modulate({ brightness: 1.0, saturation: 2.5, hue: 0 })
+    .tint({ r: 0, g: 123, b: 255 })
     .png({ quality: 100, compressionLevel: 0, progressive: false, force: true })
     .toBuffer();
 }
 
 async function applyPurpleGalaxyEffect(qrBuffer: Buffer): Promise<Buffer> {
-  // Púrpura vibrante como en la imagen
+  // Púrpura vibrante como en la imagen - MORADO INTENSO
   return await sharp(qrBuffer)
     .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
-    .modulate({ brightness: 1.3, saturation: 3.8, hue: 270 })
+    .modulate({ brightness: 1.0, saturation: 2.5, hue: 0 })
     .tint({ r: 138, g: 43, b: 226 })
     .png({ quality: 100, compressionLevel: 0, progressive: false, force: true })
     .toBuffer();
 }
 
 async function applyGoldenSunsetEffect(qrBuffer: Buffer): Promise<Buffer> {
-  // Dorado brillante como en la imagen
+  // Dorado brillante como en la imagen - AMARILLO DORADO
   return await sharp(qrBuffer)
     .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
-    .modulate({ brightness: 1.3, saturation: 3.0, hue: -30 })
+    .modulate({ brightness: 1.0, saturation: 2.0, hue: 0 })
     .tint({ r: 255, g: 215, b: 0 })
     .png({ quality: 100, compressionLevel: 0, progressive: false, force: true })
     .toBuffer();
