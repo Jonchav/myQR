@@ -11,6 +11,12 @@ Preferred communication style: Simple, everyday language.
 ## Recent Changes
 
 ### January 2025
+- **Optimización de Tamaño de Imagen**: Reducido tamaño de vista previa de imagen QR a 280px manteniendo calidad 4K/2K de descarga
+- **Regeneración Automática en Tiempo Real**: Implementada actualización automática inmediata para todos los cambios visuales (300ms delay)
+- **Eliminación de Sección de Logos**: Removida completamente la sección de logos del apartado de diseño para interfaz más limpia
+- **Medición de Texto Mejorada**: Algoritmo de medición preciso con multiplicadores específicos por fuente para evitar texto cortado
+- **Optimización de Espacio de Pantalla**: Reducido padding y tamaños de elementos visuales sin comprometer funcionalidad
+- **Debounce Optimizado**: Sistema de retraso mejorado para evitar llamadas múltiples en regeneración automática
 - **Sistema de Edición de Texto Avanzado**: Implementado control completo sobre el texto en tarjetas QR
 - **Posicionamiento de Texto**: Opciones para posicionar texto arriba, centro o abajo del QR
 - **Alineación de Texto**: Controles para alinear texto a la izquierda, centro o derecha
@@ -18,7 +24,6 @@ Preferred communication style: Simple, everyday language.
 - **Controles de Formato**: Opciones para negrita, cursiva y sombra de texto
 - **Tamaño y Opacidad**: Controles deslizantes para ajustar tamaño (12-48px) y opacidad (25-100%)
 - **Selector de Color**: Selector visual de colores para texto con vista previa en tiempo real
-- **Regeneración Automática**: Texto se actualiza automáticamente al cambiar cualquier propiedad visual
 - **Vista Previa en Tiempo Real**: Muestra vista previa del texto con todos los estilos aplicados
 - **Calidad Profesional 4K**: Mejorado generador QR base con resolución 1200px y configuraciones PNG máximas
 - **Kernel Lanczos3**: Implementado reescalado profesional para nitidez superior en todas las composiciones

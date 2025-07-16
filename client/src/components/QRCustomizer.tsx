@@ -43,7 +43,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
         clearTimeout(window.qrRegenerateTimeout);
         window.qrRegenerateTimeout = setTimeout(() => {
           onGenerate();
-        }, 500); // Delay optimizado
+        }, 300); // Delay más rápido para mejor UX
       }
     }
   };
@@ -385,17 +385,17 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
 
         {/* Vista Previa PRO */}
         {qrCode && (
-          <div className="mb-6 p-4 bg-gray-900/50 border border-purple-700 rounded-lg">
-            <Label className="text-lg font-semibold text-white flex items-center gap-2 mb-4">
-              <Sparkles className="w-5 h-5 text-purple-400" />
+          <div className="mb-6 p-3 bg-gray-900/50 border border-purple-700 rounded-lg">
+            <Label className="text-sm font-semibold text-white flex items-center gap-2 mb-3">
+              <Sparkles className="w-4 h-4 text-purple-400" />
               Vista Previa PRO
             </Label>
-            <div className="text-center space-y-4">
-              <div className="p-4 bg-gray-900 rounded-lg border-2 border-purple-800 neon-glow">
+            <div className="text-center space-y-3">
+              <div className="p-2 bg-gray-900 rounded-lg border-2 border-purple-800 neon-glow">
                 <img 
                   src={qrCode} 
                   alt="Vista previa QR personalizado" 
-                  className="mx-auto border border-gray-700 rounded-lg max-w-full h-auto shadow-2xl"
+                  className="mx-auto border border-gray-700 rounded-lg max-w-[280px] h-auto shadow-lg"
                 />
               </div>
               
@@ -952,104 +952,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
               </div>
             </div>
 
-            <div className="space-y-4">
-              <Label className="text-base font-semibold">Logo Central</Label>
-              
-              {/* Logos de Apps y Redes Sociales */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Label className="text-sm font-medium">Redes Sociales</Label>
-                  <Badge variant="outline" className="text-xs">Popular</Badge>
-                </div>
-                <div className="grid grid-cols-6 gap-2">
-                  {[
-                    { value: "facebook", icon: "📘", name: "Facebook" },
-                    { value: "twitter", icon: "🐦", name: "Twitter/X" },
-                    { value: "instagram", icon: "📷", name: "Instagram" },
-                    { value: "tiktok", icon: "🎵", name: "TikTok" },
-                    { value: "discord", icon: "🎮", name: "Discord" },
-                    { value: "snapchat", icon: "👻", name: "Snapchat" },
-                    { value: "youtube", icon: "▶️", name: "YouTube" },
-                    { value: "whatsapp", icon: "💬", name: "WhatsApp" },
-                    { value: "behance", icon: "🎨", name: "Behance" },
-                    { value: "threads", icon: "🧵", name: "Threads" },
-                    { value: "linkedin", icon: "💼", name: "LinkedIn" },
-                    { value: "dribbble", icon: "🏀", name: "Dribbble" },
-                    { value: "pinterest", icon: "📌", name: "Pinterest" },
-                    { value: "twitch", icon: "🎮", name: "Twitch" },
-                    { value: "telegram", icon: "✈️", name: "Telegram" },
-                  ].map((social) => (
-                    <Button
-                      key={social.value}
-                      variant={settings.logo === social.value ? "default" : "outline"}
-                      size="sm"
-                      className="h-12 p-2 flex flex-col items-center gap-1"
-                      onClick={() => applyRealTimeChange("logo", social.value)}
-                    >
-                      <span className="text-lg">{social.icon}</span>
-                      <span className="text-xs">{social.name}</span>
-                    </Button>
-                  ))}
-                </div>
-              </div>
 
-              {/* Logos de Streaming */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Label className="text-sm font-medium">Streaming & Entretenimiento</Label>
-                  <Badge variant="outline" className="text-xs">Trending</Badge>
-                </div>
-                <div className="grid grid-cols-6 gap-2">
-                  {[
-                    { value: "spotify", icon: "🎵", name: "Spotify" },
-                    { value: "netflix", icon: "🎬", name: "Netflix" },
-                    { value: "twitch", icon: "🎮", name: "Twitch" },
-                    { value: "discord", icon: "🎯", name: "Discord" },
-                    { value: "whatsapp", icon: "💬", name: "WhatsApp" },
-                    { value: "telegram", icon: "📨", name: "Telegram" },
-                  ].map((app) => (
-                    <Button
-                      key={app.value}
-                      variant={settings.logo === app.value ? "default" : "outline"}
-                      size="sm"
-                      className="h-12 p-2 flex flex-col items-center gap-1"
-                      onClick={() => applyRealTimeChange("logo", app.value)}
-                    >
-                      <span className="text-lg">{app.icon}</span>
-                      <span className="text-xs">{app.name}</span>
-                    </Button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Logos Generales */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Label className="text-sm font-medium">Iconos Generales</Label>
-                </div>
-                <div className="grid grid-cols-6 gap-2">
-                  {[
-                    { value: "none", icon: "🚫", name: "Sin logo" },
-                    { value: "star", icon: "⭐", name: "Estrella" },
-                    { value: "heart", icon: "❤️", name: "Corazón" },
-                    { value: "diamond", icon: "💎", name: "Diamante" },
-                    { value: "crown", icon: "👑", name: "Corona" },
-                    { value: "check", icon: "✅", name: "Check" },
-                  ].map((icon) => (
-                    <Button
-                      key={icon.value}
-                      variant={settings.logo === icon.value ? "default" : "outline"}
-                      size="sm"
-                      className="h-12 p-2 flex flex-col items-center gap-1"
-                      onClick={() => applyRealTimeChange("logo", icon.value)}
-                    >
-                      <span className="text-lg">{icon.icon}</span>
-                      <span className="text-xs">{icon.name}</span>
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            </div>
           </TabsContent>
 
           <TabsContent value="advanced" className="space-y-6">
