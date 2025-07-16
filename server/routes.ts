@@ -11,6 +11,7 @@ import Stripe from "stripe";
 
 // Cache para imágenes procesadas - mejora significativa de velocidad
 const imageCache = new Map<string, Buffer>();
+const customImageCache = new Map<string, string>(); // Cache separado para imágenes personalizadas
 const CACHE_MAX_SIZE = 50;
 
 // Función para generar clave de cache
@@ -475,46 +476,43 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
     // Generate background based on custom image or style
     let background;
     if (cardStyle === "custom_image" && customBackgroundImage) {
-      // Para imágenes personalizadas, usar procesamiento más eficiente
-      try {
-        // Procesar la imagen personalizada para optimizar tamaño
-        const customImageBase64 = customBackgroundImage.replace(/^data:image\/[a-z]+;base64,/, '');
-        const customImageBuffer = Buffer.from(customImageBase64, 'base64');
-        
-        // Redimensionar y optimizar imagen personalizada progresivamente
-        const optimizedImageBuffer = await sharp(customImageBuffer)
-          .resize(width, height, { 
-            fit: 'cover',
-            kernel: sharp.kernel.lanczos3 // Mejor calidad para redimensionado
-          })
-          .jpeg({ 
-            quality: 75, // Mejor balance calidad/tamaño
-            progressive: true, // Carga progresiva
-            mozjpeg: true // Optimización adicional
-          })
-          .toBuffer();
-        
-        const optimizedImageBase64 = `data:image/jpeg;base64,${optimizedImageBuffer.toString('base64')}`;
-        background = `<image href="${optimizedImageBase64}" width="${width}" height="${height}" preserveAspectRatio="xMidYMid slice"/>`;
-      } catch (error) {
-        console.error('Error processing custom image:', error);
-        console.error('Image size before processing:', customImageBuffer.length, 'bytes');
-        console.error('Target dimensions:', width, 'x', height);
-        
-        // Intentar con procesamiento más básico
+      // Para imágenes personalizadas, usar cache inteligente
+      const customImageKey = `custom_${Buffer.from(customBackgroundImage).toString('base64').substring(0, 50)}_${width}x${height}`;
+      
+      let cachedImage = customImageCache.get(customImageKey);
+      if (cachedImage) {
+        background = `<image href="${cachedImage}" width="${width}" height="${height}" preserveAspectRatio="xMidYMid slice"/>`;
+      } else {
         try {
-          console.log('Attempting basic image processing...');
-          const basicImageBuffer = await sharp(customImageBuffer)
-            .resize(width, height, { fit: 'cover' })
-            .png({ quality: 50 })
+          // Procesar la imagen personalizada para optimizar tamaño
+          const customImageBase64 = customBackgroundImage.replace(/^data:image\/[a-z]+;base64,/, '');
+          const customImageBuffer = Buffer.from(customImageBase64, 'base64');
+          
+          // Redimensionar y optimizar imagen personalizada con máxima velocidad y calidad
+          const optimizedImageBuffer = await sharp(customImageBuffer)
+            .resize(width, height, { 
+              fit: 'cover',
+              kernel: sharp.kernel.cubic // Mejor balance velocidad/calidad
+            })
+            .jpeg({ 
+              quality: 90, // Alta calidad para imágenes personalizadas
+              progressive: false,
+              mozjpeg: false
+            })
             .toBuffer();
           
-          const basicImageBase64 = `data:image/png;base64,${basicImageBuffer.toString('base64')}`;
-          background = `<image href="${basicImageBase64}" width="${width}" height="${height}" preserveAspectRatio="xMidYMid slice"/>`;
-          console.log('Basic image processing successful');
-        } catch (basicError) {
-          console.error('Basic image processing also failed:', basicError);
-          // Fallback a gradient si falla el procesamiento
+          const optimizedImageBase64 = `data:image/jpeg;base64,${optimizedImageBuffer.toString('base64')}`;
+          
+          // Guardar en cache
+          customImageCache.set(customImageKey, optimizedImageBase64);
+          if (customImageCache.size > CACHE_MAX_SIZE) {
+            const firstKey = customImageCache.keys().next().value;
+            customImageCache.delete(firstKey);
+          }
+          
+          background = `<image href="${optimizedImageBase64}" width="${width}" height="${height}" preserveAspectRatio="xMidYMid slice"/>`;
+        } catch (error) {
+          console.error('Error processing custom image:', error);
           background = generateCardBackground("modern_gradient", width, height);
         }
       }
@@ -536,9 +534,9 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
       <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
         ${background}
         
-        <!-- QR Code background with subtle shadow -->
+        <!-- QR Code background with subtle shadow (NO se ve afectado por cambios de colores) -->
         <rect x="${qrX - 25}" y="${qrY - 25}" width="${qrSize + 50}" height="${qrSize + 50}" 
-              fill="${options.backgroundColor || 'white'}" rx="25" opacity="0.95" 
+              fill="white" rx="25" opacity="0.95" 
               style="filter: drop-shadow(0 8px 16px rgba(0,0,0,0.3))"/>
         
         <!-- No text support -->
@@ -555,14 +553,10 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
       const backgroundBuffer = Buffer.from(cardBackgroundSVG);
       backgroundImage = await sharp(backgroundBuffer)
         .png({
-          quality: 60, // Más bajo para mayor velocidad
-          compressionLevel: 1, // Mínima compresión para máxima velocidad
+          quality: 50, // Más bajo para mayor velocidad
+          compressionLevel: 0, // Sin compresión para máxima velocidad
           progressive: false,
           force: true
-        })
-        .resize(width, height, {
-          kernel: sharp.kernel.nearest, // El más rápido
-          fit: 'fill'
         })
         .toBuffer();
       
@@ -571,38 +565,18 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
       imageCache.set(cacheKey, backgroundImage);
     }
     
-    // Optimización máxima: procesar QR y composición en paralelo
-    const [resizedQRBuffer, compositeResult] = await Promise.all([
-      // Resize QR code con configuración ultra-rápida
-      sharp(qrBuffer)
-        .resize(Math.floor(qrSize), Math.floor(qrSize), {
-          kernel: sharp.kernel.nearest, // El más rápido
-          fit: 'fill'
-        })
-        .png({
-          quality: 70, // Muy reducido para máxima velocidad
-          compressionLevel: 1, // Mínima compresión
-          progressive: false,
-          force: true
-        })
-        .toBuffer(),
-      
-      // Preparar background para composición
-      Promise.resolve(backgroundImage)
-    ]);
-    
-    // Composite final optimizado
-    const result = await sharp(compositeResult)
+    // Optimización máxima: composición directa sin redimensionado separado
+    const result = await sharp(backgroundImage)
       .composite([
         {
-          input: resizedQRBuffer,
+          input: qrBuffer,
           top: Math.floor(qrY),
-          left: Math.floor(qrX),
+          left: Math.floor(qrX)
         }
       ])
       .png({
-        quality: 70, // Muy reducido para máxima velocidad
-        compressionLevel: 1, // Mínima compresión
+        quality: 85, // Mejor calidad para el resultado final
+        compressionLevel: 1,
         progressive: false,
         force: true
       })

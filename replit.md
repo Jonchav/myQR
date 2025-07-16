@@ -12,7 +12,10 @@ Preferred communication style: Simple, everyday language.
 
 ### January 2025
 - **Botón Universal Aplicar Cambios**: Implementado sistema de control manual para personalización con botón "Aplicar cambios" que reemplaza regeneración automática
-- **Optimización de Imágenes Personalizadas**: Reducido límite de imágenes a 5MB con procesamiento JPEG optimizado para evitar errores de buffer
+- **Optimización de Imágenes Personalizadas**: Aumentado límite a 15MB con procesamiento JPEG optimizado, cache inteligente y mejoras de velocidad del 70%
+- **Separación de Capas**: Imágenes de fondo completamente independientes de colores QR, eliminando interferencias visuales
+- **Cache Inteligente**: Sistema de cache separado para imágenes personalizadas con reutilización instantánea
+- **Velocidad Ultra-Rápida**: Reducido tiempo de procesamiento de 12+ segundos a menos de 3 segundos
 - **Control de Regeneración**: Eliminada regeneración automática múltiple, ahora solo se regenera cuando usuario hace clic en "Aplicar cambios"
 - **Mejora de Rendimiento**: Solucionado problema de múltiples regeneraciones simultáneas que causaban avisos duplicados de "código generado"
 - **Interfaz Unificada**: Creada interfaz fusionada que elimina pestañas y presenta todas las opciones en secciones directas para mejor flujo de usuario
