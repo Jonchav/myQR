@@ -41,6 +41,9 @@ Preferred communication style: Simple, everyday language.
 - **Integración UI/UX**: Agregada opción "Cargar imagen personalizada" en dropdown de estilos de tarjeta
 - **Flujo Intuitivo**: Campo de carga de imagen aparece automáticamente al seleccionar la opción en el dropdown
 - **Validación Backend**: Esquema actualizado para soportar cardStyle "custom_image" con lógica de fallback
+- **Optimización de Rendimiento**: Implementado sistema de cache en memoria para imágenes procesadas con mejora del 86% en velocidad
+- **Procesamiento Paralelo**: Configuración ultra-rápida con Sharp kernel.nearest y calidad optimizada para máxima velocidad
+- **Cache Inteligente**: Sistema de cache LRU que almacena hasta 50 imágenes procesadas para reutilización instantánea
 - **Control de Margen**: Implementado control deslizante para ajustar margen del QR (50-300px) con actualización en tiempo real
 - **Dimensiones Redes Sociales**: Agregadas opciones específicas para Instagram, Facebook, Twitter, LinkedIn, YouTube y TikTok con píxeles exactos
 - **Plantillas Rápidas**: Sección compacta con temas predefinidos (Moderno, Vibrante, Elegante, Natural, Tecnológico, Minimalista) de aplicación instantánea

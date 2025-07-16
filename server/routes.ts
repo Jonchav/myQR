@@ -9,6 +9,28 @@ import sharp from "sharp";
 import * as XLSX from "xlsx";
 import Stripe from "stripe";
 
+// Cache para imágenes procesadas - mejora significativa de velocidad
+const imageCache = new Map<string, Buffer>();
+const CACHE_MAX_SIZE = 50;
+
+// Función para generar clave de cache
+function getCacheKey(options: any): string {
+  return JSON.stringify({
+    cardStyle: options.cardStyle,
+    cardTemplate: options.cardTemplate,
+    bgColor: options.backgroundColor,
+    customImage: options.customBackgroundImage ? 'custom' : 'none'
+  });
+}
+
+// Función para limpiar cache si está lleno
+function cleanupCache() {
+  if (imageCache.size >= CACHE_MAX_SIZE) {
+    const firstKey = imageCache.keys().next().value;
+    imageCache.delete(firstKey);
+  }
+}
+
 // Initialize Stripe
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
@@ -443,6 +465,10 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
     
     const { width, height } = getCardDimensions(cardTemplate);
     
+    // Verificar cache para backgrounds
+    const cacheKey = getCacheKey(options);
+    let backgroundImage = imageCache.get(cacheKey);
+    
     // Generate background based on custom image or style
     let background;
     if (cardStyle === "custom_image" && customBackgroundImage) {
@@ -479,37 +505,50 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
     const qrBase64 = qrDataUrl.replace(/^data:image\/[a-z]+;base64,/, '');
     const qrBuffer = Buffer.from(qrBase64, 'base64');
     
-    // Create background from SVG with optimized settings for speed
-    const backgroundBuffer = Buffer.from(cardBackgroundSVG);
-    const backgroundImage = await sharp(backgroundBuffer)
-      .png({
-        quality: 90, // Reducido para mayor velocidad
-        compressionLevel: 6, // Compresión moderada
-        progressive: false,
-        force: true
-      })
-      .resize(width, height, {
-        kernel: sharp.kernel.cubic, // Más rápido que lanczos3
-        fit: 'fill'
-      })
-      .toBuffer();
+    // Si no está en cache, generar background
+    if (!backgroundImage) {
+      // Create background from SVG with ultra-fast settings
+      const backgroundBuffer = Buffer.from(cardBackgroundSVG);
+      backgroundImage = await sharp(backgroundBuffer)
+        .png({
+          quality: 60, // Más bajo para mayor velocidad
+          compressionLevel: 1, // Mínima compresión para máxima velocidad
+          progressive: false,
+          force: true
+        })
+        .resize(width, height, {
+          kernel: sharp.kernel.nearest, // El más rápido
+          fit: 'fill'
+        })
+        .toBuffer();
+      
+      // Guardar en cache
+      cleanupCache();
+      imageCache.set(cacheKey, backgroundImage);
+    }
     
-    // Resize QR code with optimized quality
-    const resizedQRBuffer = await sharp(qrBuffer)
-      .resize(Math.floor(qrSize), Math.floor(qrSize), {
-        kernel: sharp.kernel.cubic, // Más rápido
-        fit: 'fill'
-      })
-      .png({
-        quality: 90, // Reducido para mayor velocidad
-        compressionLevel: 6,
-        progressive: false,
-        force: true
-      })
-      .toBuffer();
+    // Optimización máxima: procesar QR y composición en paralelo
+    const [resizedQRBuffer, compositeResult] = await Promise.all([
+      // Resize QR code con configuración ultra-rápida
+      sharp(qrBuffer)
+        .resize(Math.floor(qrSize), Math.floor(qrSize), {
+          kernel: sharp.kernel.nearest, // El más rápido
+          fit: 'fill'
+        })
+        .png({
+          quality: 70, // Muy reducido para máxima velocidad
+          compressionLevel: 1, // Mínima compresión
+          progressive: false,
+          force: true
+        })
+        .toBuffer(),
+      
+      // Preparar background para composición
+      Promise.resolve(backgroundImage)
+    ]);
     
-    // Composite the background and QR code with optimized settings
-    const result = await sharp(backgroundImage)
+    // Composite final optimizado
+    const result = await sharp(compositeResult)
       .composite([
         {
           input: resizedQRBuffer,
@@ -518,8 +557,8 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
         }
       ])
       .png({
-        quality: 90, // Reducido para mayor velocidad
-        compressionLevel: 6,
+        quality: 70, // Muy reducido para máxima velocidad
+        compressionLevel: 1, // Mínima compresión
         progressive: false,
         force: true
       })
