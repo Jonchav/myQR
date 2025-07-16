@@ -74,7 +74,16 @@ const qrGenerationSchema = z.object({
     "classic", "vibrant_rainbow", "neon_cyber", "electric_blue", "sunset_fire", 
     "forest_nature", "ocean_waves", "multicolor_blocks", "purple_galaxy", 
     "golden_sunset", "mint_fresh", "coral_reef", "volcano_red", "autumn_leaves", 
-    "monochrome_red", "pastel_dream"
+    "monochrome_red", "pastel_dream",
+    // Todos los estilos adicionales del frontend
+    "cosmic_purple", "laser_green", "neon_pink", "electric_yellow", "deep_ocean",
+    "royal_blue", "emerald_shine", "crimson_wave", "cyber_orange", "mystic_violet",
+    "arctic_blue", "jade_matrix", "ruby_fire", "sapphire_glow", "bronze_metal",
+    "silver_chrome", "magenta_burst", "teal_storm", "amber_lightning", "indigo_depth",
+    "lime_electric", "rose_gold", "steel_blue", "neon_turquoise", "plasma_red",
+    "galaxy_green", "cyber_magenta", "electric_teal", "laser_blue", "neon_lime",
+    "digital_purple", "chrome_yellow", "matrix_green", "fire_orange", "ice_blue",
+    "toxic_green"
   ]).default("classic"),
   includeText: z.boolean().default(false),
   errorCorrection: z.enum(["L", "M", "Q", "H"]).default("M"),
