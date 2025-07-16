@@ -24,11 +24,11 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
     const file = event.target.files?.[0];
     if (!file) return;
     
-    // Verificar tamaño del archivo (5MB máximo para evitar errores de buffer)
-    if (file.size > 5 * 1024 * 1024) {
+    // Verificar tamaño del archivo (15MB máximo)
+    if (file.size > 15 * 1024 * 1024) {
       toast({
         title: "Archivo muy grande",
-        description: "El archivo debe ser menor a 5MB para procesamiento óptimo",
+        description: "El archivo debe ser menor a 15MB para procesamiento óptimo",
         variant: "destructive"
       });
       return;
@@ -346,7 +346,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                               Haz clic para subir imagen
                             </p>
                             <p className="text-xs text-muted-foreground">
-                              PNG, JPG, GIF hasta 100MB
+                              PNG, JPG, GIF hasta 15MB
                             </p>
                           </div>
                           <input

@@ -481,18 +481,42 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
         const customImageBase64 = customBackgroundImage.replace(/^data:image\/[a-z]+;base64,/, '');
         const customImageBuffer = Buffer.from(customImageBase64, 'base64');
         
-        // Redimensionar y optimizar imagen personalizada
+        // Redimensionar y optimizar imagen personalizada progresivamente
         const optimizedImageBuffer = await sharp(customImageBuffer)
-          .resize(width, height, { fit: 'cover' })
-          .jpeg({ quality: 60, progressive: false }) // Usar JPEG para mejor compresión
+          .resize(width, height, { 
+            fit: 'cover',
+            kernel: sharp.kernel.lanczos3 // Mejor calidad para redimensionado
+          })
+          .jpeg({ 
+            quality: 75, // Mejor balance calidad/tamaño
+            progressive: true, // Carga progresiva
+            mozjpeg: true // Optimización adicional
+          })
           .toBuffer();
         
         const optimizedImageBase64 = `data:image/jpeg;base64,${optimizedImageBuffer.toString('base64')}`;
         background = `<image href="${optimizedImageBase64}" width="${width}" height="${height}" preserveAspectRatio="xMidYMid slice"/>`;
       } catch (error) {
         console.error('Error processing custom image:', error);
-        // Fallback a gradient si falla el procesamiento
-        background = generateCardBackground("modern_gradient", width, height);
+        console.error('Image size before processing:', customImageBuffer.length, 'bytes');
+        console.error('Target dimensions:', width, 'x', height);
+        
+        // Intentar con procesamiento más básico
+        try {
+          console.log('Attempting basic image processing...');
+          const basicImageBuffer = await sharp(customImageBuffer)
+            .resize(width, height, { fit: 'cover' })
+            .png({ quality: 50 })
+            .toBuffer();
+          
+          const basicImageBase64 = `data:image/png;base64,${basicImageBuffer.toString('base64')}`;
+          background = `<image href="${basicImageBase64}" width="${width}" height="${height}" preserveAspectRatio="xMidYMid slice"/>`;
+          console.log('Basic image processing successful');
+        } catch (basicError) {
+          console.error('Basic image processing also failed:', basicError);
+          // Fallback a gradient si falla el procesamiento
+          background = generateCardBackground("modern_gradient", width, height);
+        }
       }
     } else if (cardStyle === "custom_image" && !customBackgroundImage) {
       // If custom_image is selected but no image provided, use default gradient
