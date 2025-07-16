@@ -24,11 +24,11 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
     const file = event.target.files?.[0];
     if (!file) return;
     
-    // Verificar tamaño del archivo (100MB máximo)
-    if (file.size > 100 * 1024 * 1024) {
+    // Verificar tamaño del archivo (5MB máximo para evitar errores de buffer)
+    if (file.size > 5 * 1024 * 1024) {
       toast({
         title: "Archivo muy grande",
-        description: "El archivo debe ser menor a 100MB",
+        description: "El archivo debe ser menor a 5MB para procesamiento óptimo",
         variant: "destructive"
       });
       return;
@@ -50,7 +50,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
       applyRealTimeChange("customBackgroundImage", result);
       toast({
         title: "Imagen cargada",
-        description: "La imagen de fondo se ha cargado correctamente",
+        description: "Haz clic en 'Aplicar cambios' para usar la imagen",
       });
     };
     reader.readAsDataURL(file);
@@ -75,12 +75,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
     const newSettings = { ...settings, [key]: value };
     onChange(newSettings);
     
-    // Solo regenerar automáticamente si no es custom_image
-    if (key !== 'cardStyle' || value !== 'custom_image') {
-      setTimeout(() => {
-        onGenerate();
-      }, 50);
-    }
+    // No regenerar automáticamente - solo actualizar configuración
   };
 
   return (
@@ -340,13 +335,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                         <p className="text-xs text-green-600 dark:text-green-400">
                           ✓ Imagen cargada correctamente
                         </p>
-                        <Button
-                          onClick={onGenerate}
-                          disabled={isGenerating}
-                          className="w-full bg-purple-600 hover:bg-purple-700 text-white"
-                        >
-                          {isGenerating ? "Generando..." : "Aplicar imagen de fondo"}
-                        </Button>
+
                       </div>
                     ) : (
                       <div className="space-y-2">
@@ -374,6 +363,32 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
               </div>
             </CardContent>
           </Card>
+        </div>
+        
+        {/* Botón universal para aplicar cambios */}
+        <div className="mt-6 pt-4 border-t border-purple-200 dark:border-purple-700">
+          <Button
+            onClick={onGenerate}
+            disabled={isGenerating}
+            className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium py-3 px-6 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105"
+          >
+            {isGenerating ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                Generando QR personalizado...
+              </>
+            ) : (
+              <>
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Aplicar cambios
+              </>
+            )}
+          </Button>
+          <p className="text-xs text-center text-muted-foreground mt-2">
+            Haz clic para aplicar todas las personalizaciones seleccionadas
+          </p>
         </div>
       </CardContent>
     </Card>

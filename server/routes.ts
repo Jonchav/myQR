@@ -475,8 +475,25 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
     // Generate background based on custom image or style
     let background;
     if (cardStyle === "custom_image" && customBackgroundImage) {
-      // Use custom image as background
-      background = `<image href="${customBackgroundImage}" width="${width}" height="${height}" preserveAspectRatio="xMidYMid slice"/>`;
+      // Para imágenes personalizadas, usar procesamiento más eficiente
+      try {
+        // Procesar la imagen personalizada para optimizar tamaño
+        const customImageBase64 = customBackgroundImage.replace(/^data:image\/[a-z]+;base64,/, '');
+        const customImageBuffer = Buffer.from(customImageBase64, 'base64');
+        
+        // Redimensionar y optimizar imagen personalizada
+        const optimizedImageBuffer = await sharp(customImageBuffer)
+          .resize(width, height, { fit: 'cover' })
+          .jpeg({ quality: 60, progressive: false }) // Usar JPEG para mejor compresión
+          .toBuffer();
+        
+        const optimizedImageBase64 = `data:image/jpeg;base64,${optimizedImageBuffer.toString('base64')}`;
+        background = `<image href="${optimizedImageBase64}" width="${width}" height="${height}" preserveAspectRatio="xMidYMid slice"/>`;
+      } catch (error) {
+        console.error('Error processing custom image:', error);
+        // Fallback a gradient si falla el procesamiento
+        background = generateCardBackground("modern_gradient", width, height);
+      }
     } else if (cardStyle === "custom_image" && !customBackgroundImage) {
       // If custom_image is selected but no image provided, use default gradient
       background = generateCardBackground("modern_gradient", width, height);

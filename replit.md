@@ -11,6 +11,10 @@ Preferred communication style: Simple, everyday language.
 ## Recent Changes
 
 ### January 2025
+- **Botón Universal Aplicar Cambios**: Implementado sistema de control manual para personalización con botón "Aplicar cambios" que reemplaza regeneración automática
+- **Optimización de Imágenes Personalizadas**: Reducido límite de imágenes a 5MB con procesamiento JPEG optimizado para evitar errores de buffer
+- **Control de Regeneración**: Eliminada regeneración automática múltiple, ahora solo se regenera cuando usuario hace clic en "Aplicar cambios"
+- **Mejora de Rendimiento**: Solucionado problema de múltiples regeneraciones simultáneas que causaban avisos duplicados de "código generado"
 - **Interfaz Unificada**: Creada interfaz fusionada que elimina pestañas y presenta todas las opciones en secciones directas para mejor flujo de usuario
 - **Priorización de Colores**: Movida sección de colores y patrones como primer parámetro de personalización, justo después de la vista previa del QR
 - **Corrección de Colores**: Solucionado problema donde colores personalizados no se aplicaban correctamente debido a sobrescritura automática de colores de marca
