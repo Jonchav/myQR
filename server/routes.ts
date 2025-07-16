@@ -494,14 +494,14 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
               fit: 'cover',
               kernel: sharp.kernel.cubic // Mejor balance velocidad/calidad
             })
-            .jpeg({ 
-              quality: 90, // Alta calidad para imágenes personalizadas
+            .png({ 
+              quality: 95, // PNG para mantener colores exactos
               progressive: false,
-              mozjpeg: false
+              compressionLevel: 6 // Balance entre calidad y tamaño
             })
             .toBuffer();
           
-          const optimizedImageBase64 = `data:image/jpeg;base64,${optimizedImageBuffer.toString('base64')}`;
+          const optimizedImageBase64 = `data:image/png;base64,${optimizedImageBuffer.toString('base64')}`;
           
           // Guardar en cache
           customImageCache.set(customImageKey, optimizedImageBase64);
@@ -524,20 +524,22 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
       background = generateCardBackground(cardStyle, width, height);
     }
     
-    // Calculate QR code size and position - centered and larger
-    const qrSize = Math.min(width, height) * 0.45; // Increased to 45% for better visibility
-    const qrX = (width - qrSize) / 2; // Center horizontally
-    const qrY = (height - qrSize) / 2; // Center vertically
+    // Calculate QR code size and position - perfectamente centrado
+    const qrSize = Math.min(width, height) * 0.4; // Tamaño más apropiado para centrado
+    const qrX = Math.round((width - qrSize) / 2); // Center horizontally con redondeo
+    const qrY = Math.round((height - qrSize) / 2); // Center vertically con redondeo
     
-    // Create the card background SVG
+    // Create the card background SVG (sin recuadro blanco para imagen personalizada)
     const cardBackgroundSVG = `
       <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
         ${background}
         
-        <!-- QR Code background with subtle shadow (NO se ve afectado por cambios de colores) -->
+        <!-- Solo para estilos predefinidos, no para imágenes personalizadas -->
+        ${cardStyle !== "custom_image" ? `
         <rect x="${qrX - 25}" y="${qrY - 25}" width="${qrSize + 50}" height="${qrSize + 50}" 
               fill="white" rx="25" opacity="0.95" 
               style="filter: drop-shadow(0 8px 16px rgba(0,0,0,0.3))"/>
+        ` : ''}
         
         <!-- No text support -->
       </svg>
@@ -565,22 +567,50 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
       imageCache.set(cacheKey, backgroundImage);
     }
     
-    // Optimización máxima: composición directa sin redimensionado separado
-    const result = await sharp(backgroundImage)
-      .composite([
-        {
-          input: qrBuffer,
-          top: Math.floor(qrY),
-          left: Math.floor(qrX)
-        }
-      ])
-      .png({
-        quality: 85, // Mejor calidad para el resultado final
-        compressionLevel: 1,
-        progressive: false,
-        force: true
-      })
-      .toBuffer();
+    // Optimización específica para imágenes personalizadas
+    let result;
+    if (cardStyle === "custom_image") {
+      // Para imágenes personalizadas: composición directa sobre la imagen optimizada
+      const customImageBase64 = customBackgroundImage.replace(/^data:image\/[a-z]+;base64,/, '');
+      const customImageBuffer = Buffer.from(customImageBase64, 'base64');
+      
+      result = await sharp(customImageBuffer)
+        .resize(width, height, { 
+          fit: 'cover',
+          kernel: sharp.kernel.cubic
+        })
+        .composite([
+          {
+            input: qrBuffer,
+            top: qrY,
+            left: qrX
+          }
+        ])
+        .png({
+          quality: 95, // Máxima calidad para imágenes personalizadas
+          compressionLevel: 6,
+          progressive: false,
+          force: true
+        })
+        .toBuffer();
+    } else {
+      // Para estilos predefinidos: usar el sistema de cache
+      result = await sharp(backgroundImage)
+        .composite([
+          {
+            input: qrBuffer,
+            top: qrY,
+            left: qrX
+          }
+        ])
+        .png({
+          quality: 85,
+          compressionLevel: 1,
+          progressive: false,
+          force: true
+        })
+        .toBuffer();
+    }
     
     return `data:image/png;base64,${result.toString('base64')}`;
   } catch (error) {
