@@ -70,9 +70,10 @@ const qrGenerationSchema = z.object({
     "spotify", "netflix", "twitch", "discord", "whatsapp", "telegram"
   ]).default("none"),
   creativeStyle: z.enum([
-    "classic", "multicolor_blocks", "rainbow_gradient", "neon_cyber", "forest_nature", 
-    "ocean_waves", "sunset_fire", "purple_galaxy", "mint_fresh", "golden_luxury",
-    "cherry_blossom", "electric_blue", "autumn_leaves", "monochrome_red", "pastel_dream"
+    "classic", "vibrant_rainbow", "neon_cyber", "electric_blue", "sunset_fire", 
+    "forest_nature", "ocean_waves", "multicolor_blocks", "purple_galaxy", 
+    "golden_sunset", "mint_fresh", "coral_reef", "volcano_red", "autumn_leaves", 
+    "monochrome_red", "pastel_dream"
   ]).default("classic"),
   includeText: z.boolean().default(false),
   errorCorrection: z.enum(["L", "M", "Q", "H"]).default("M"),
@@ -696,29 +697,58 @@ async function applyCreativeStyle(qrDataUrl: string, style: string, options: any
     const base64Data = qrDataUrl.split(',')[1];
     const qrBuffer = Buffer.from(base64Data, 'base64');
     
-    // Get creative colors for the style
-    const colors = getCreativeColors(style);
+    // Apply intense creative styling based on the style
+    let coloredBuffer;
     
-    // Apply color transformations to the existing functional QR
-    const coloredBuffer = await sharp(qrBuffer)
-      .resize(1200, 1200, {
-        kernel: 'lanczos3',
-        fit: 'contain',
-        background: { r: 255, g: 255, b: 255, alpha: 1 }
-      })
-      .modulate({
-        brightness: getBrightness(style),
-        saturation: getSaturation(style),
-        hue: getStyleHueShift(style)
-      })
-      .tint(getStyleTint(style))
-      .png({ 
-        quality: 100, 
-        compressionLevel: 0,
-        progressive: false,
-        force: true
-      })
-      .toBuffer();
+    switch(style) {
+      case 'vibrant_rainbow':
+        coloredBuffer = await applyRainbowEffect(qrBuffer);
+        break;
+      case 'neon_cyber':
+        coloredBuffer = await applyNeonCyberEffect(qrBuffer);
+        break;
+      case 'sunset_fire':
+        coloredBuffer = await applySunsetFireEffect(qrBuffer);
+        break;
+      case 'forest_nature':
+        coloredBuffer = await applyForestNatureEffect(qrBuffer);
+        break;
+      case 'ocean_waves':
+        coloredBuffer = await applyOceanWavesEffect(qrBuffer);
+        break;
+      case 'multicolor_blocks':
+        coloredBuffer = await applyMulticolorBlocksEffect(qrBuffer);
+        break;
+      case 'pastel_dream':
+        coloredBuffer = await applyPastelDreamEffect(qrBuffer);
+        break;
+      case 'monochrome_red':
+        coloredBuffer = await applyMonochromeRedEffect(qrBuffer);
+        break;
+      case 'autumn_leaves':
+        coloredBuffer = await applyAutumnLeavesEffect(qrBuffer);
+        break;
+      case 'electric_blue':
+        coloredBuffer = await applyElectricBlueEffect(qrBuffer);
+        break;
+      case 'purple_galaxy':
+        coloredBuffer = await applyPurpleGalaxyEffect(qrBuffer);
+        break;
+      case 'golden_sunset':
+        coloredBuffer = await applyGoldenSunsetEffect(qrBuffer);
+        break;
+      case 'mint_fresh':
+        coloredBuffer = await applyMintFreshEffect(qrBuffer);
+        break;
+      case 'coral_reef':
+        coloredBuffer = await applyCoralReefEffect(qrBuffer);
+        break;
+      case 'volcano_red':
+        coloredBuffer = await applyVolcanoRedEffect(qrBuffer);
+        break;
+      default:
+        coloredBuffer = await applyBasicColorEffect(qrBuffer, style);
+    }
     
     console.log('Creative style applied successfully');
     return `data:image/png;base64,${coloredBuffer.toString('base64')}`;
@@ -800,22 +830,148 @@ function getSaturation(style: string): number {
   return saturation[style] || 1.0;
 }
 
-// Function to get tint color for different styles
-function getStyleTint(style: string): { r: number; g: number; b: number } {
-  const tints = {
-    classic: { r: 0, g: 0, b: 0 },
-    multicolor_blocks: { r: 255, g: 50, b: 50 },
-    rainbow_gradient: { r: 255, g: 100, b: 0 },
-    neon_cyber: { r: 0, g: 255, b: 255 },
-    forest_nature: { r: 50, g: 150, b: 50 },
-    ocean_waves: { r: 0, g: 100, b: 200 },
-    sunset_fire: { r: 255, g: 100, b: 0 },
-    pastel_dream: { r: 255, g: 200, b: 255 },
-    monochrome_red: { r: 200, g: 0, b: 0 },
-    autumn_leaves: { r: 150, g: 100, b: 50 }
-  };
-  
-  return tints[style] || tints.classic;
+// Individual effect functions for intense creative styling
+async function applyRainbowEffect(qrBuffer: Buffer): Promise<Buffer> {
+  return await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .modulate({ brightness: 1.3, saturation: 2.5, hue: 120 })
+    .tint({ r: 255, g: 100, b: 200 })
+    .png({ quality: 100, compressionLevel: 0, progressive: false, force: true })
+    .toBuffer();
+}
+
+async function applyNeonCyberEffect(qrBuffer: Buffer): Promise<Buffer> {
+  return await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 1 } })
+    .modulate({ brightness: 1.8, saturation: 3.0, hue: 180 })
+    .tint({ r: 0, g: 255, b: 255 })
+    .png({ quality: 100, compressionLevel: 0, progressive: false, force: true })
+    .toBuffer();
+}
+
+async function applySunsetFireEffect(qrBuffer: Buffer): Promise<Buffer> {
+  return await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .modulate({ brightness: 1.4, saturation: 2.2, hue: -30 })
+    .tint({ r: 255, g: 120, b: 0 })
+    .png({ quality: 100, compressionLevel: 0, progressive: false, force: true })
+    .toBuffer();
+}
+
+async function applyForestNatureEffect(qrBuffer: Buffer): Promise<Buffer> {
+  return await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .modulate({ brightness: 1.1, saturation: 2.0, hue: -60 })
+    .tint({ r: 50, g: 200, b: 50 })
+    .png({ quality: 100, compressionLevel: 0, progressive: false, force: true })
+    .toBuffer();
+}
+
+async function applyOceanWavesEffect(qrBuffer: Buffer): Promise<Buffer> {
+  return await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .modulate({ brightness: 1.2, saturation: 2.5, hue: 60 })
+    .tint({ r: 0, g: 150, b: 255 })
+    .png({ quality: 100, compressionLevel: 0, progressive: false, force: true })
+    .toBuffer();
+}
+
+async function applyMulticolorBlocksEffect(qrBuffer: Buffer): Promise<Buffer> {
+  return await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .modulate({ brightness: 1.5, saturation: 2.8, hue: 45 })
+    .tint({ r: 255, g: 80, b: 150 })
+    .png({ quality: 100, compressionLevel: 0, progressive: false, force: true })
+    .toBuffer();
+}
+
+async function applyPastelDreamEffect(qrBuffer: Buffer): Promise<Buffer> {
+  return await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .modulate({ brightness: 1.6, saturation: 1.2, hue: 15 })
+    .tint({ r: 255, g: 200, b: 255 })
+    .png({ quality: 100, compressionLevel: 0, progressive: false, force: true })
+    .toBuffer();
+}
+
+async function applyMonochromeRedEffect(qrBuffer: Buffer): Promise<Buffer> {
+  return await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .modulate({ brightness: 1.1, saturation: 2.5, hue: -15 })
+    .tint({ r: 220, g: 0, b: 0 })
+    .png({ quality: 100, compressionLevel: 0, progressive: false, force: true })
+    .toBuffer();
+}
+
+async function applyAutumnLeavesEffect(qrBuffer: Buffer): Promise<Buffer> {
+  return await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .modulate({ brightness: 1.2, saturation: 2.0, hue: -45 })
+    .tint({ r: 200, g: 120, b: 50 })
+    .png({ quality: 100, compressionLevel: 0, progressive: false, force: true })
+    .toBuffer();
+}
+
+async function applyElectricBlueEffect(qrBuffer: Buffer): Promise<Buffer> {
+  return await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 1 } })
+    .modulate({ brightness: 1.7, saturation: 3.5, hue: 90 })
+    .tint({ r: 0, g: 100, b: 255 })
+    .png({ quality: 100, compressionLevel: 0, progressive: false, force: true })
+    .toBuffer();
+}
+
+async function applyPurpleGalaxyEffect(qrBuffer: Buffer): Promise<Buffer> {
+  return await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 20, g: 0, b: 40, alpha: 1 } })
+    .modulate({ brightness: 1.5, saturation: 2.8, hue: 150 })
+    .tint({ r: 150, g: 50, b: 255 })
+    .png({ quality: 100, compressionLevel: 0, progressive: false, force: true })
+    .toBuffer();
+}
+
+async function applyGoldenSunsetEffect(qrBuffer: Buffer): Promise<Buffer> {
+  return await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .modulate({ brightness: 1.4, saturation: 2.3, hue: -20 })
+    .tint({ r: 255, g: 200, b: 0 })
+    .png({ quality: 100, compressionLevel: 0, progressive: false, force: true })
+    .toBuffer();
+}
+
+async function applyMintFreshEffect(qrBuffer: Buffer): Promise<Buffer> {
+  return await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .modulate({ brightness: 1.3, saturation: 2.0, hue: -90 })
+    .tint({ r: 100, g: 255, b: 200 })
+    .png({ quality: 100, compressionLevel: 0, progressive: false, force: true })
+    .toBuffer();
+}
+
+async function applyCoralReefEffect(qrBuffer: Buffer): Promise<Buffer> {
+  return await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .modulate({ brightness: 1.3, saturation: 2.4, hue: -10 })
+    .tint({ r: 255, g: 127, b: 80 })
+    .png({ quality: 100, compressionLevel: 0, progressive: false, force: true })
+    .toBuffer();
+}
+
+async function applyVolcanoRedEffect(qrBuffer: Buffer): Promise<Buffer> {
+  return await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 40, g: 0, b: 0, alpha: 1 } })
+    .modulate({ brightness: 1.6, saturation: 3.2, hue: -25 })
+    .tint({ r: 255, g: 50, b: 0 })
+    .png({ quality: 100, compressionLevel: 0, progressive: false, force: true })
+    .toBuffer();
+}
+
+async function applyBasicColorEffect(qrBuffer: Buffer, style: string): Promise<Buffer> {
+  return await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .modulate({ brightness: 1.2, saturation: 1.8, hue: 0 })
+    .png({ quality: 100, compressionLevel: 0, progressive: false, force: true })
+    .toBuffer();
 }
 
 // Enhanced function to apply colors to SVG with better pattern recognition

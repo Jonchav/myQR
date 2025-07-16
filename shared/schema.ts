@@ -148,6 +148,26 @@ export const insertQRCodeSchema = createInsertSchema(qrCodes).pick({
   customBackgroundImage: true,
   errorCorrection: true,
   qrDataUrl: true,
+  margin: true,
+}).extend({
+  creativeStyle: z.enum([
+    "classic",
+    "vibrant_rainbow",
+    "neon_cyber", 
+    "electric_blue",
+    "sunset_fire",
+    "forest_nature",
+    "ocean_waves",
+    "multicolor_blocks",
+    "purple_galaxy",
+    "golden_sunset",
+    "mint_fresh",
+    "coral_reef",
+    "volcano_red",
+    "autumn_leaves",
+    "monochrome_red",
+    "pastel_dream"
+  ]).default("classic"),
 });
 
 export const insertUserPreferencesSchema = createInsertSchema(userPreferences).pick({
