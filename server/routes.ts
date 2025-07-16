@@ -11,10 +11,27 @@ import Stripe from "stripe";
 import { QR } from "qr-svg";
 // Removido: import fetch from "node-fetch";
 
+// Configurar Sharp para máximo rendimiento
+sharp.concurrency(1); // Limitar concurrencia para mejor uso de memoria
+sharp.cache({
+  memory: 50, // Limitar cache de memoria a 50 MB
+  files: 20,  // Limitar cache de archivos a 20 MB
+  items: 50   // Limitar número de elementos en cache
+});
+
 // Cache para imágenes procesadas - mejora significativa de velocidad
 const imageCache = new Map<string, Buffer>();
 const customImageCache = new Map<string, string>(); // Cache separado para imágenes personalizadas
-const CACHE_MAX_SIZE = 50;
+const CACHE_MAX_SIZE = 30; // Reducir cache para mejor memoria
+
+// Sistema de monitoreo de rendimiento
+const performanceLog = (operation: string, startTime: number) => {
+  const endTime = performance.now();
+  const duration = endTime - startTime;
+  if (duration > 500) { // Log solo operaciones lentas
+    console.log(`🐌 Operación lenta: ${operation} tomó ${duration.toFixed(2)}ms`);
+  }
+};
 
 // Función para generar clave de cache
 function getCacheKey(options: any): string {
@@ -821,12 +838,12 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
           const optimizedImageBuffer = await sharp(customImageBuffer)
             .resize(width, height, { 
               fit: 'cover',
-              kernel: sharp.kernel.cubic // Mejor balance velocidad/calidad
+              kernel: sharp.kernel.nearest // Kernel más rápido para mejor velocidad
             })
-            .png({ 
-              quality: 80, // Calidad optimizada para velocidad
+            .jpeg({ 
+              quality: 75, // Calidad optimizada para velocidad
               progressive: false,
-              compressionLevel: 4 // Menor compresión para mayor velocidad
+              mozjpeg: true // Mejor compresión
             })
             .toBuffer();
           
@@ -1475,16 +1492,17 @@ async function applyMultiColorEffect(qrBuffer: Buffer, style: string): Promise<B
 
 // Efectos con gradientes aplicados directamente a las celdas del QR
 async function applyRainbowGradientEffect(qrBuffer: Buffer): Promise<Buffer> {
-  // Procesar imagen para aplicar gradientes a píxeles individuales
+  // Procesar imagen para aplicar gradientes a píxeles individuales - optimizado
   const { data, info } = await sharp(qrBuffer)
-    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .resize(700, 700, { kernel: 'cubic', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
     .raw()
     .toBuffer({ resolveWithObject: true });
   
   const { width, height, channels } = info;
   const pixelData = new Uint8Array(data);
   
-  // Aplicar gradiente arcoíris a cada píxel negro
+  // Aplicar gradiente arcoíris a cada píxel negro - optimizado
+  const widthPlusHeight = width + height;
   for (let i = 0; i < pixelData.length; i += channels) {
     const r = pixelData[i];
     const g = pixelData[i + 1];
@@ -1492,11 +1510,12 @@ async function applyRainbowGradientEffect(qrBuffer: Buffer): Promise<Buffer> {
     
     // Detectar píxeles negros/oscuros (QR cells)
     if (r < 128 && g < 128 && b < 128) {
-      const x = Math.floor((i / channels) % width);
-      const y = Math.floor((i / channels) / width);
+      const pixelIndex = i / channels;
+      const x = pixelIndex % width;
+      const y = Math.floor(pixelIndex / width);
       
-      // Calcular gradiente basado en posición
-      const gradientPos = (x + y) / (width + height);
+      // Calcular gradiente basado en posición - optimizado
+      const gradientPos = (x + y) / widthPlusHeight;
       
       if (gradientPos < 0.2) {
         // Rosa vibrante
@@ -1518,7 +1537,7 @@ async function applyRainbowGradientEffect(qrBuffer: Buffer): Promise<Buffer> {
   }
   
   return await sharp(pixelData, { raw: { width, height, channels } })
-    .png({ quality: 85, compressionLevel: 4 })
+    .png({ quality: 80, compressionLevel: 6 })
     .toBuffer();
 }
 
@@ -2063,7 +2082,7 @@ async function applyBasicColorEffect(qrBuffer: Buffer, style: string): Promise<B
 // Nuevas funciones para estilos con gradientes
 async function applyPlasmaRedGradientEffect(qrBuffer: Buffer): Promise<Buffer> {
   const { data, info } = await sharp(qrBuffer)
-    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .resize(800, 800, { kernel: 'cubic', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
     .raw()
     .toBuffer({ resolveWithObject: true });
   
@@ -2071,17 +2090,19 @@ async function applyPlasmaRedGradientEffect(qrBuffer: Buffer): Promise<Buffer> {
   const pixelData = new Uint8Array(data);
   
   // Aplicar gradiente plasma rojo #FF073A -> #DC143C -> #8B0000
+  const widthPlusHeight = width + height;
   for (let i = 0; i < pixelData.length; i += channels) {
     const r = pixelData[i];
     const g = pixelData[i + 1];
     const b = pixelData[i + 2];
     
     if (r < 128 && g < 128 && b < 128) {
-      const x = Math.floor((i / channels) % width);
-      const y = Math.floor((i / channels) / width);
+      const pixelIndex = i / channels;
+      const x = pixelIndex % width;
+      const y = Math.floor(pixelIndex / width);
       
-      // Gradiente diagonal plasma
-      const gradientPos = (x + y) / (width + height);
+      // Gradiente diagonal plasma optimizado
+      const gradientPos = (x + y) / widthPlusHeight;
       
       if (gradientPos < 0.33) {
         // Plasma rojo brillante
@@ -2097,13 +2118,13 @@ async function applyPlasmaRedGradientEffect(qrBuffer: Buffer): Promise<Buffer> {
   }
   
   return await sharp(pixelData, { raw: { width, height, channels } })
-    .png({ quality: 85, compressionLevel: 4 })
+    .png({ quality: 80, compressionLevel: 6 })
     .toBuffer();
 }
 
 async function applyGalaxyGreenGradientEffect(qrBuffer: Buffer): Promise<Buffer> {
   const { data, info } = await sharp(qrBuffer)
-    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .resize(800, 800, { kernel: 'cubic', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
     .raw()
     .toBuffer({ resolveWithObject: true });
   
@@ -2111,20 +2132,24 @@ async function applyGalaxyGreenGradientEffect(qrBuffer: Buffer): Promise<Buffer>
   const pixelData = new Uint8Array(data);
   
   // Aplicar gradiente galaxia verde #00FF41 -> #32CD32 -> #228B22
+  const centerX = width / 2;
+  const centerY = height / 2;
+  const maxDistance = Math.sqrt(centerX ** 2 + centerY ** 2);
+  
   for (let i = 0; i < pixelData.length; i += channels) {
     const r = pixelData[i];
     const g = pixelData[i + 1];
     const b = pixelData[i + 2];
     
     if (r < 128 && g < 128 && b < 128) {
-      const x = Math.floor((i / channels) % width);
-      const y = Math.floor((i / channels) / width);
+      const pixelIndex = i / channels;
+      const x = pixelIndex % width;
+      const y = Math.floor(pixelIndex / width);
       
-      // Gradiente radial desde el centro
-      const centerX = width / 2;
-      const centerY = height / 2;
-      const distance = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
-      const maxDistance = Math.sqrt(centerX ** 2 + centerY ** 2);
+      // Gradiente radial desde el centro optimizado
+      const dx = x - centerX;
+      const dy = y - centerY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
       const gradientPos = Math.min(distance / maxDistance, 1);
       
       if (gradientPos < 0.33) {
@@ -2141,13 +2166,13 @@ async function applyGalaxyGreenGradientEffect(qrBuffer: Buffer): Promise<Buffer>
   }
   
   return await sharp(pixelData, { raw: { width, height, channels } })
-    .png({ quality: 85, compressionLevel: 4 })
+    .png({ quality: 80, compressionLevel: 6 })
     .toBuffer();
 }
 
 async function applyCyberMagentaGradientEffect(qrBuffer: Buffer): Promise<Buffer> {
   const { data, info } = await sharp(qrBuffer)
-    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .resize(800, 800, { kernel: 'cubic', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
     .raw()
     .toBuffer({ resolveWithObject: true });
   
@@ -2155,17 +2180,19 @@ async function applyCyberMagentaGradientEffect(qrBuffer: Buffer): Promise<Buffer
   const pixelData = new Uint8Array(data);
   
   // Aplicar gradiente cyber magenta #FF00FF -> #FF1493 -> #8B008B
+  const widthPlusHeight = width + height;
   for (let i = 0; i < pixelData.length; i += channels) {
     const r = pixelData[i];
     const g = pixelData[i + 1];
     const b = pixelData[i + 2];
     
     if (r < 128 && g < 128 && b < 128) {
-      const x = Math.floor((i / channels) % width);
-      const y = Math.floor((i / channels) / width);
+      const pixelIndex = i / channels;
+      const x = pixelIndex % width;
+      const y = Math.floor(pixelIndex / width);
       
-      // Gradiente diagonal alternativo
-      const gradientPos = (x - y + width) / (width + height);
+      // Gradiente diagonal alternativo optimizado
+      const gradientPos = (x - y + width) / widthPlusHeight;
       
       if (gradientPos < 0.33) {
         // Magenta brillante
@@ -2181,13 +2208,13 @@ async function applyCyberMagentaGradientEffect(qrBuffer: Buffer): Promise<Buffer
   }
   
   return await sharp(pixelData, { raw: { width, height, channels } })
-    .png({ quality: 85, compressionLevel: 4 })
+    .png({ quality: 80, compressionLevel: 6 })
     .toBuffer();
 }
 
 async function applyElectricTealGradientEffect(qrBuffer: Buffer): Promise<Buffer> {
   const { data, info } = await sharp(qrBuffer)
-    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .resize(800, 800, { kernel: 'cubic', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
     .raw()
     .toBuffer({ resolveWithObject: true });
   
@@ -2201,8 +2228,9 @@ async function applyElectricTealGradientEffect(qrBuffer: Buffer): Promise<Buffer
     const b = pixelData[i + 2];
     
     if (r < 128 && g < 128 && b < 128) {
-      const x = Math.floor((i / channels) % width);
-      const y = Math.floor((i / channels) / width);
+      const pixelIndex = i / channels;
+      const x = pixelIndex % width;
+      const y = Math.floor(pixelIndex / width);
       
       // Gradiente vertical eléctrico
       const gradientPos = y / height;
@@ -2221,7 +2249,7 @@ async function applyElectricTealGradientEffect(qrBuffer: Buffer): Promise<Buffer
   }
   
   return await sharp(pixelData, { raw: { width, height, channels } })
-    .png({ quality: 85, compressionLevel: 4 })
+    .png({ quality: 80, compressionLevel: 6 })
     .toBuffer();
 }
 
