@@ -4,7 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { Palette, Frame, Sparkles, Loader2, Home, ArrowLeft, Download, X, Maximize2, Upload } from "lucide-react";
+import { Palette, Frame, Sparkles, Loader2, Home, ArrowLeft, X, Maximize2, Upload } from "lucide-react";
 
 interface QRCustomizerProps {
   settings: any;
@@ -13,10 +13,9 @@ interface QRCustomizerProps {
   isGenerating: boolean;
   onBackToHome?: () => void;
   qrCode?: string | null;
-  onDownload?: () => void;
 }
 
-export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onBackToHome, qrCode, onDownload }: QRCustomizerProps) {
+export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onBackToHome, qrCode }: QRCustomizerProps) {
   const { toast } = useToast();
   
   // Función para manejar la carga de imágenes
@@ -98,17 +97,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                 Volver
               </Button>
             )}
-            {qrCode && onDownload && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onDownload}
-                className="flex items-center gap-1"
-              >
-                <Download className="w-4 h-4" />
-                Descargar
-              </Button>
-            )}
+
           </div>
         </div>
       </CardHeader>

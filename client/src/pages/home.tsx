@@ -605,7 +605,6 @@ export default function Home() {
                   isGenerating={generateQRMutation.isPending}
                   onBackToHome={() => setActiveTab("generate")}
                   qrCode={qrCode}
-                  onDownload={handleDownload}
                 />
               </div>
             )}
