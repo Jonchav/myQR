@@ -124,6 +124,7 @@ Preferred communication style: Simple, everyday language.
 - **Estilos Predefinidos**: Agregados presets de texto profesionales (SCAN ME, Escaneáme, etc.) para uso rápido
 - **Fondo de Texto**: Implementado fondo semitransparente automático para mejor legibilidad en cualquier diseño de tarjeta
 - **Eliminación Módulo Avanzado**: Removido completamente el módulo "Avanzado" por inconsistencias en patrones/estilos QR, simplificando la interfaz a 4 pestañas principales
+- **Estilos de Tarjeta Vibrantes**: Reemplazados todos los estilos de tarjeta con fondos blancos/grises por gradientes coloridos vibrantes - minimalist (azul-púrpura), corporate (azul-verde), electric_lime (lima vibrante), deep_space (azul brillante), silver_chrome (púrpura-índigo), pearl_white (naranja-rojo)
 
 ### December 2024
 - **Stripe Payment Integration**: Implemented complete payment system with subscription plans and 3-day free trial

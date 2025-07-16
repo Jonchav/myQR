@@ -407,8 +407,14 @@ function generateCardBackground(style: string, width: number, height: number): s
     `,
     
     "minimalist": `
-      <rect width="${width}" height="${height}" fill="#f8f9fa"/>
-      <rect x="${width*0.1}" y="${height*0.1}" width="${width*0.8}" height="${height*0.8}" fill="none" stroke="#dee2e6" stroke-width="2"/>
+      <defs>
+        <linearGradient id="minimalistGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#minimalistGrad)"/>
+      <rect x="${width*0.1}" y="${height*0.1}" width="${width*0.8}" height="${height*0.8}" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
     `,
     
     "abstract_art": `
@@ -424,9 +430,15 @@ function generateCardBackground(style: string, width: number, height: number): s
     `,
     
     "corporate": `
-      <rect width="${width}" height="${height}" fill="#1e293b"/>
-      <rect x="0" y="0" width="${width}" height="${height*0.3}" fill="#334155"/>
-      <rect x="0" y="${height*0.7}" width="${width}" height="${height*0.3}" fill="#475569"/>
+      <defs>
+        <linearGradient id="corporateGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#1e3a8a;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#corporateGrad)"/>
+      <rect x="0" y="0" width="${width}" height="${height*0.3}" fill="rgba(255,255,255,0.1)"/>
+      <rect x="0" y="${height*0.7}" width="${width}" height="${height*0.3}" fill="rgba(255,255,255,0.1)"/>
     `,
     
     "creative_burst": `
@@ -636,8 +648,8 @@ function generateCardBackground(style: string, width: number, height: number): s
     "electric_lime": `
       <defs>
         <linearGradient id="limeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:#a8e6cf;stop-opacity:1" />
-          <stop offset="100%" style="stop-color:#dcedc1;stop-opacity:1" />
+          <stop offset="0%" style="stop-color:#84cc16;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#22c55e;stop-opacity:1" />
         </linearGradient>
       </defs>
       <rect width="${width}" height="${height}" fill="url(#limeGrad)"/>
@@ -666,8 +678,8 @@ function generateCardBackground(style: string, width: number, height: number): s
     "deep_space": `
       <defs>
         <linearGradient id="deepSpaceGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:#434343;stop-opacity:1" />
-          <stop offset="100%" style="stop-color:#000000;stop-opacity:1" />
+          <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#1e40af;stop-opacity:1" />
         </linearGradient>
       </defs>
       <rect width="${width}" height="${height}" fill="url(#deepSpaceGrad)"/>
@@ -686,8 +698,8 @@ function generateCardBackground(style: string, width: number, height: number): s
     "silver_chrome": `
       <defs>
         <linearGradient id="silverGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:#bdc3c7;stop-opacity:1" />
-          <stop offset="100%" style="stop-color:#2c3e50;stop-opacity:1" />
+          <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
         </linearGradient>
       </defs>
       <rect width="${width}" height="${height}" fill="url(#silverGrad)"/>
@@ -746,8 +758,8 @@ function generateCardBackground(style: string, width: number, height: number): s
     "pearl_white": `
       <defs>
         <linearGradient id="pearlGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:#f7f7f7;stop-opacity:1" />
-          <stop offset="100%" style="stop-color:#e3e3e3;stop-opacity:1" />
+          <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
         </linearGradient>
       </defs>
       <rect width="${width}" height="${height}" fill="url(#pearlGrad)"/>
