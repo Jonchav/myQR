@@ -55,7 +55,7 @@ const qrGenerationSchema = z.object({
   cardStyle: z.enum([
     "none", "modern_gradient", "neon_waves", "geometric", "organic_flow", "minimalist",
     "abstract_art", "corporate", "creative_burst", "elegant_lines", "vibrant_blocks",
-    "scan_me_default"
+    "scan_me_default", "custom_image"
   ]).default("modern_gradient"),
   customBackgroundImage: z.union([z.string(), z.null()]).optional(), // Base64 encoded image data
   textContent: z.string().optional(),
@@ -445,9 +445,12 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
     
     // Generate background based on custom image or style
     let background;
-    if (customBackgroundImage) {
+    if (cardStyle === "custom_image" && customBackgroundImage) {
       // Use custom image as background
       background = `<image href="${customBackgroundImage}" width="${width}" height="${height}" preserveAspectRatio="xMidYMid slice"/>`;
+    } else if (cardStyle === "custom_image" && !customBackgroundImage) {
+      // If custom_image is selected but no image provided, use default gradient
+      background = generateCardBackground("modern_gradient", width, height);
     } else {
       // Use predefined style background
       background = generateCardBackground(cardStyle, width, height);
@@ -657,7 +660,7 @@ async function generateAdvancedQRCode(options: any): Promise<string> {
   }
   
   // Generate creative card if specified
-  if (options.cardTemplate && options.cardTemplate !== "none") {
+  if (options.cardTemplate && options.cardTemplate !== "none" || options.cardStyle && options.cardStyle !== "none") {
     console.log('Generating creative card...');
     qrDataUrl = await generateCreativeCard(qrDataUrl, options);
     console.log('Creative card generated successfully');

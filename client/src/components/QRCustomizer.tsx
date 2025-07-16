@@ -75,83 +75,66 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
     const newSettings = { ...settings, [key]: value };
     onChange(newSettings);
     
-    // Si hay una URL y el cambio es visual, regenerar automáticamente
-    if (settings.url && onGenerate && !isGenerating) {
-      const visualChanges = ['backgroundColor', 'foregroundColor', 'style', 'pattern', 'gradient', 'frame', 'size', 'border', 'logo', 'errorCorrection', 'includeText', 'textContent', 'textPosition', 'textAlign', 'textSize', 'textColor', 'textOpacity', 'textFont', 'textShadow', 'textBold', 'textItalic', 'cardTemplate', 'cardStyle', 'margin'];
-      if (visualChanges.includes(key)) {
-        // Usar debounce para evitar múltiples llamadas
-        clearTimeout(window.qrRegenerateTimeout);
-        
-        // Para cambios de color y patrones, usar un delay más corto para mayor responsividad
-        const delay = ['backgroundColor', 'foregroundColor', 'pattern', 'style'].includes(key) ? 50 : 
-                     key === 'textContent' ? 200 : 100;
-        window.qrRegenerateTimeout = setTimeout(() => {
-          onGenerate();
-        }, delay);
-      }
-    }
+    // Regenerar QR automáticamente con delay para cambios visuales
+    setTimeout(() => {
+      onGenerate();
+    }, 50);
   };
 
-
-
   return (
-    <Card className="w-full max-w-4xl mx-auto shadow-lg border-purple-200 dark:border-purple-700">
-      <CardHeader className="bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+    <Card className="w-full max-w-2xl mx-auto">
+      <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Sparkles className="w-6 h-6" />
-            <CardTitle className="text-xl">Personalización PRO</CardTitle>
-          </div>
+          <CardTitle className="text-xl flex items-center gap-2">
+            <Sparkles className="w-6 h-6 text-primary" />
+            Personalización PRO
+          </CardTitle>
           <div className="flex items-center gap-2">
             {onBackToHome && (
-              <Button 
-                variant="outline" 
+              <Button
+                variant="ghost"
                 size="sm"
                 onClick={onBackToHome}
-                className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+                className="flex items-center gap-1"
               >
-                <ArrowLeft className="w-4 h-4 mr-1" />
+                <ArrowLeft className="w-4 h-4" />
                 Volver
+              </Button>
+            )}
+            {qrCode && onDownload && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onDownload}
+                className="flex items-center gap-1"
+              >
+                <Download className="w-4 h-4" />
+                Descargar
               </Button>
             )}
           </div>
         </div>
       </CardHeader>
-      
-      <CardContent className="p-6">
-        {/* Vista previa del QR */}
-        {qrCode && (
-          <div className="mb-6 p-4 bg-gradient-to-br from-purple-900 to-blue-900 rounded-lg">
-            <Label className="text-sm font-semibold text-white flex items-center gap-2 mb-3">
-              <Sparkles className="w-4 h-4 text-purple-400" />
-              Vista Previa PRO
-            </Label>
-            <div className="text-center space-y-3">
-              <div className="p-2 bg-gray-900 rounded-lg border-2 border-purple-800 neon-glow">
-                <img 
-                  src={qrCode} 
-                  alt="Vista previa QR personalizado" 
-                  className="mx-auto border border-gray-700 rounded-lg max-w-[280px] h-auto shadow-lg"
-                />
-              </div>
-              
-              {onDownload && (
-                <Button 
-                  onClick={onDownload}
-                  className="w-full gradient-purple neon-glow"
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  Descargar PRO
-                </Button>
-              )}
+      <CardContent className="space-y-6">
+        {/* QR Preview */}
+        <div className="w-full max-w-[280px] mx-auto">
+          {qrCode ? (
+            <div className="relative">
+              <img
+                src={qrCode}
+                alt="QR Code"
+                className="w-full h-auto rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm"
+              />
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="aspect-square bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center">
+              <p className="text-gray-500 dark:text-gray-400 text-sm">Vista previa del QR</p>
+            </div>
+          )}
+        </div>
 
-        {/* Unified Customization Interface */}
         <div className="space-y-6">
-          
-          {/* Colors and Patterns - MOVED TO FIRST POSITION */}
+          {/* Colors and Patterns */}
           <Card className="border-purple-200 dark:border-purple-700">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2">
@@ -241,8 +224,6 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
             </CardContent>
           </Card>
 
-
-
           {/* Size and Social Media Dimensions */}
           <Card className="border-purple-200 dark:border-purple-700">
             <CardHeader className="pb-3">
@@ -290,8 +271,6 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                   </Select>
                 </div>
               </div>
-              
-
             </CardContent>
           </Card>
 
@@ -326,60 +305,63 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                       <SelectItem value="abstract_art">🌿 Natural</SelectItem>
                       <SelectItem value="elegant_lines">⚡ Tecnológico</SelectItem>
                       <SelectItem value="vibrant_blocks">✨ Lujo</SelectItem>
+                      <SelectItem value="custom_image">📁 Cargar imagen personalizada</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 
-                {/* Imagen de fondo personalizada */}
-                <div className="space-y-2">
-                  <Label>Imagen de fondo personalizada</Label>
-                  <p className="text-xs text-muted-foreground">
-                    Sube una imagen como fondo de la tarjeta (máximo 100MB)
-                  </p>
-                  
-                  {settings.customBackgroundImage ? (
-                    <div className="space-y-2">
-                      <div className="relative">
-                        <img 
-                          src={settings.customBackgroundImage} 
-                          alt="Imagen de fondo personalizada" 
-                          className="w-full h-24 object-cover rounded border border-purple-200 dark:border-purple-700"
-                        />
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={removeCustomImage}
-                          className="absolute top-1 right-1 h-6 w-6 p-0"
-                        >
-                          <X className="w-3 h-3" />
-                        </Button>
-                      </div>
-                      <p className="text-xs text-green-600 dark:text-green-400">
-                        ✓ Imagen cargada correctamente
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      <label className="cursor-pointer">
-                        <div className="border-2 border-dashed border-purple-300 dark:border-purple-600 rounded-lg p-4 text-center hover:border-purple-400 dark:hover:border-purple-500 transition-colors">
-                          <Upload className="w-6 h-6 mx-auto mb-2 text-purple-500" />
-                          <p className="text-sm text-purple-600 dark:text-purple-400">
-                            Haz clic para subir imagen
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            PNG, JPG, GIF hasta 100MB
-                          </p>
+                {/* Imagen de fondo personalizada - solo se muestra cuando se selecciona "custom_image" */}
+                {settings.cardStyle === "custom_image" && (
+                  <div className="space-y-2">
+                    <Label>Imagen de fondo personalizada</Label>
+                    <p className="text-xs text-muted-foreground">
+                      Sube una imagen como fondo de la tarjeta (máximo 100MB)
+                    </p>
+                    
+                    {settings.customBackgroundImage ? (
+                      <div className="space-y-2">
+                        <div className="relative">
+                          <img 
+                            src={settings.customBackgroundImage} 
+                            alt="Imagen de fondo personalizada" 
+                            className="w-full h-24 object-cover rounded border border-purple-200 dark:border-purple-700"
+                          />
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={removeCustomImage}
+                            className="absolute top-1 right-1 h-6 w-6 p-0"
+                          >
+                            <X className="w-3 h-3" />
+                          </Button>
                         </div>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={handleImageUpload}
-                          className="hidden"
-                        />
-                      </label>
-                    </div>
-                  )}
-                </div>
+                        <p className="text-xs text-green-600 dark:text-green-400">
+                          ✓ Imagen cargada correctamente
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <label className="cursor-pointer">
+                          <div className="border-2 border-dashed border-purple-300 dark:border-purple-600 rounded-lg p-4 text-center hover:border-purple-400 dark:hover:border-purple-500 transition-colors">
+                            <Upload className="w-6 h-6 mx-auto mb-2 text-purple-500" />
+                            <p className="text-sm text-purple-600 dark:text-purple-400">
+                              Haz clic para subir imagen
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              PNG, JPG, GIF hasta 100MB
+                            </p>
+                          </div>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            className="hidden"
+                          />
+                        </label>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>

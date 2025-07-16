@@ -38,6 +38,9 @@ Preferred communication style: Simple, everyday language.
 - **Esquema BD Expandido**: Agregado campo `customBackgroundImage` para almacenar imágenes de fondo personalizadas en base64
 - **Validación Robusta**: Corregida validación de esquema para manejar campos null y opcionales correctamente
 - **Limpieza de Datos**: Implementada limpieza automática de valores null antes de validación para evitar errores
+- **Integración UI/UX**: Agregada opción "Cargar imagen personalizada" en dropdown de estilos de tarjeta
+- **Flujo Intuitivo**: Campo de carga de imagen aparece automáticamente al seleccionar la opción en el dropdown
+- **Validación Backend**: Esquema actualizado para soportar cardStyle "custom_image" con lógica de fallback
 - **Control de Margen**: Implementado control deslizante para ajustar margen del QR (50-300px) con actualización en tiempo real
 - **Dimensiones Redes Sociales**: Agregadas opciones específicas para Instagram, Facebook, Twitter, LinkedIn, YouTube y TikTok con píxeles exactos
 - **Plantillas Rápidas**: Sección compacta con temas predefinidos (Moderno, Vibrante, Elegante, Natural, Tecnológico, Minimalista) de aplicación instantánea
