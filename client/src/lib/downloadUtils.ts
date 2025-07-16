@@ -60,10 +60,24 @@ export const downloadQR = {
   // SVG download
   svg: async (qrDataUrl: string, filename: string = 'qr-code') => {
     try {
-      const response = await fetch(`/api/qr/download/svg?qrDataUrl=${encodeURIComponent(qrDataUrl)}&filename=${filename}`);
-      if (!response.ok) throw new Error('Download failed');
+      // Convert PNG data URL to SVG format
+      const img = new Image();
+      img.src = qrDataUrl;
       
-      const blob = await response.blob();
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+      });
+      
+      // Create SVG content
+      const svgContent = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="${img.width}" height="${img.height}" viewBox="0 0 ${img.width} ${img.height}">
+          <image href="${qrDataUrl}" width="${img.width}" height="${img.height}" />
+        </svg>
+      `;
+      
+      // Create blob and download
+      const blob = new Blob([svgContent], { type: 'image/svg+xml' });
       saveAs(blob, `${filename}.svg`);
     } catch (error) {
       console.error('Error downloading SVG:', error);
