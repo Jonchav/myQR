@@ -316,63 +316,62 @@ function generateCardBackground(style: string, width: number, height: number): s
   return backgrounds[style] || backgrounds["modern_gradient"];
 }
 
-// Function to generate text SVG with advanced formatting
+// Function to generate text SVG with professional formatting and high contrast
 function generateTextSVG(options: any, cardWidth: number, cardHeight: number, qrX: number, qrY: number, qrSize: number): string {
   const {
     textContent,
     textPosition = "bottom",
     textAlign = "center",
-    textSize = 24,
-    textColor = "#000000",
+    textSize = 40,
+    textColor = "#ffffff",
     textOpacity = 100,
     textFont = "Arial",
-    textShadow = false,
-    textBold = false,
+    textShadow = true,
+    textBold = true,
     textItalic = false
   } = options;
   
-  // Calculate text position
+  // Calculate text position with better spacing
   let textX = cardWidth / 2;
   let textY = cardHeight / 2;
   
   switch (textPosition) {
     case "top":
-      textY = qrY - 40;
+      textY = qrY - 80; // More space from QR
       break;
     case "center":
       textY = cardHeight / 2;
       break;
     case "bottom":
-      textY = qrY + qrSize + 60;
+      textY = qrY + qrSize + 100; // More space from QR
       break;
   }
   
-  // Calculate text anchor based on alignment
-  let textAnchor = "middle";
-  switch (textAlign) {
-    case "left":
-      textX = 50;
-      textAnchor = "start";
-      break;
-    case "right":
-      textX = cardWidth - 50;
-      textAnchor = "end";
-      break;
-    case "center":
-      textX = cardWidth / 2;
-      textAnchor = "middle";
-      break;
-  }
+  // Always center text for cards (professional look)
+  textX = cardWidth / 2;
+  const textAnchor = "middle";
   
-  // Build font style
-  const fontWeight = textBold ? "bold" : "normal";
+  // Build font style with professional defaults
+  const fontWeight = textBold ? "bold" : "600"; // Semi-bold minimum
   const fontStyle = textItalic ? "italic" : "normal";
   const opacity = textOpacity / 100;
   
-  // Build text shadow
-  const shadowStyle = textShadow ? `filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.5))` : "";
+  // Enhanced shadow for better contrast
+  const shadowStyle = textShadow ? `filter: drop-shadow(3px 3px 6px rgba(0,0,0,0.8))` : "";
+  
+  // Create text with background for better readability
+  const backgroundRect = `
+    <rect x="${textX - (textContent.length * textSize * 0.3)}" 
+          y="${textY - textSize * 0.7}" 
+          width="${textContent.length * textSize * 0.6}" 
+          height="${textSize * 1.2}"
+          fill="rgba(0,0,0,0.7)" 
+          rx="8" 
+          opacity="0.8"/>
+  `;
   
   return `
+    ${backgroundRect}
     <text x="${textX}" y="${textY}" 
           text-anchor="${textAnchor}" 
           fill="${textColor}" 

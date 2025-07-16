@@ -23,6 +23,9 @@ Preferred communication style: Simple, everyday language.
 - **Calidad Profesional 4K**: Mejorado generador QR base con resolución 1200px y configuraciones PNG máximas
 - **Kernel Lanczos3**: Implementado reescalado profesional para nitidez superior en todas las composiciones
 - **Esquema de BD Expandido**: Agregados campos para textPosition, textAlign, textSize, textColor, textOpacity, textFont, textShadow, textBold, textItalic
+- **Mejoras de Contraste y UX**: Reorganizado panel de texto a tarjetas creativas con mejor contraste y sombras profesionales
+- **Estilos Predefinidos**: Agregados presets de texto profesionales (SCAN ME, Escaneáme, etc.) para uso rápido
+- **Fondo de Texto**: Implementado fondo semitransparente automático para mejor legibilidad en cualquier diseño de tarjeta
 
 ### December 2024
 - **Stripe Payment Integration**: Implemented complete payment system with subscription plans and 3-day free trial

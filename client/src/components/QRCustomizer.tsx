@@ -625,7 +625,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
             <div className="space-y-4">
               <div className="text-center space-y-2">
                 <h3 className="text-lg font-semibold text-purple-400">🎨 Tarjetas Creativas</h3>
-                <p className="text-sm text-gray-400">Crea tarjetas coloridas perfectas para redes sociales</p>
+                <p className="text-sm text-gray-400">Crea tarjetas profesionales con texto personalizado</p>
               </div>
               
               <div className="grid grid-cols-2 gap-4">
@@ -671,6 +671,178 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                 </div>
               </div>
 
+              {/* Configuración de texto para tarjetas */}
+              {settings.cardTemplate && settings.cardTemplate !== "none" && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-medium text-white">Texto de la Tarjeta</h4>
+                    <Switch
+                      id="includeText"
+                      checked={settings.includeText}
+                      onCheckedChange={(checked) => applyRealTimeChange("includeText", checked)}
+                    />
+                  </div>
+
+                  {settings.includeText && (
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="textContent">Texto personalizado</Label>
+                        <Input
+                          id="textContent"
+                          value={settings.textContent || ""}
+                          onChange={(e) => applyRealTimeChange("textContent", e.target.value)}
+                          placeholder="Ej: SCAN ME, Escaneáme, ¡Prueba esto!"
+                        />
+                      </div>
+
+                      {/* Estilos de texto predefinidos */}
+                      <div className="space-y-2">
+                        <Label>Estilos predefinidos</Label>
+                        <div className="grid grid-cols-2 gap-2">
+                          {[
+                            { name: "SCAN ME", style: "Clásico", settings: { textContent: "SCAN ME", textFont: "Arial", textBold: true, textSize: 40, textColor: "#ffffff", textShadow: true } },
+                            { name: "Escaneáme", style: "Español", settings: { textContent: "Escaneáme", textFont: "Georgia", textBold: true, textSize: 36, textColor: "#ffffff", textShadow: true } },
+                            { name: "¡Prueba esto!", style: "Divertido", settings: { textContent: "¡Prueba esto!", textFont: "Impact", textBold: true, textSize: 32, textColor: "#ffff00", textShadow: true } },
+                            { name: "Tap to scan", style: "Moderno", settings: { textContent: "Tap to scan", textFont: "Helvetica", textBold: false, textSize: 28, textColor: "#ffffff", textShadow: true } },
+                          ].map((preset) => (
+                            <Button
+                              key={preset.name}
+                              variant="outline"
+                              size="sm"
+                              className="h-auto p-2 text-xs"
+                              onClick={() => {
+                                Object.entries(preset.settings).forEach(([key, value]) => {
+                                  applyRealTimeChange(key, value);
+                                });
+                              }}
+                            >
+                              <div className="text-center">
+                                <div className="font-medium">{preset.name}</div>
+                                <div className="text-xs text-gray-400">{preset.style}</div>
+                              </div>
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Posición del texto</Label>
+                          <Select value={settings.textPosition || "bottom"} onValueChange={(value) => applyRealTimeChange("textPosition", value)}>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="top">⬆️ Arriba del QR</SelectItem>
+                              <SelectItem value="bottom">⬇️ Abajo del QR</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label>Estilo de fuente</Label>
+                          <Select value={settings.textFont || "Arial"} onValueChange={(value) => applyRealTimeChange("textFont", value)}>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Arial">Arial - Moderna</SelectItem>
+                              <SelectItem value="Helvetica">Helvetica - Profesional</SelectItem>
+                              <SelectItem value="Georgia">Georgia - Elegante</SelectItem>
+                              <SelectItem value="Impact">Impact - Impactante</SelectItem>
+                              <SelectItem value="Verdana">Verdana - Legible</SelectItem>
+                              <SelectItem value="Trebuchet MS">Trebuchet - Creativa</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Tamaño del texto</Label>
+                          <Select value={settings.textSize?.toString() || "40"} onValueChange={(value) => applyRealTimeChange("textSize", parseInt(value))}>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="24">24px - Pequeño</SelectItem>
+                              <SelectItem value="32">32px - Mediano</SelectItem>
+                              <SelectItem value="40">40px - Grande</SelectItem>
+                              <SelectItem value="48">48px - Muy grande</SelectItem>
+                              <SelectItem value="56">56px - Extra grande</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="textColor">Color del texto</Label>
+                          <div className="flex gap-2">
+                            <Input
+                              id="textColor"
+                              type="color"
+                              value={settings.textColor || "#ffffff"}
+                              onChange={(e) => applyRealTimeChange("textColor", e.target.value)}
+                              className="w-12 h-10 p-1"
+                            />
+                            <Input
+                              value={settings.textColor || "#ffffff"}
+                              onChange={(e) => applyRealTimeChange("textColor", e.target.value)}
+                              className="flex-1"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="flex items-center space-x-2">
+                          <Switch
+                            id="textBold"
+                            checked={settings.textBold || false}
+                            onCheckedChange={(checked) => applyRealTimeChange("textBold", checked)}
+                          />
+                          <Label htmlFor="textBold" className="text-sm">
+                            Texto en negrita
+                          </Label>
+                        </div>
+
+                        <div className="flex items-center space-x-2">
+                          <Switch
+                            id="textShadow"
+                            checked={settings.textShadow || false}
+                            onCheckedChange={(checked) => applyRealTimeChange("textShadow", checked)}
+                          />
+                          <Label htmlFor="textShadow" className="text-sm">
+                            Sombra de texto
+                          </Label>
+                        </div>
+                      </div>
+
+                      <div className="p-3 bg-gray-900/50 border border-gray-700 rounded-lg">
+                        <p className="text-sm text-gray-400 mb-2">Vista previa del texto:</p>
+                        <div className="text-center">
+                          <span 
+                            style={{
+                              color: settings.textColor || "#ffffff",
+                              fontSize: `${Math.max((settings.textSize || 40) * 0.4, 16)}px`,
+                              fontFamily: settings.textFont || "Arial",
+                              fontWeight: settings.textBold ? "bold" : "600",
+                              textShadow: settings.textShadow ? "3px 3px 6px rgba(0,0,0,0.8)" : "none",
+                              display: "inline-block",
+                              padding: "8px 16px",
+                              backgroundColor: "rgba(0,0,0,0.7)",
+                              borderRadius: "8px",
+                              letterSpacing: "0.5px"
+                            }}
+                          >
+                            {settings.textContent || "SCAN ME"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Vista previa de dimensiones */}
               {settings.cardTemplate && settings.cardTemplate !== "none" && (
                 <div className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg">
@@ -684,8 +856,8 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                     {settings.cardTemplate === "linkedin_post" && <p>• Formato profesional para LinkedIn</p>}
                     {settings.cardTemplate === "youtube_thumbnail" && <p>• Formato horizontal para miniaturas de YouTube</p>}
                     {settings.cardTemplate === "tiktok_video" && <p>• Formato vertical para TikTok</p>}
-                    <p>• El QR se posiciona automáticamente en el diseño</p>
-                    <p>• Incluye texto "SCAN ME" para mejor visibilidad</p>
+                    <p>• El QR se posiciona automáticamente en el centro</p>
+                    <p>• Texto personalizable con alto contraste</p>
                   </div>
                 </div>
               )}
@@ -914,188 +1086,16 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                 </Select>
               </div>
 
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="includeText"
-                  checked={settings.includeText}
-                  onCheckedChange={(checked) => applyRealTimeChange("includeText", checked)}
-                />
-                <Label htmlFor="includeText" className="flex items-center gap-2">
-                  <Type className="w-4 h-4" />
-                  Incluir texto personalizado
-                </Label>
-              </div>
-
-              {settings.includeText && (
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="textContent">Texto personalizado</Label>
-                    <Input
-                      id="textContent"
-                      value={settings.textContent || ""}
-                      onChange={(e) => applyRealTimeChange("textContent", e.target.value)}
-                      placeholder="Ingresa tu texto aquí"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Posición del texto</Label>
-                      <Select value={settings.textPosition || "bottom"} onValueChange={(value) => applyRealTimeChange("textPosition", value)}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="top">⬆️ Arriba</SelectItem>
-                          <SelectItem value="center">📍 Centro</SelectItem>
-                          <SelectItem value="bottom">⬇️ Abajo</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>Alineación</Label>
-                      <Select value={settings.textAlign || "center"} onValueChange={(value) => applyRealTimeChange("textAlign", value)}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="left">⬅️ Izquierda</SelectItem>
-                          <SelectItem value="center">📍 Centro</SelectItem>
-                          <SelectItem value="right">➡️ Derecha</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Tamaño del texto</Label>
-                      <Select value={settings.textSize?.toString() || "24"} onValueChange={(value) => applyRealTimeChange("textSize", parseInt(value))}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="12">12px - Muy pequeño</SelectItem>
-                          <SelectItem value="16">16px - Pequeño</SelectItem>
-                          <SelectItem value="20">20px - Normal</SelectItem>
-                          <SelectItem value="24">24px - Mediano</SelectItem>
-                          <SelectItem value="32">32px - Grande</SelectItem>
-                          <SelectItem value="40">40px - Muy grande</SelectItem>
-                          <SelectItem value="48">48px - Extra grande</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>Opacidad</Label>
-                      <Select value={settings.textOpacity?.toString() || "100"} onValueChange={(value) => applyRealTimeChange("textOpacity", parseInt(value))}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="25">25% - Muy transparente</SelectItem>
-                          <SelectItem value="50">50% - Semitransparente</SelectItem>
-                          <SelectItem value="75">75% - Poco transparente</SelectItem>
-                          <SelectItem value="100">100% - Opaco</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="textColor">Color del texto</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        id="textColor"
-                        type="color"
-                        value={settings.textColor || "#000000"}
-                        onChange={(e) => applyRealTimeChange("textColor", e.target.value)}
-                        className="w-12 h-10 p-1"
-                      />
-                      <Input
-                        value={settings.textColor || "#000000"}
-                        onChange={(e) => applyRealTimeChange("textColor", e.target.value)}
-                        className="flex-1"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Fuente</Label>
-                    <Select value={settings.textFont || "Arial"} onValueChange={(value) => applyRealTimeChange("textFont", value)}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Arial">Arial - Clásica</SelectItem>
-                        <SelectItem value="Georgia">Georgia - Elegante</SelectItem>
-                        <SelectItem value="Times New Roman">Times - Formal</SelectItem>
-                        <SelectItem value="Verdana">Verdana - Moderna</SelectItem>
-                        <SelectItem value="Helvetica">Helvetica - Minimalista</SelectItem>
-                        <SelectItem value="Comic Sans MS">Comic Sans - Divertida</SelectItem>
-                        <SelectItem value="Impact">Impact - Impactante</SelectItem>
-                        <SelectItem value="Courier New">Courier - Monospace</SelectItem>
-                        <SelectItem value="Trebuchet MS">Trebuchet - Creativa</SelectItem>
-                        <SelectItem value="Palatino">Palatino - Artística</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="flex items-center space-x-2">
-                      <Switch
-                        id="textBold"
-                        checked={settings.textBold || false}
-                        onCheckedChange={(checked) => applyRealTimeChange("textBold", checked)}
-                      />
-                      <Label htmlFor="textBold" className="text-sm">
-                        Negrita
-                      </Label>
-                    </div>
-
-                    <div className="flex items-center space-x-2">
-                      <Switch
-                        id="textItalic"
-                        checked={settings.textItalic || false}
-                        onCheckedChange={(checked) => applyRealTimeChange("textItalic", checked)}
-                      />
-                      <Label htmlFor="textItalic" className="text-sm">
-                        Cursiva
-                      </Label>
-                    </div>
-
-                    <div className="flex items-center space-x-2">
-                      <Switch
-                        id="textShadow"
-                        checked={settings.textShadow || false}
-                        onCheckedChange={(checked) => applyRealTimeChange("textShadow", checked)}
-                      />
-                      <Label htmlFor="textShadow" className="text-sm">
-                        Sombra
-                      </Label>
-                    </div>
-                  </div>
-
-                  <div className="p-3 bg-gray-900/50 border border-gray-700 rounded-lg">
-                    <p className="text-sm text-gray-400">
-                      Vista previa del texto: <span 
-                        style={{
-                          color: settings.textColor || "#000000",
-                          fontSize: `${(settings.textSize || 24) * 0.5}px`,
-                          fontFamily: settings.textFont || "Arial",
-                          fontWeight: settings.textBold ? "bold" : "normal",
-                          fontStyle: settings.textItalic ? "italic" : "normal",
-                          opacity: (settings.textOpacity || 100) / 100,
-                          textShadow: settings.textShadow ? "2px 2px 4px rgba(0,0,0,0.5)" : "none"
-                        }}
-                      >
-                        {settings.textContent || "Tu texto aquí"}
-                      </span>
-                    </p>
-                  </div>
+              <div className="p-4 bg-blue-900/20 border border-blue-700 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <Type className="w-4 h-4 text-blue-400" />
+                  <h4 className="text-sm font-medium text-blue-400">Configuración de Texto</h4>
                 </div>
-              )}
+                <p className="text-xs text-gray-400">
+                  ℹ️ Las opciones de texto están ahora en la pestaña "Tarjetas" para mejor organización. 
+                  Selecciona un formato de tarjeta para acceder a todas las opciones de texto personalizado.
+                </p>
+              </div>
             </div>
           </TabsContent>
         </Tabs>
