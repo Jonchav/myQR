@@ -459,6 +459,9 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
   try {
     const { cardTemplate, cardStyle, customBackgroundImage } = options;
     
+    console.log('generateCreativeCard - cardStyle:', cardStyle);
+    console.log('generateCreativeCard - customBackgroundImage present:', !!customBackgroundImage);
+    
     if (cardTemplate === "none" && cardStyle === "none") {
       return qrDataUrl;
     }
@@ -699,8 +702,10 @@ async function generateAdvancedQRCode(options: any): Promise<string> {
   }
   
   // Generate creative card if specified
-  if (options.cardTemplate && options.cardTemplate !== "none" || options.cardStyle && options.cardStyle !== "none") {
+  if ((options.cardTemplate && options.cardTemplate !== "none") || (options.cardStyle && options.cardStyle !== "none")) {
     console.log('Generating creative card...');
+    console.log('cardTemplate:', options.cardTemplate);
+    console.log('cardStyle:', options.cardStyle);
     qrDataUrl = await generateCreativeCard(qrDataUrl, options);
     console.log('Creative card generated successfully');
   }
