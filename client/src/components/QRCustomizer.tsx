@@ -174,7 +174,23 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Patrón Avanzado</Label>
+                  <Label>Estilo Creativo</Label>
+                  <Select value={settings.creativeStyle || "classic"} onValueChange={(value) => applyRealTimeChange("creativeStyle", value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="classic">🎨 Clásico Blanco y Negro</SelectItem>
+                      <SelectItem value="colorful">🌈 Colorido Múltiple (Rojo, Azul, Amarillo)</SelectItem>
+                      <SelectItem value="rainbow">🌈 Arcoíris Vibrante</SelectItem>
+                      <SelectItem value="sunset">🌅 Atardecer (Naranja, Amarillo)</SelectItem>
+                      <SelectItem value="ocean">🌊 Océano (Azules)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label>Patrón Decorativo</Label>
                   <Select value={settings.pattern} onValueChange={(value) => applyRealTimeChange("pattern", value)}>
                     <SelectTrigger>
                       <SelectValue />
@@ -191,7 +207,9 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                     </SelectContent>
                   </Select>
                 </div>
-                
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Estilo del QR</Label>
                   <Select value={settings.style} onValueChange={(value) => applyRealTimeChange("style", value)}>
@@ -205,6 +223,13 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                       <SelectItem value="circle">⭕ Circular</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label className="text-sm">Nota sobre Estilos</Label>
+                  <p className="text-xs text-muted-foreground">
+                    Los estilos creativos añaden colores múltiples y esquinas distintivas manteniendo la funcionalidad del QR
+                  </p>
                 </div>
               </div>
             </CardContent>

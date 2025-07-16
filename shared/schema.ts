@@ -55,6 +55,7 @@ export const qrCodes = pgTable("qr_codes", {
   gradient: varchar("gradient").default("none"), // none, blue, purple, green, sunset
   border: varchar("border").default("none"), // none, thin, thick, double
   logo: varchar("logo").default("none"), // none, replit, custom
+  creativeStyle: varchar("creative_style").default("classic"), // classic, colorful, rainbow, sunset, ocean
   
   // Advanced text options
   includeText: boolean("include_text").default(false),
@@ -130,6 +131,7 @@ export const insertQRCodeSchema = createInsertSchema(qrCodes).pick({
   gradient: true,
   border: true,
   logo: true,
+  creativeStyle: true,
   includeText: true,
   textContent: true,
   textPosition: true,

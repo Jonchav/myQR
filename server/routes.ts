@@ -644,6 +644,250 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
   }
 }
 
+// Function to generate creative QR with custom colors and patterns
+async function generateCreativeQR(options: any): Promise<string> {
+  const size = getQRSize(options.size);
+  const errorCorrectionLevel = getErrorCorrectionLevel(options.errorCorrection);
+  
+  // Generate base QR code
+  const qrOptions = {
+    width: size,
+    margin: Math.floor((options.margin || 150) / 30),
+    color: {
+      dark: "#000000",
+      light: "#ffffff"
+    },
+    errorCorrectionLevel,
+    type: 'image/png',
+    quality: 1.0
+  };
+
+  const dataToEncode = options.data || options.url;
+  let qrDataUrl = await QRCode.toDataURL(dataToEncode, qrOptions);
+  
+  // Apply creative styling
+  if (options.creativeStyle && options.creativeStyle !== "classic") {
+    qrDataUrl = await applyCreativeStyle(qrDataUrl, options.creativeStyle, options);
+  }
+  
+  return qrDataUrl;
+}
+
+// Function to apply creative styling with multiple colors and patterns
+async function applyCreativeStyle(qrDataUrl: string, style: string, options: any): Promise<string> {
+  try {
+    const qrBase64 = qrDataUrl.replace(/^data:image\/[a-z]+;base64,/, '');
+    const qrBuffer = Buffer.from(qrBase64, 'base64');
+    
+    const { width, height } = await sharp(qrBuffer).metadata();
+    if (!width || !height) return qrDataUrl;
+    
+    // Create SVG with creative styling
+    const creativeSVG = await generateCreativeQRSVG(style, width, height, options);
+    
+    // Convert SVG to buffer and composite with base QR
+    const svgBuffer = Buffer.from(creativeSVG);
+    const styledQR = await sharp(svgBuffer)
+      .png({ quality: 90, compressionLevel: 4 })
+      .composite([{
+        input: qrBuffer,
+        blend: 'multiply' // This preserves QR functionality while adding style
+      }])
+      .toBuffer();
+    
+    return `data:image/png;base64,${styledQR.toString('base64')}`;
+  } catch (error) {
+    console.error('Error applying creative style:', error);
+    return qrDataUrl;
+  }
+}
+
+// Function to generate creative QR SVG with multiple colors and patterns
+async function generateCreativeQRSVG(style: string, width: number, height: number, options: any): Promise<string> {
+  const colors = {
+    colorful: {
+      primary: options.foregroundColor || "#FF4757",
+      secondary: options.backgroundColor || "#2ED573", 
+      accent1: "#5352ED",
+      accent2: "#FFA726",
+      accent3: "#26C6DA"
+    },
+    rainbow: {
+      primary: "#FF6B6B",
+      secondary: "#4ECDC4",
+      accent1: "#45B7D1",
+      accent2: "#F7DC6F",
+      accent3: "#BB8FCE"
+    },
+    sunset: {
+      primary: "#FF5722",
+      secondary: "#FF9800",
+      accent1: "#FFC107",
+      accent2: "#FFEB3B",
+      accent3: "#CDDC39"
+    },
+    ocean: {
+      primary: "#0277BD",
+      secondary: "#0288D1",
+      accent1: "#039BE5",
+      accent2: "#03A9F4",
+      accent3: "#29B6F6"
+    }
+  };
+  
+  const colorScheme = colors[style as keyof typeof colors] || colors.colorful;
+  
+  return `
+    <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        ${generateCreativePatterns(colorScheme)}
+        ${generateCreativeCorners(colorScheme)}
+      </defs>
+      
+      <!-- Base gradient background -->
+      <rect width="${width}" height="${height}" fill="url(#baseGradient)" opacity="0.1"/>
+      
+      <!-- Creative corner designs -->
+      ${generateCornerElements(width, height, colorScheme)}
+      
+      <!-- Decorative elements -->
+      ${generateDecorativeElements(width, height, colorScheme, style)}
+      
+      <!-- Pattern overlay that doesn't interfere with QR scanning -->
+      <rect width="${width}" height="${height}" fill="url(#patternOverlay)" opacity="0.05"/>
+    </svg>
+  `;
+}
+
+// Function to generate creative patterns for QR
+function generateCreativePatterns(colors: any): string {
+  return `
+    <linearGradient id="baseGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:${colors.primary};stop-opacity:1" />
+      <stop offset="50%" style="stop-color:${colors.secondary};stop-opacity:1" />
+      <stop offset="100%" style="stop-color:${colors.accent1};stop-opacity:1" />
+    </linearGradient>
+    
+    <pattern id="patternOverlay" patternUnits="userSpaceOnUse" width="20" height="20">
+      <circle cx="10" cy="10" r="2" fill="${colors.accent2}" opacity="0.3"/>
+      <circle cx="5" cy="5" r="1" fill="${colors.accent3}" opacity="0.2"/>
+      <circle cx="15" cy="15" r="1" fill="${colors.accent3}" opacity="0.2"/>
+    </pattern>
+    
+    <filter id="roundedCorners">
+      <feMorphology operator="dilate" radius="2"/>
+      <feGaussianBlur stdDeviation="1" result="rounded"/>
+    </filter>
+    
+    <radialGradient id="cornerGradient1" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:${colors.primary};stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:${colors.accent1};stop-opacity:0.3" />
+    </radialGradient>
+    
+    <radialGradient id="cornerGradient2" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:${colors.secondary};stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:${colors.accent2};stop-opacity:0.3" />
+    </radialGradient>
+    
+    <radialGradient id="cornerGradient3" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:${colors.accent1};stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:${colors.accent3};stop-opacity:0.3" />
+    </radialGradient>
+  `;
+}
+
+// Function to generate creative corners
+function generateCreativeCorners(colors: any): string {
+  return `
+    <defs>
+      <g id="corner1">
+        <rect x="0" y="0" width="60" height="60" fill="url(#cornerGradient1)" rx="15" opacity="0.3"/>
+        <rect x="10" y="10" width="40" height="40" fill="${colors.primary}" rx="8" opacity="0.2"/>
+        <circle cx="30" cy="30" r="15" fill="${colors.accent1}" opacity="0.1"/>
+      </g>
+      
+      <g id="corner2">
+        <polygon points="0,0 60,0 60,60" fill="url(#cornerGradient2)" opacity="0.3"/>
+        <rect x="10" y="10" width="40" height="40" fill="${colors.secondary}" rx="20" opacity="0.2"/>
+        <circle cx="30" cy="30" r="8" fill="${colors.accent2}" opacity="0.4"/>
+      </g>
+      
+      <g id="corner3">
+        <circle cx="30" cy="30" r="30" fill="url(#cornerGradient3)" opacity="0.3"/>
+        <rect x="15" y="15" width="30" height="30" fill="${colors.accent1}" rx="15" opacity="0.2"/>
+        <polygon points="20,20 40,20 30,40" fill="${colors.accent3}" opacity="0.3"/>
+      </g>
+      
+      <g id="corner4">
+        <path d="M0,0 L60,0 L60,30 Q30,60 0,30 Z" fill="url(#cornerGradient1)" opacity="0.3"/>
+        <rect x="10" y="10" width="35" height="35" fill="${colors.primary}" rx="10" opacity="0.2"/>
+        <ellipse cx="25" cy="25" rx="12" ry="8" fill="${colors.accent2}" opacity="0.4"/>
+      </g>
+    </defs>
+  `;
+}
+
+// Function to generate corner elements
+function generateCornerElements(width: number, height: number, colors: any): string {
+  return `
+    <!-- Top-left corner -->
+    <use href="#corner1" x="0" y="0"/>
+    
+    <!-- Top-right corner -->
+    <g transform="translate(${width}, 0) scale(-1, 1)">
+      <use href="#corner2" x="0" y="0"/>
+    </g>
+    
+    <!-- Bottom-left corner -->
+    <g transform="translate(0, ${height}) scale(1, -1)">
+      <use href="#corner3" x="0" y="0"/>
+    </g>
+    
+    <!-- Bottom-right corner -->
+    <g transform="translate(${width}, ${height}) scale(-1, -1)">
+      <use href="#corner4" x="0" y="0"/>
+    </g>
+  `;
+}
+
+// Function to generate decorative elements
+function generateDecorativeElements(width: number, height: number, colors: any, style: string): string {
+  const centerX = width / 2;
+  const centerY = height / 2;
+  
+  let decorative = "";
+  
+  if (style === "colorful") {
+    decorative = `
+      <circle cx="${centerX - 80}" cy="${centerY - 80}" r="15" fill="${colors.accent1}" opacity="0.2"/>
+      <circle cx="${centerX + 80}" cy="${centerY - 80}" r="12" fill="${colors.accent2}" opacity="0.3"/>
+      <circle cx="${centerX - 80}" cy="${centerY + 80}" r="18" fill="${colors.accent3}" opacity="0.2"/>
+      <circle cx="${centerX + 80}" cy="${centerY + 80}" r="10" fill="${colors.primary}" opacity="0.3"/>
+    `;
+  } else if (style === "rainbow") {
+    decorative = `
+      <path d="M${centerX - 100},${centerY} Q${centerX},${centerY - 50} ${centerX + 100},${centerY}" 
+            stroke="${colors.accent1}" stroke-width="3" fill="none" opacity="0.2"/>
+      <path d="M${centerX - 100},${centerY + 20} Q${centerX},${centerY - 30} ${centerX + 100},${centerY + 20}" 
+            stroke="${colors.accent2}" stroke-width="2" fill="none" opacity="0.3"/>
+    `;
+  } else if (style === "sunset") {
+    decorative = `
+      <ellipse cx="${centerX}" cy="${centerY - 60}" rx="40" ry="20" fill="${colors.accent1}" opacity="0.1"/>
+      <ellipse cx="${centerX}" cy="${centerY + 60}" rx="30" ry="15" fill="${colors.accent2}" opacity="0.2"/>
+    `;
+  } else if (style === "ocean") {
+    decorative = `
+      <path d="M0,${centerY} Q${centerX/2},${centerY - 20} ${centerX},${centerY} Q${centerX * 1.5},${centerY + 20} ${width},${centerY}" 
+            stroke="${colors.accent1}" stroke-width="2" fill="none" opacity="0.2"/>
+      <path d="M0,${centerY + 30} Q${centerX/2},${centerY + 10} ${centerX},${centerY + 30} Q${centerX * 1.5},${centerY + 50} ${width},${centerY + 30}" 
+            stroke="${colors.accent2}" stroke-width="1" fill="none" opacity="0.3"/>
+    `;
+  }
+  
+  return decorative;
+}
+
 // Function to apply custom patterns to QR code - Modified to use shape-based patterns
 async function applyCustomPattern(qrDataUrl: string, pattern: string, size: number): Promise<string> {
   if (pattern === "standard") return qrDataUrl;
@@ -742,6 +986,13 @@ async function generateAdvancedQRCode(options: any): Promise<string> {
   // Generate the QR code
   const dataToEncode = options.data || options.url;
   let qrDataUrl = await QRCode.toDataURL(dataToEncode, qrOptions);
+  
+  // Apply creative styling if specified
+  if (options.creativeStyle && options.creativeStyle !== "classic") {
+    console.log('Applying creative styling:', options.creativeStyle);
+    qrDataUrl = await applyCreativeStyle(qrDataUrl, options.creativeStyle, options);
+    console.log('Creative styling applied successfully');
+  }
   
   // Apply custom cell shapes first if specified
   if (options.style && options.style !== "square") {
