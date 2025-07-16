@@ -267,4 +267,19 @@
     background-color: #374151 !important;
     color: #f3f4f6 !important;
   }
+
+  /* Ocultar barra de desplazamiento para el carrete horizontal */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Animación suave para hover en estilos */
+  .hover\:scale-102:hover {
+    transform: scale(1.02);
+  }
 }

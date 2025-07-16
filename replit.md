@@ -11,9 +11,11 @@ Preferred communication style: Simple, everyday language.
 ## Recent Changes
 
 ### January 2025
-- **Catálogo de 15 Estilos Creativos**: Implementado sistema completo de catálogo visual con 15 estilos únicos organizados por categorías: Básico, Colorido, Moderno, Naturaleza, Cálido, Cósmico, Fresco, Elegante, Delicado, Energético, Estacional, Monocromático, Suave. Cada estilo incluye paleta de colores específica y vista previa interactiva
+- **Carrete Horizontal de Estilos**: Rediseñado completamente el catálogo de estilos en formato carrete horizontal con 15 estilos únicos, vista previa automática con colores representativos, y scroll suave sin barra visible
+- **Vista Previa Automática**: Implementado sistema de generación automática de vistas previas para todos los estilos al cargar la página, con función de actualización manual e indicadores de carga
+- **Interfaz Intuitiva**: Creada selección visual con escala de hover, indicadores de selección con punto circular, y información contextual del estilo seleccionado
 - **Migración a qr-svg**: Solucionado problema de compatibilidad con Node.js reemplazando qr-code-styling por qr-svg, eliminando error "window is not defined" y mejorando estabilidad del servidor
-- **Interfaz de Catálogo Visual**: Creado componente StyleCatalog con grid de tarjetas, categorización automática, vista previa bajo demanda, y selección visual intuitiva que reemplaza dropdown simple
+- **Paletas de Colores**: Cada estilo incluye paleta de colores específica que se muestra como vista previa antes de la generación completa del QR
 - **Esquinas Personalizadas**: Cada esquina tiene diseño único con gradientes radiales, formas geométricas (rectángulos redondeados, triángulos, círculos, curvas) y colores distintivos que se adaptan al esquema seleccionado
 - **Patrones Decorativos**: Elementos visuales como círculos, ondas, elipses y paths curvos que añaden atractivo sin interferir con el escaneo del QR
 - **Composición SVG Avanzada**: Sistema de generación SVG con defs, gradientes, filtros y patrones que se compone con el QR base usando blend mode 'multiply' para preservar legibilidad
