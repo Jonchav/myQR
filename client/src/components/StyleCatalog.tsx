@@ -14,21 +14,21 @@ export function StyleCatalog({ onStyleSelect, selectedStyle, isGenerating }: Sty
 
   const styles = [
     { id: 'classic', name: 'Clásico', colors: ['#000000'] },
-    { id: 'vibrant_rainbow', name: 'Arcoíris Vibrante', colors: ['#FF0080'] },
-    { id: 'neon_cyber', name: 'Neón Cyber', colors: ['#00FFFF'] },
-    { id: 'electric_blue', name: 'Azul Eléctrico', colors: ['#007BFF'] },
-    { id: 'sunset_fire', name: 'Fuego del Atardecer', colors: ['#FFA500'] },
-    { id: 'forest_nature', name: 'Bosque Natural', colors: ['#00FF00'] },
-    { id: 'ocean_waves', name: 'Ondas del Océano', colors: ['#0064FF'] },
-    { id: 'multicolor_blocks', name: 'Bloques Multicolor', colors: ['#9400D3'] },
-    { id: 'purple_galaxy', name: 'Galaxia Púrpura', colors: ['#8A2BE2'] },
-    { id: 'golden_sunset', name: 'Atardecer Dorado', colors: ['#FFD700'] },
-    { id: 'mint_fresh', name: 'Menta Fresca', colors: ['#00FA9A'] },
-    { id: 'coral_reef', name: 'Arrecife de Coral', colors: ['#FF7F50'] },
-    { id: 'volcano_red', name: 'Rojo Volcánico', colors: ['#DC143C'] },
+    { id: 'vibrant_rainbow', name: 'Arcoíris Vibrante', colors: ['#D12982'] },
+    { id: 'neon_cyber', name: 'Neón Cyber', colors: ['#00AAAA'] },
+    { id: 'electric_blue', name: 'Azul Eléctrico', colors: ['#0056B3'] },
+    { id: 'sunset_fire', name: 'Fuego del Atardecer', colors: ['#E6931A'] },
+    { id: 'forest_nature', name: 'Bosque Natural', colors: ['#228B22'] },
+    { id: 'ocean_waves', name: 'Ondas del Océano', colors: ['#0047AB'] },
+    { id: 'multicolor_blocks', name: 'Bloques Multicolor', colors: ['#6A1B9A'] },
+    { id: 'purple_galaxy', name: 'Galaxia Púrpura', colors: ['#5D1A8B'] },
+    { id: 'golden_sunset', name: 'Atardecer Dorado', colors: ['#DAA520'] },
+    { id: 'mint_fresh', name: 'Menta Fresca', colors: ['#00C572'] },
+    { id: 'coral_reef', name: 'Arrecife de Coral', colors: ['#FF5722'] },
+    { id: 'volcano_red', name: 'Rojo Volcánico', colors: ['#B71C1C'] },
     { id: 'autumn_leaves', name: 'Hojas de Otoño', colors: ['#8B4513'] },
-    { id: 'monochrome_red', name: 'Rojo Monocromático', colors: ['#DC143C'] },
-    { id: 'pastel_dream', name: 'Sueño Pastel', colors: ['#FFB3BA'] }
+    { id: 'monochrome_red', name: 'Rojo Monocromático', colors: ['#B71C1C'] },
+    { id: 'pastel_dream', name: 'Sueño Pastel', colors: ['#FF8A95'] }
   ];
 
   const generateQRPreview = async (styleId: string) => {

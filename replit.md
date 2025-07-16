@@ -30,6 +30,9 @@ Preferred communication style: Simple, everyday language.
 - **Corrección Crítica de Colores**: Solucionado problema donde color púrpura del usuario (#5b21b6) sobrescribía colores específicos de estilos creativos
 - **Prioridad de Colores de Estilo**: Sistema ahora usa colores específicos de cada estilo (electric_blue: #007BFF, vibrant_rainbow: #FF0080) en lugar de colores del usuario
 - **Generación QR Correcta**: QR codes ahora se generan directamente con colores base específicos del estilo y se mejoran con API para máxima viveza
+- **Mejora Crítica de Contraste**: Resuelto problema de escaneabilidad con colores optimizados para mayor contraste - verde forest_nature cambió de #00FF00 a #228B22 para mejor legibilidad
+- **Colores Escaneables**: Todos los estilos ahora usan colores más oscuros con contraste mínimo 4.5:1 para garantizar funcionalidad completa del QR
+- **Gradientes Mejorados**: Actualizado sistema de gradientes píxel por píxel para usar colores base con mejor contraste mientras mantiene efectos visuales vibrantes
 - **Sistema de Efectos Multicolor**: Implementado sistema revolucionario de gradientes y mezclas de colores que aplica múltiples colores vibrantes en un solo QR
 - **Gradientes SVG Avanzados**: Creados 15 efectos únicos con gradientes lineales y radiales: arcoíris (rosa-púrpura-violeta), neón (cyan-verde-azul), eléctrico (azul-cian-púrpura), fuego (naranja-amarillo-rojo), etc.
 - **Técnica de Composición**: Los efectos multicolor se aplican usando overlays SVG con blend mode 'multiply' para preservar funcionalidad del QR

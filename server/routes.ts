@@ -684,28 +684,28 @@ async function generateCreativeQR(options: any): Promise<string> {
   return qrDataUrl;
 }
 
-// Función para obtener colores específicos de cada estilo
+// Función para obtener colores específicos de cada estilo con mejor contraste
 function getCreativeStyleColors(style: string): { foreground: string; background: string } {
   const styleColors = {
     'classic': { foreground: '#000000', background: '#ffffff' },
-    'vibrant_rainbow': { foreground: '#FF0080', background: '#ffffff' },
-    'neon_cyber': { foreground: '#00FFFF', background: '#ffffff' },
-    'electric_blue': { foreground: '#007BFF', background: '#ffffff' },
-    'sunset_fire': { foreground: '#FFA500', background: '#ffffff' },
-    'forest_nature': { foreground: '#00FF00', background: '#ffffff' },
-    'ocean_waves': { foreground: '#0064FF', background: '#ffffff' },
-    'multicolor_blocks': { foreground: '#9400D3', background: '#ffffff' },
-    'purple_galaxy': { foreground: '#8A2BE2', background: '#ffffff' },
-    'golden_sunset': { foreground: '#FFD700', background: '#ffffff' },
-    'mint_fresh': { foreground: '#00FA9A', background: '#ffffff' },
-    'coral_reef': { foreground: '#FF7F50', background: '#ffffff' },
-    'volcano_red': { foreground: '#DC143C', background: '#ffffff' },
-    'autumn_leaves': { foreground: '#8B4513', background: '#ffffff' },
-    'monochrome_red': { foreground: '#DC143C', background: '#ffffff' },
-    'pastel_dream': { foreground: '#FFB3BA', background: '#ffffff' }
+    'vibrant_rainbow': { foreground: '#D12982', background: '#ffffff' }, // Rosa más oscuro
+    'neon_cyber': { foreground: '#00AAAA', background: '#ffffff' }, // Cyan más oscuro
+    'electric_blue': { foreground: '#0056B3', background: '#ffffff' }, // Azul más oscuro
+    'sunset_fire': { foreground: '#E6931A', background: '#ffffff' }, // Naranja más oscuro
+    'forest_nature': { foreground: '#228B22', background: '#ffffff' }, // Verde más oscuro para mejor contraste
+    'ocean_waves': { foreground: '#0047AB', background: '#ffffff' }, // Azul océano más oscuro
+    'multicolor_blocks': { foreground: '#6A1B9A', background: '#ffffff' }, // Púrpura más oscuro
+    'purple_galaxy': { foreground: '#5D1A8B', background: '#ffffff' }, // Púrpura más oscuro
+    'golden_sunset': { foreground: '#DAA520', background: '#ffffff' }, // Dorado más oscuro
+    'mint_fresh': { foreground: '#00C572', background: '#ffffff' }, // Menta más oscuro
+    'coral_reef': { foreground: '#FF5722', background: '#ffffff' }, // Coral más oscuro
+    'volcano_red': { foreground: '#B71C1C', background: '#ffffff' }, // Rojo más oscuro
+    'autumn_leaves': { foreground: '#8B4513', background: '#ffffff' }, // Mantiene buen contraste
+    'monochrome_red': { foreground: '#B71C1C', background: '#ffffff' }, // Rojo más oscuro
+    'pastel_dream': { foreground: '#FF8A95', background: '#ffffff' } // Pastel más oscuro
   };
   
-  return styleColors[style] || styleColors.classic;
+  return styleColors[style as keyof typeof styleColors] || styleColors.classic;
 }
 
 // Función para mejorar QR codes con gradientes en celdas
@@ -1118,25 +1118,48 @@ async function applyFireGradientEffect(qrBuffer: Buffer): Promise<Buffer> {
 }
 
 async function applyNatureGradientEffect(qrBuffer: Buffer): Promise<Buffer> {
-  // Gradiente de naturaleza verde-lima-esmeralda
-  const svgOverlay = `
-    <svg width="1200" height="1200" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="nature" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:#00FF00;stop-opacity:1" />
-          <stop offset="25%" style="stop-color:#32CD32;stop-opacity:1" />
-          <stop offset="50%" style="stop-color:#90EE90;stop-opacity:1" />
-          <stop offset="75%" style="stop-color:#00FF80;stop-opacity:1" />
-          <stop offset="100%" style="stop-color:#00FF40;stop-opacity:1" />
-        </linearGradient>
-      </defs>
-      <rect width="100%" height="100%" fill="url(#nature)" opacity="0.8"/>
-    </svg>
-  `;
-  
-  return await sharp(qrBuffer)
+  const { data, info } = await sharp(qrBuffer)
     .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
-    .composite([{ input: Buffer.from(svgOverlay), blend: 'multiply' }])
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  
+  const { width, height, channels } = info;
+  const pixelData = new Uint8Array(data);
+  
+  // Aplicar gradiente de naturaleza verde-esmeralda con mejor contraste
+  for (let i = 0; i < pixelData.length; i += channels) {
+    const r = pixelData[i];
+    const g = pixelData[i + 1];
+    const b = pixelData[i + 2];
+    
+    if (r < 128 && g < 128 && b < 128) {
+      const x = Math.floor((i / channels) % width);
+      const y = Math.floor((i / channels) / width);
+      
+      // Gradiente diagonal de naturaleza
+      const diagonal = (x + y) / (width + height);
+      const gradientPos = Math.min(diagonal, 1);
+      
+      if (gradientPos < 0.2) {
+        // Verde bosque oscuro (base)
+        pixelData[i] = 34; pixelData[i + 1] = 139; pixelData[i + 2] = 34;
+      } else if (gradientPos < 0.4) {
+        // Verde medio
+        pixelData[i] = 46; pixelData[i + 1] = 125; pixelData[i + 2] = 50;
+      } else if (gradientPos < 0.6) {
+        // Verde esmeralda
+        pixelData[i] = 0; pixelData[i + 1] = 128; pixelData[i + 2] = 0;
+      } else if (gradientPos < 0.8) {
+        // Verde lima oscuro
+        pixelData[i] = 50; pixelData[i + 1] = 205; pixelData[i + 2] = 50;
+      } else {
+        // Verde natural
+        pixelData[i] = 34; pixelData[i + 1] = 139; pixelData[i + 2] = 34;
+      }
+    }
+  }
+  
+  return await sharp(pixelData, { raw: { width, height, channels } })
     .png({ quality: 85, compressionLevel: 4 })
     .toBuffer();
 }
