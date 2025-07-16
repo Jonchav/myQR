@@ -32,6 +32,7 @@ Preferred communication style: Simple, everyday language.
 - **Interfaz Simplificada**: Eliminado texto "SCAN ME", plantillas rápidas, barra de margen y edición de texto según preferencias del usuario
 - **Interfaz Enfocada**: Reducida interfaz a colores, patrones, estilos de QR, tamaños y estilos de tarjeta para mayor simplicidad
 - **Código Optimizado**: Eliminadas funciones de texto innecesarias y simplificado esquema de validación backend
+- **Optimización de Tamaño de Imagen**: Reducido tamaño de vista previa de imagen QR a 280px manteniendo calidad 4K/2K de descarga
 - **Control de Margen**: Implementado control deslizante para ajustar margen del QR (50-300px) con actualización en tiempo real
 - **Dimensiones Redes Sociales**: Agregadas opciones específicas para Instagram, Facebook, Twitter, LinkedIn, YouTube y TikTok con píxeles exactos
 - **Plantillas Rápidas**: Sección compacta con temas predefinidos (Moderno, Vibrante, Elegante, Natural, Tecnológico, Minimalista) de aplicación instantánea
