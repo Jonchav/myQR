@@ -13,6 +13,7 @@ export function StyleCatalog({ onStyleSelect, selectedStyle, isGenerating }: Sty
   const [isLoading, setIsLoading] = useState(false);
 
   const styles = [
+    // Estilos originales mejorados
     { id: 'classic', name: 'Clásico', colors: ['#000000'] },
     { id: 'vibrant_rainbow', name: 'Arcoíris Vibrante', colors: ['#D12982'] },
     { id: 'neon_cyber', name: 'Neón Cyber', colors: ['#00AAAA'] },
@@ -28,7 +29,45 @@ export function StyleCatalog({ onStyleSelect, selectedStyle, isGenerating }: Sty
     { id: 'volcano_red', name: 'Rojo Volcánico', colors: ['#B71C1C'] },
     { id: 'autumn_leaves', name: 'Hojas de Otoño', colors: ['#8B4513'] },
     { id: 'monochrome_red', name: 'Rojo Monocromático', colors: ['#B71C1C'] },
-    { id: 'pastel_dream', name: 'Sueño Pastel', colors: ['#FF8A95'] }
+    { id: 'pastel_dream', name: 'Sueño Pastel', colors: ['#FF8A95'] },
+    
+    // 20 nuevos estilos creativos
+    { id: 'cosmic_purple', name: 'Púrpura Cósmico', colors: ['#4A148C'] },
+    { id: 'laser_green', name: 'Verde Láser', colors: ['#2E7D32'] },
+    { id: 'neon_pink', name: 'Rosa Neón', colors: ['#C2185B'] },
+    { id: 'electric_yellow', name: 'Amarillo Eléctrico', colors: ['#F57F17'] },
+    { id: 'deep_ocean', name: 'Océano Profundo', colors: ['#006064'] },
+    { id: 'royal_blue', name: 'Azul Real', colors: ['#1A237E'] },
+    { id: 'emerald_shine', name: 'Brillo Esmeralda', colors: ['#00695C'] },
+    { id: 'crimson_wave', name: 'Ola Carmesí', colors: ['#B71C1C'] },
+    { id: 'cyber_orange', name: 'Naranja Cyber', colors: ['#E65100'] },
+    { id: 'mystic_violet', name: 'Violeta Místico', colors: ['#6A1B9A'] },
+    { id: 'arctic_blue', name: 'Azul Ártico', colors: ['#0277BD'] },
+    { id: 'jade_matrix', name: 'Matriz Jade', colors: ['#2E7D32'] },
+    { id: 'ruby_fire', name: 'Fuego Rubí', colors: ['#C62828'] },
+    { id: 'sapphire_glow', name: 'Brillo Zafiro', colors: ['#1565C0'] },
+    { id: 'bronze_metal', name: 'Metal Bronce', colors: ['#8D6E63'] },
+    { id: 'silver_chrome', name: 'Cromo Plateado', colors: ['#546E7A'] },
+    { id: 'magenta_burst', name: 'Explosión Magenta', colors: ['#AD1457'] },
+    { id: 'teal_storm', name: 'Tormenta Turquesa', colors: ['#00796B'] },
+    { id: 'amber_lightning', name: 'Rayo Ámbar', colors: ['#FF8F00'] },
+    { id: 'indigo_depth', name: 'Profundidad Índigo', colors: ['#303F9F'] },
+    { id: 'lime_electric', name: 'Lima Eléctrico', colors: ['#689F38'] },
+    { id: 'rose_gold', name: 'Oro Rosa', colors: ['#D81B60'] },
+    { id: 'steel_blue', name: 'Azul Acero', colors: ['#37474F'] },
+    { id: 'neon_turquoise', name: 'Turquesa Neón', colors: ['#00838F'] },
+    { id: 'plasma_red', name: 'Rojo Plasma', colors: ['#D32F2F'] },
+    { id: 'galaxy_green', name: 'Verde Galaxia', colors: ['#388E3C'] },
+    { id: 'cyber_magenta', name: 'Magenta Cyber', colors: ['#8E24AA'] },
+    { id: 'electric_teal', name: 'Turquesa Eléctrico', colors: ['#00695C'] },
+    { id: 'laser_blue', name: 'Azul Láser', colors: ['#1976D2'] },
+    { id: 'neon_lime', name: 'Lima Neón', colors: ['#8BC34A'] },
+    { id: 'digital_purple', name: 'Púrpura Digital', colors: ['#7B1FA2'] },
+    { id: 'chrome_yellow', name: 'Amarillo Cromo', colors: ['#FBC02D'] },
+    { id: 'matrix_green', name: 'Verde Matrix', colors: ['#4CAF50'] },
+    { id: 'fire_orange', name: 'Naranja Fuego', colors: ['#F57C00'] },
+    { id: 'ice_blue', name: 'Azul Hielo', colors: ['#0288D1'] },
+    { id: 'toxic_green', name: 'Verde Tóxico', colors: ['#558B2F'] }
   ];
 
   const generateQRPreview = async (styleId: string) => {

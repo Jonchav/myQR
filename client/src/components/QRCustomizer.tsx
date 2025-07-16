@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Palette, Frame, Sparkles, Loader2, Home, ArrowLeft, X, Maximize2, Upload } from "lucide-react";
 import { StyleCatalog } from "./StyleCatalog";
+import { CardStyleCatalog } from "./CardStyleCatalog";
 
 interface QRCustomizerProps {
   settings: any;
@@ -177,6 +178,14 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                 <StyleCatalog 
                   selectedStyle={settings.creativeStyle || "classic"}
                   onStyleSelect={(style) => applyRealTimeChange("creativeStyle", style)}
+                  isGenerating={isGenerating}
+                />
+              </div>
+              
+              <div className="col-span-full space-y-3">
+                <CardStyleCatalog 
+                  selectedStyle={settings.cardStyle || "minimalist"}
+                  onStyleSelect={(style) => applyRealTimeChange("cardStyle", style)}
                   isGenerating={isGenerating}
                 />
               </div>

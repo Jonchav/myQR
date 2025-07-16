@@ -684,25 +684,64 @@ async function generateCreativeQR(options: any): Promise<string> {
   return qrDataUrl;
 }
 
-// Función para obtener colores específicos de cada estilo con mejor contraste
+// Función para obtener colores específicos de cada estilo con mejor contraste - EXPANDIDO
 function getCreativeStyleColors(style: string): { foreground: string; background: string } {
   const styleColors = {
+    // Estilos originales mejorados
     'classic': { foreground: '#000000', background: '#ffffff' },
-    'vibrant_rainbow': { foreground: '#D12982', background: '#ffffff' }, // Rosa más oscuro
-    'neon_cyber': { foreground: '#00AAAA', background: '#ffffff' }, // Cyan más oscuro
-    'electric_blue': { foreground: '#0056B3', background: '#ffffff' }, // Azul más oscuro
-    'sunset_fire': { foreground: '#E6931A', background: '#ffffff' }, // Naranja más oscuro
-    'forest_nature': { foreground: '#228B22', background: '#ffffff' }, // Verde más oscuro para mejor contraste
-    'ocean_waves': { foreground: '#0047AB', background: '#ffffff' }, // Azul océano más oscuro
-    'multicolor_blocks': { foreground: '#6A1B9A', background: '#ffffff' }, // Púrpura más oscuro
-    'purple_galaxy': { foreground: '#5D1A8B', background: '#ffffff' }, // Púrpura más oscuro
-    'golden_sunset': { foreground: '#DAA520', background: '#ffffff' }, // Dorado más oscuro
-    'mint_fresh': { foreground: '#00C572', background: '#ffffff' }, // Menta más oscuro
-    'coral_reef': { foreground: '#FF5722', background: '#ffffff' }, // Coral más oscuro
-    'volcano_red': { foreground: '#B71C1C', background: '#ffffff' }, // Rojo más oscuro
-    'autumn_leaves': { foreground: '#8B4513', background: '#ffffff' }, // Mantiene buen contraste
-    'monochrome_red': { foreground: '#B71C1C', background: '#ffffff' }, // Rojo más oscuro
-    'pastel_dream': { foreground: '#FF8A95', background: '#ffffff' } // Pastel más oscuro
+    'vibrant_rainbow': { foreground: '#D12982', background: '#ffffff' },
+    'neon_cyber': { foreground: '#00AAAA', background: '#ffffff' },
+    'electric_blue': { foreground: '#0056B3', background: '#ffffff' },
+    'sunset_fire': { foreground: '#E6931A', background: '#ffffff' },
+    'forest_nature': { foreground: '#228B22', background: '#ffffff' },
+    'ocean_waves': { foreground: '#0047AB', background: '#ffffff' },
+    'multicolor_blocks': { foreground: '#6A1B9A', background: '#ffffff' },
+    'purple_galaxy': { foreground: '#5D1A8B', background: '#ffffff' },
+    'golden_sunset': { foreground: '#DAA520', background: '#ffffff' },
+    'mint_fresh': { foreground: '#00C572', background: '#ffffff' },
+    'coral_reef': { foreground: '#FF5722', background: '#ffffff' },
+    'volcano_red': { foreground: '#B71C1C', background: '#ffffff' },
+    'autumn_leaves': { foreground: '#8B4513', background: '#ffffff' },
+    'monochrome_red': { foreground: '#B71C1C', background: '#ffffff' },
+    'pastel_dream': { foreground: '#FF8A95', background: '#ffffff' },
+    
+    // 20 nuevos estilos creativos
+    'cosmic_purple': { foreground: '#4A148C', background: '#ffffff' },
+    'laser_green': { foreground: '#2E7D32', background: '#ffffff' },
+    'neon_pink': { foreground: '#C2185B', background: '#ffffff' },
+    'electric_yellow': { foreground: '#F57F17', background: '#ffffff' },
+    'deep_ocean': { foreground: '#006064', background: '#ffffff' },
+    'royal_blue': { foreground: '#1A237E', background: '#ffffff' },
+    'emerald_shine': { foreground: '#00695C', background: '#ffffff' },
+    'crimson_wave': { foreground: '#B71C1C', background: '#ffffff' },
+    'cyber_orange': { foreground: '#E65100', background: '#ffffff' },
+    'mystic_violet': { foreground: '#6A1B9A', background: '#ffffff' },
+    'arctic_blue': { foreground: '#0277BD', background: '#ffffff' },
+    'jade_matrix': { foreground: '#2E7D32', background: '#ffffff' },
+    'ruby_fire': { foreground: '#C62828', background: '#ffffff' },
+    'sapphire_glow': { foreground: '#1565C0', background: '#ffffff' },
+    'bronze_metal': { foreground: '#8D6E63', background: '#ffffff' },
+    'silver_chrome': { foreground: '#546E7A', background: '#ffffff' },
+    'magenta_burst': { foreground: '#AD1457', background: '#ffffff' },
+    'teal_storm': { foreground: '#00796B', background: '#ffffff' },
+    'amber_lightning': { foreground: '#FF8F00', background: '#ffffff' },
+    'indigo_depth': { foreground: '#303F9F', background: '#ffffff' },
+    'lime_electric': { foreground: '#689F38', background: '#ffffff' },
+    'rose_gold': { foreground: '#D81B60', background: '#ffffff' },
+    'steel_blue': { foreground: '#37474F', background: '#ffffff' },
+    'neon_turquoise': { foreground: '#00838F', background: '#ffffff' },
+    'plasma_red': { foreground: '#D32F2F', background: '#ffffff' },
+    'galaxy_green': { foreground: '#388E3C', background: '#ffffff' },
+    'cyber_magenta': { foreground: '#8E24AA', background: '#ffffff' },
+    'electric_teal': { foreground: '#00695C', background: '#ffffff' },
+    'laser_blue': { foreground: '#1976D2', background: '#ffffff' },
+    'neon_lime': { foreground: '#8BC34A', background: '#ffffff' },
+    'digital_purple': { foreground: '#7B1FA2', background: '#ffffff' },
+    'chrome_yellow': { foreground: '#FBC02D', background: '#ffffff' },
+    'matrix_green': { foreground: '#4CAF50', background: '#ffffff' },
+    'fire_orange': { foreground: '#F57C00', background: '#ffffff' },
+    'ice_blue': { foreground: '#0288D1', background: '#ffffff' },
+    'toxic_green': { foreground: '#558B2F', background: '#ffffff' }
   };
   
   return styleColors[style as keyof typeof styleColors] || styleColors.classic;
