@@ -8,7 +8,7 @@ import { setupAuth, isAuthenticated } from "./replitAuth";
 import sharp from "sharp";
 import * as XLSX from "xlsx";
 import Stripe from "stripe";
-import QRCodeStyling from "qr-code-styling";
+import QRCodeSVG from "qr-svg";
 
 // Cache para imágenes procesadas - mejora significativa de velocidad
 const imageCache = new Map<string, Buffer>();
@@ -675,288 +675,152 @@ async function generateCreativeQR(options: any): Promise<string> {
   return qrDataUrl;
 }
 
-// Function to apply creative styling with qr-code-styling
+// Function to apply creative styling with qr-svg
 async function applyCreativeStyle(qrDataUrl: string, style: string, options: any): Promise<string> {
   try {
-    console.log('Applying creative style with qr-code-styling:', style);
+    console.log('Applying creative style with qr-svg:', style);
     
-    // Create QR code with creative styling using qr-code-styling
-    const qrCodeStyling = new QRCodeStyling({
+    // Generate QR code with creative styling using qr-svg
+    const qrSvg = QRCodeSVG({
+      content: options.data || options.url,
       width: 800,
       height: 800,
-      data: options.data || options.url,
-      margin: 0,
-      qrOptions: {
-        typeNumber: 0,
-        mode: 'Byte',
-        errorCorrectionLevel: 'M'
-      },
-      imageOptions: {
-        hideBackgroundDots: true,
-        imageSize: 0,
-        margin: 0
-      },
-      dotsOptions: getCreativeDotsOptions(style),
-      backgroundOptions: getCreativeBackgroundOptions(style),
-      cornersSquareOptions: getCreativeCornersSquareOptions(style),
-      cornersDotOptions: getCreativeCornersDotOptions(style)
+      color: '#000000',
+      background: '#ffffff',
+      ecl: 'M',
+      join: true,
+      predefined: false,
+      pretty: true,
+      swap: false,
+      xmlDeclaration: false,
+      container: 'svg'
     });
 
-    // Generate the QR code as buffer
-    const qrBuffer = await qrCodeStyling.getRawData('png');
+    // Create creative SVG with styled elements
+    const creativeSVG = await generateCreativeSVG(qrSvg, style, options);
     
-    return `data:image/png;base64,${qrBuffer.toString('base64')}`;
+    // Convert SVG to PNG using Sharp
+    const pngBuffer = await sharp(Buffer.from(creativeSVG))
+      .png({ quality: 90, compressionLevel: 4 })
+      .toBuffer();
+    
+    return `data:image/png;base64,${pngBuffer.toString('base64')}`;
   } catch (error) {
     console.error('Error applying creative style:', error);
     return qrDataUrl; // Return original if fails
   }
 }
 
-// Helper functions for creative styling options
-function getCreativeDotsOptions(style: string) {
-  const baseOptions = {
-    type: 'rounded' as const,
-    color: '#000000'
+// Function to generate creative SVG with styled elements
+async function generateCreativeSVG(baseSvg: string, style: string, options: any): Promise<string> {
+  // Define color schemes for each style
+  const colorSchemes = {
+    colorful: {
+      colors: ['#FF4757', '#5352ED', '#2ED573', '#FFA726', '#26C6DA'],
+      bgGradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+    },
+    rainbow: {
+      colors: ['#FF6B6B', '#4ECDC4', '#45B7D1', '#F7DC6F', '#BB8FCE', '#A8E6CF'],
+      bgGradient: 'linear-gradient(45deg, #ff9a9e 0%, #fecfef 25%, #fecfef 50%, #fecfef 75%, #fad0c4 100%)'
+    },
+    sunset: {
+      colors: ['#FF5722', '#FF9800', '#FFC107', '#FFEB3B', '#CDDC39'],
+      bgGradient: 'linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%)'
+    },
+    ocean: {
+      colors: ['#0277BD', '#0288D1', '#039BE5', '#03A9F4', '#29B6F6'],
+      bgGradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+    }
   };
+
+  const scheme = colorSchemes[style as keyof typeof colorSchemes] || colorSchemes.colorful;
   
-  switch (style) {
-    case 'colorful':
-      return {
-        ...baseOptions,
-        type: 'rounded' as const,
-        gradient: {
-          type: 'radial' as const,
-          rotation: 0,
-          colorStops: [
-            { offset: 0, color: '#FF4757' },
-            { offset: 0.3, color: '#5352ED' },
-            { offset: 0.6, color: '#2ED573' },
-            { offset: 1, color: '#FFA726' }
-          ]
-        }
-      };
-    case 'rainbow':
-      return {
-        ...baseOptions,
-        type: 'dots' as const,
-        gradient: {
-          type: 'linear' as const,
-          rotation: 45,
-          colorStops: [
-            { offset: 0, color: '#FF6B6B' },
-            { offset: 0.2, color: '#4ECDC4' },
-            { offset: 0.4, color: '#45B7D1' },
-            { offset: 0.6, color: '#F7DC6F' },
-            { offset: 0.8, color: '#BB8FCE' },
-            { offset: 1, color: '#FF6B6B' }
-          ]
-        }
-      };
-    case 'sunset':
-      return {
-        ...baseOptions,
-        type: 'classy-rounded' as const,
-        gradient: {
-          type: 'radial' as const,
-          rotation: 0,
-          colorStops: [
-            { offset: 0, color: '#FF5722' },
-            { offset: 0.5, color: '#FF9800' },
-            { offset: 1, color: '#FFC107' }
-          ]
-        }
-      };
-    case 'ocean':
-      return {
-        ...baseOptions,
-        type: 'extra-rounded' as const,
-        gradient: {
-          type: 'linear' as const,
-          rotation: 90,
-          colorStops: [
-            { offset: 0, color: '#0277BD' },
-            { offset: 0.3, color: '#0288D1' },
-            { offset: 0.6, color: '#039BE5' },
-            { offset: 1, color: '#29B6F6' }
-          ]
-        }
-      };
-    default:
-      return baseOptions;
-  }
+  // Parse the base SVG to extract paths
+  const svgContent = baseSvg.replace(/fill="[^"]*"/g, '');
+  
+  // Create enhanced SVG with creative styling
+  const enhancedSvg = `
+    <svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <!-- Creative gradients for each color -->
+        ${scheme.colors.map((color, index) => `
+          <radialGradient id="gradient${index}" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" style="stop-color:${color};stop-opacity:1" />
+            <stop offset="100%" style="stop-color:${adjustBrightness(color, -20)};stop-opacity:1" />
+          </radialGradient>
+        `).join('')}
+        
+        <!-- Corner styles -->
+        <pattern id="cornerPattern" patternUnits="userSpaceOnUse" width="20" height="20">
+          <circle cx="10" cy="10" r="8" fill="${scheme.colors[0]}" opacity="0.6"/>
+        </pattern>
+        
+        <!-- Background pattern -->
+        <pattern id="bgPattern" patternUnits="userSpaceOnUse" width="40" height="40">
+          <circle cx="20" cy="20" r="3" fill="${scheme.colors[1]}" opacity="0.1"/>
+        </pattern>
+      </defs>
+      
+      <!-- Background with subtle pattern -->
+      <rect width="800" height="800" fill="white"/>
+      <rect width="800" height="800" fill="url(#bgPattern)"/>
+      
+      <!-- Modified QR code with creative colors -->
+      <g transform="translate(100, 100)">
+        ${applyCreativeColorsToSVG(svgContent, scheme.colors)}
+      </g>
+      
+      <!-- Decorative corner elements -->
+      ${generateCornerDecorations(scheme.colors)}
+    </svg>
+  `;
+  
+  return enhancedSvg;
 }
 
-function getCreativeBackgroundOptions(style: string) {
-  const baseOptions = {
-    color: '#ffffff'
-  };
+// Helper function to apply creative colors to SVG paths
+function applyCreativeColorsToSVG(svgContent: string, colors: string[]): string {
+  const colorIndex = Math.floor(Math.random() * colors.length);
   
-  switch (style) {
-    case 'colorful':
-      return {
-        gradient: {
-          type: 'radial' as const,
-          rotation: 0,
-          colorStops: [
-            { offset: 0, color: '#ffffff' },
-            { offset: 1, color: '#f8f9fa' }
-          ]
-        }
-      };
-    case 'rainbow':
-      return {
-        gradient: {
-          type: 'linear' as const,
-          rotation: 135,
-          colorStops: [
-            { offset: 0, color: '#ffeaa7' },
-            { offset: 1, color: '#fab1a0' }
-          ]
-        }
-      };
-    case 'sunset':
-      return {
-        gradient: {
-          type: 'radial' as const,
-          rotation: 0,
-          colorStops: [
-            { offset: 0, color: '#fff3e0' },
-            { offset: 1, color: '#ffe0b2' }
-          ]
-        }
-      };
-    case 'ocean':
-      return {
-        gradient: {
-          type: 'linear' as const,
-          rotation: 180,
-          colorStops: [
-            { offset: 0, color: '#e3f2fd' },
-            { offset: 1, color: '#bbdefb' }
-          ]
-        }
-      };
-    default:
-      return baseOptions;
-  }
+  // Replace rect elements with colored versions
+  return svgContent.replace(/<rect[^>]*>/g, (match) => {
+    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    return match.replace(/fill="[^"]*"/, `fill="${randomColor}"`).replace(/>/g, ` fill="${randomColor}">`);
+  });
 }
 
-function getCreativeCornersSquareOptions(style: string) {
-  const baseOptions = {
-    type: 'square' as const,
-    color: '#000000'
-  };
+// Helper function to adjust color brightness
+function adjustBrightness(color: string, percent: number): string {
+  const hex = color.replace('#', '');
+  const r = parseInt(hex.substr(0, 2), 16);
+  const g = parseInt(hex.substr(2, 2), 16);
+  const b = parseInt(hex.substr(4, 2), 16);
   
-  switch (style) {
-    case 'colorful':
-      return {
-        type: 'extra-rounded' as const,
-        gradient: {
-          type: 'linear' as const,
-          rotation: 45,
-          colorStops: [
-            { offset: 0, color: '#FF4757' },
-            { offset: 0.5, color: '#5352ED' },
-            { offset: 1, color: '#2ED573' }
-          ]
-        }
-      };
-    case 'rainbow':
-      return {
-        type: 'dot' as const,
-        gradient: {
-          type: 'radial' as const,
-          rotation: 0,
-          colorStops: [
-            { offset: 0, color: '#FF6B6B' },
-            { offset: 0.5, color: '#4ECDC4' },
-            { offset: 1, color: '#45B7D1' }
-          ]
-        }
-      };
-    case 'sunset':
-      return {
-        type: 'classy-rounded' as const,
-        gradient: {
-          type: 'linear' as const,
-          rotation: 180,
-          colorStops: [
-            { offset: 0, color: '#FF5722' },
-            { offset: 1, color: '#FFC107' }
-          ]
-        }
-      };
-    case 'ocean':
-      return {
-        type: 'extra-rounded' as const,
-        gradient: {
-          type: 'radial' as const,
-          rotation: 0,
-          colorStops: [
-            { offset: 0, color: '#0277BD' },
-            { offset: 1, color: '#29B6F6' }
-          ]
-        }
-      };
-    default:
-      return baseOptions;
-  }
+  return `#${Math.round(r * (100 + percent) / 100).toString(16).padStart(2, '0')}${Math.round(g * (100 + percent) / 100).toString(16).padStart(2, '0')}${Math.round(b * (100 + percent) / 100).toString(16).padStart(2, '0')}`;
 }
 
-function getCreativeCornersDotOptions(style: string) {
-  const baseOptions = {
-    color: '#000000'
-  };
-  
-  switch (style) {
-    case 'colorful':
-      return {
-        gradient: {
-          type: 'radial' as const,
-          rotation: 0,
-          colorStops: [
-            { offset: 0, color: '#FFA726' },
-            { offset: 1, color: '#FF4757' }
-          ]
-        }
-      };
-    case 'rainbow':
-      return {
-        gradient: {
-          type: 'linear' as const,
-          rotation: 90,
-          colorStops: [
-            { offset: 0, color: '#F7DC6F' },
-            { offset: 1, color: '#BB8FCE' }
-          ]
-        }
-      };
-    case 'sunset':
-      return {
-        gradient: {
-          type: 'radial' as const,
-          rotation: 0,
-          colorStops: [
-            { offset: 0, color: '#FFEB3B' },
-            { offset: 1, color: '#FF9800' }
-          ]
-        }
-      };
-    case 'ocean':
-      return {
-        gradient: {
-          type: 'linear' as const,
-          rotation: 45,
-          colorStops: [
-            { offset: 0, color: '#03A9F4' },
-            { offset: 1, color: '#0288D1' }
-          ]
-        }
-      };
-    default:
-      return baseOptions;
-  }
+// Helper function to generate corner decorations
+function generateCornerDecorations(colors: string[]): string {
+  return `
+    <!-- Top-left corner -->
+    <circle cx="50" cy="50" r="25" fill="${colors[0]}" opacity="0.6"/>
+    <rect x="25" y="25" width="50" height="50" rx="10" fill="${colors[1]}" opacity="0.4"/>
+    
+    <!-- Top-right corner -->
+    <polygon points="750,25 775,50 750,75" fill="${colors[2]}" opacity="0.6"/>
+    <rect x="725" y="25" width="50" height="50" rx="25" fill="${colors[3]}" opacity="0.4"/>
+    
+    <!-- Bottom-left corner -->
+    <circle cx="50" cy="750" r="20" fill="${colors[4]}" opacity="0.6"/>
+    <rect x="25" y="725" width="50" height="50" rx="25" fill="${colors[0]}" opacity="0.4"/>
+    
+    <!-- Bottom-right corner -->
+    <ellipse cx="750" cy="750" rx="25" ry="15" fill="${colors[1]}" opacity="0.6"/>
+    <path d="M 725 725 Q 775 725 775 775 Q 775 725 725 725" fill="${colors[2]}" opacity="0.4"/>
+  `;
 }
+
+
 
 // Function to generate creative QR SVG with multiple colors and patterns
 async function generateCreativeQRSVG(style: string, width: number, height: number, options: any): Promise<string> {
