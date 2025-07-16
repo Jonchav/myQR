@@ -728,8 +728,202 @@ async function enhanceQRWithGradients(qrDataUrl: string, style: string, options:
   }
 }
 
-// === SISTEMA DE GRADIENTES EN CELDAS ===
-// Solo se mantiene el sistema avanzado de gradientes píxel por píxel
+// Función eliminada: getEnhancedColors (ya no se usa la API externa)
+
+// Función eliminada: applyEnhancedStyling (ya no se usa la API externa)
+
+// Funciones de efectos específicos para la mejora con API
+async function applyRainbowGradient(qrBuffer: Buffer, colors: any): Promise<Buffer> {
+  return await sharp(qrBuffer)
+    .modulate({
+      brightness: 1.3,
+      saturation: 2.0,
+      hue: 30
+    })
+    .tint(colors.primary)
+    .png({ quality: 90, compressionLevel: 4 })
+    .toBuffer();
+}
+
+async function applyNeonGlow(qrBuffer: Buffer, colors: any): Promise<Buffer> {
+  return await sharp(qrBuffer)
+    .modulate({
+      brightness: 1.5,
+      saturation: 2.5,
+      hue: 180
+    })
+    .tint(colors.primary)
+    .png({ quality: 90, compressionLevel: 4 })
+    .toBuffer();
+}
+
+async function applyElectricEffect(qrBuffer: Buffer, colors: any): Promise<Buffer> {
+  return await sharp(qrBuffer)
+    .modulate({
+      brightness: 1.2,
+      saturation: 1.8,
+      hue: 210
+    })
+    .tint(colors.primary)
+    .png({ quality: 90, compressionLevel: 4 })
+    .toBuffer();
+}
+
+async function applyFireGradient(qrBuffer: Buffer, colors: any): Promise<Buffer> {
+  return await sharp(qrBuffer)
+    .modulate({
+      brightness: 1.4,
+      saturation: 2.2,
+      hue: 15
+    })
+    .tint(colors.primary)
+    .png({ quality: 90, compressionLevel: 4 })
+    .toBuffer();
+}
+
+async function applyNatureGradient(qrBuffer: Buffer, colors: any): Promise<Buffer> {
+  return await sharp(qrBuffer)
+    .modulate({
+      brightness: 1.1,
+      saturation: 1.9,
+      hue: 120
+    })
+    .tint(colors.primary)
+    .png({ quality: 90, compressionLevel: 4 })
+    .toBuffer();
+}
+
+async function applyWaveEffect(qrBuffer: Buffer, colors: any): Promise<Buffer> {
+  return await sharp(qrBuffer)
+    .modulate({
+      brightness: 1.2,
+      saturation: 1.7,
+      hue: 240
+    })
+    .tint(colors.primary)
+    .png({ quality: 90, compressionLevel: 4 })
+    .toBuffer();
+}
+
+async function applyBlockPattern(qrBuffer: Buffer, colors: any): Promise<Buffer> {
+  return await sharp(qrBuffer)
+    .modulate({
+      brightness: 1.3,
+      saturation: 2.1,
+      hue: 270
+    })
+    .tint(colors.primary)
+    .png({ quality: 90, compressionLevel: 4 })
+    .toBuffer();
+}
+
+async function applyGalaxyEffect(qrBuffer: Buffer, colors: any): Promise<Buffer> {
+  return await sharp(qrBuffer)
+    .modulate({
+      brightness: 1.2,
+      saturation: 1.8,
+      hue: 300
+    })
+    .tint(colors.primary)
+    .png({ quality: 90, compressionLevel: 4 })
+    .toBuffer();
+}
+
+async function applyGoldenGradient(qrBuffer: Buffer, colors: any): Promise<Buffer> {
+  return await sharp(qrBuffer)
+    .modulate({
+      brightness: 1.4,
+      saturation: 1.6,
+      hue: 45
+    })
+    .tint(colors.primary)
+    .png({ quality: 90, compressionLevel: 4 })
+    .toBuffer();
+}
+
+async function applyMintEffect(qrBuffer: Buffer, colors: any): Promise<Buffer> {
+  return await sharp(qrBuffer)
+    .modulate({
+      brightness: 1.2,
+      saturation: 1.5,
+      hue: 150
+    })
+    .tint(colors.primary)
+    .png({ quality: 90, compressionLevel: 4 })
+    .toBuffer();
+}
+
+async function applyCoralGradient(qrBuffer: Buffer, colors: any): Promise<Buffer> {
+  return await sharp(qrBuffer)
+    .modulate({
+      brightness: 1.3,
+      saturation: 1.7,
+      hue: 30
+    })
+    .tint(colors.primary)
+    .png({ quality: 90, compressionLevel: 4 })
+    .toBuffer();
+}
+
+async function applyVolcanoEffect(qrBuffer: Buffer, colors: any): Promise<Buffer> {
+  return await sharp(qrBuffer)
+    .modulate({
+      brightness: 1.1,
+      saturation: 2.0,
+      hue: 0
+    })
+    .tint(colors.primary)
+    .png({ quality: 90, compressionLevel: 4 })
+    .toBuffer();
+}
+
+async function applyAutumnGradient(qrBuffer: Buffer, colors: any): Promise<Buffer> {
+  return await sharp(qrBuffer)
+    .modulate({
+      brightness: 1.0,
+      saturation: 1.6,
+      hue: 20
+    })
+    .tint(colors.primary)
+    .png({ quality: 90, compressionLevel: 4 })
+    .toBuffer();
+}
+
+async function applyMonochromeEffect(qrBuffer: Buffer, colors: any): Promise<Buffer> {
+  return await sharp(qrBuffer)
+    .modulate({
+      brightness: 1.1,
+      saturation: 1.8,
+      hue: 0
+    })
+    .tint(colors.primary)
+    .png({ quality: 90, compressionLevel: 4 })
+    .toBuffer();
+}
+
+async function applyPastelGradient(qrBuffer: Buffer, colors: any): Promise<Buffer> {
+  return await sharp(qrBuffer)
+    .modulate({
+      brightness: 1.3,
+      saturation: 0.8,
+      hue: 10
+    })
+    .tint(colors.primary)
+    .png({ quality: 90, compressionLevel: 4 })
+    .toBuffer();
+}
+
+async function applyDefaultEnhancement(qrBuffer: Buffer, colors: any): Promise<Buffer> {
+  return await sharp(qrBuffer)
+    .modulate({
+      brightness: 1.1,
+      saturation: 1.2,
+      hue: 0
+    })
+    .tint(colors.primary)
+    .png({ quality: 90, compressionLevel: 4 })
+    .toBuffer();
+}
 
 // Function to apply creative styling to existing functional QR
 async function applyCreativeStyle(qrDataUrl: string, style: string, options: any): Promise<string> {
