@@ -24,6 +24,11 @@ Preferred communication style: Simple, everyday language.
 - **Tarjeta PRO por Defecto**: Configuración automática de tarjeta minimalista con "SCAN ME" al activar modo PRO
 - **Gradiente Púrpura-Naranja**: Creado estilo "scan_me_default" que replica el diseño del ejemplo con gradiente violeta a naranja
 - **Activación Automática**: El modo PRO se activa automáticamente con configuración predeterminada al cambiar a pestaña de personalización
+- **Sincronización de Parámetros**: Corregida discrepancia entre parámetros seleccionados y resultado generado
+- **Colores Respetados**: Eliminada sobrescritura automática de colores de marca, ahora respeta siempre los colores del usuario
+- **Campos de Texto Completos**: Añadidos todos los campos de personalización de texto al schema de validación
+- **Margen Dinámico**: Corregido sistema de margen para que responda a los cambios del usuario en tiempo real
+- **Texto Estético Mejorado**: Mejorado contraste y espaciado del texto "SCAN ME" con fondo moderno y sombras
 - **Control de Margen**: Implementado control deslizante para ajustar margen del QR (50-300px) con actualización en tiempo real
 - **Dimensiones Redes Sociales**: Agregadas opciones específicas para Instagram, Facebook, Twitter, LinkedIn, YouTube y TikTok con píxeles exactos
 - **Plantillas Rápidas**: Sección compacta con temas predefinidos (Moderno, Vibrante, Elegante, Natural, Tecnológico, Minimalista) de aplicación instantánea

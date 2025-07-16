@@ -47,6 +47,16 @@ const qrGenerationSchema = z.object({
   ]).default("none"),
   includeText: z.boolean().default(false),
   textContent: z.string().optional(),
+  textPosition: z.enum(["top", "center", "bottom"]).default("bottom"),
+  textAlign: z.enum(["left", "center", "right"]).default("center"),
+  textSize: z.number().default(24),
+  textColor: z.string().default("#ffffff"),
+  textOpacity: z.number().default(100),
+  textFont: z.string().default("Arial"),
+  textShadow: z.boolean().default(false),
+  textBold: z.boolean().default(true),
+  textItalic: z.boolean().default(false),
+  margin: z.number().default(150),
   errorCorrection: z.enum(["L", "M", "Q", "H"]).default("M"),
   backgroundImage: z.string().optional(), // Data URL for background image
   cardTemplate: z.enum([
@@ -470,13 +480,13 @@ function generateTextSVG(options: any, cardWidth: number, cardHeight: number, qr
   
   switch (textPosition) {
     case "top":
-      textY = qrY - 80; // More space from QR
+      textY = qrY - 120; // More space from QR
       break;
     case "center":
       textY = cardHeight / 2;
       break;
     case "bottom":
-      textY = qrY + qrSize + 100; // More space from QR
+      textY = qrY + qrSize + 120; // More space from QR
       break;
   }
   
@@ -501,15 +511,16 @@ function generateTextSVG(options: any, cardWidth: number, cardHeight: number, qr
     y: textY - textSize * 1.3 // Ajustar posición Y generosamente
   };
   
-  // Create text with background for better readability
+  // Create text with modern background for better readability
   const backgroundRect = `
     <rect x="${textMetrics.x}" 
           y="${textMetrics.y}" 
           width="${textMetrics.width}" 
           height="${textMetrics.height}"
-          fill="rgba(0,0,0,0.8)" 
-          rx="12" 
-          opacity="0.9"/>
+          fill="rgba(0,0,0,0.9)" 
+          rx="20" 
+          opacity="0.95"
+          style="filter: drop-shadow(0 6px 12px rgba(0,0,0,0.4))"/>
   `;
   
   return `
@@ -523,7 +534,7 @@ function generateTextSVG(options: any, cardWidth: number, cardHeight: number, qr
           font-family="${textFont}, Arial, sans-serif" 
           opacity="${opacity}"
           dominant-baseline="central"
-          letter-spacing="1px"
+          letter-spacing="2px"
           style="${shadowStyle}"
           xml:space="preserve">
       ${textContent.trim()}
@@ -692,28 +703,17 @@ async function generateAdvancedQRCode(options: any): Promise<string> {
   const size = getQRSize(options.size);
   const errorCorrectionLevel = getErrorCorrectionLevel(options.errorCorrection);
   
-  // Use user-selected colors directly, don't override with brand colors
-  let qrForegroundColor = options.foregroundColor;
-  let qrBackgroundColor = options.backgroundColor;
+  // ALWAYS use user-selected colors - never override with brand colors
+  const qrForegroundColor = options.foregroundColor || "#000000";
+  const qrBackgroundColor = options.backgroundColor || "#ffffff";
   
   // Log the colors being used for debugging
   console.log('QR Colors - Foreground:', qrForegroundColor, 'Background:', qrBackgroundColor);
   
-  // Only apply brand colors if user hasn't customized colors AND has a logo
-  if (options.logo && options.logo !== "none" && 
-      options.foregroundColor === "#000000" && options.backgroundColor === "#ffffff") {
-    const brandColors = getBrandColors(options.logo);
-    if (brandColors) {
-      qrForegroundColor = brandColors.primary;
-      qrBackgroundColor = brandColors.background || options.backgroundColor;
-      console.log('Applied brand colors - Foreground:', qrForegroundColor, 'Background:', qrBackgroundColor);
-    }
-  }
-  
-  // Professional QR code options with brand colors
+  // Professional QR code options with user colors
   const qrOptions = {
     width: size,
-    margin: options.margin || 1,
+    margin: Math.floor((options.margin || 150) / 30), // Convert pixels to QR margin units
     color: {
       dark: qrForegroundColor,
       light: qrBackgroundColor
