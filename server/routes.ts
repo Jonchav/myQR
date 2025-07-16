@@ -316,26 +316,32 @@ function generateCardBackground(style: string, width: number, height: number): s
   return backgrounds[style] || backgrounds["modern_gradient"];
 }
 
-// Function to get more accurate text width estimation
+// Function to get more accurate text width estimation with safety buffer
 function getTextWidth(text: string, fontSize: number, fontWeight: string, fontFamily: string): number {
-  // Character width multipliers for different fonts
+  // Character width multipliers for different fonts (generosos para evitar cortes)
   const fontMultipliers: { [key: string]: number } = {
-    "Arial": 0.55,
-    "Helvetica": 0.55,
-    "Georgia": 0.6,
-    "Impact": 0.45,
-    "Verdana": 0.65,
-    "Trebuchet MS": 0.58,
-    "Times New Roman": 0.5,
-    "Courier New": 0.6,
-    "Comic Sans MS": 0.6,
-    "Palatino": 0.55
+    "Arial": 0.7,
+    "Helvetica": 0.7,
+    "Georgia": 0.75,
+    "Impact": 0.6,
+    "Verdana": 0.8,
+    "Trebuchet MS": 0.72,
+    "Times New Roman": 0.65,
+    "Courier New": 0.75,
+    "Comic Sans MS": 0.75,
+    "Palatino": 0.7
   };
   
-  const multiplier = fontMultipliers[fontFamily] || 0.55;
-  const weightMultiplier = fontWeight === "bold" ? 1.1 : 1.0;
+  const multiplier = fontMultipliers[fontFamily] || 0.7;
+  const weightMultiplier = fontWeight === "bold" ? 1.2 : 1.0;
   
-  return text.length * fontSize * multiplier * weightMultiplier;
+  // Agregamos un factor de seguridad del 30% para evitar cortes completamente
+  const baseWidth = text.length * fontSize * multiplier * weightMultiplier;
+  
+  // Para textos largos, agregamos más buffer
+  const lengthBuffer = text.length > 8 ? 1.4 : 1.3;
+  
+  return baseWidth * lengthBuffer;
 }
 
 // Function to generate text SVG with professional formatting and high contrast
@@ -388,10 +394,10 @@ function generateTextSVG(options: any, cardWidth: number, cardHeight: number, qr
   // Calculate text metrics for proper background sizing using accurate width
   const textWidth = getTextWidth(textContent.trim(), textSize, fontWeight, textFont);
   const textMetrics = {
-    width: textWidth + 32, // Add padding
-    height: textSize * 1.6,
-    x: textX - (textWidth + 32) / 2,
-    y: textY - textSize * 0.9
+    width: textWidth + 48, // Más padding para asegurar espacio
+    height: textSize * 1.8, // Más altura
+    x: textX - (textWidth + 48) / 2,
+    y: textY - textSize * 1.1 // Ajustar posición Y
   };
   
   // Create text with background for better readability
