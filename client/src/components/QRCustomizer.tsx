@@ -286,7 +286,13 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label>Estilo de tarjeta</Label>
-                  <Select value={settings.cardStyle} onValueChange={(value) => applyRealTimeChange("cardStyle", value)}>
+                  <Select value={settings.cardStyle} onValueChange={(value) => {
+                    // Si cambiamos de custom_image a otra opción, resetear la imagen
+                    if (settings.cardStyle === "custom_image" && value !== "custom_image") {
+                      applyRealTimeChange("customBackgroundImage", null);
+                    }
+                    applyRealTimeChange("cardStyle", value);
+                  }}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>

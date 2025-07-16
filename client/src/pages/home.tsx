@@ -156,8 +156,7 @@ export default function Home() {
     setGeneratedUrl(null);
     setError(null);
     setShowSuccess(false);
-    setQrSettings(prev => ({
-      ...prev,
+    setQrSettings({
       url: "",
       backgroundColor: "#ffffff",
       foregroundColor: "#000000",
@@ -172,7 +171,20 @@ export default function Home() {
       includeText: false,
       textContent: "",
       errorCorrection: "M",
-    }));
+      cardTemplate: "none",
+      cardStyle: "modern_gradient",
+      textPosition: "bottom",
+      textAlign: "center",
+      textSize: 24,
+      textColor: "#ffffff",
+      textOpacity: 100,
+      textFont: "Arial",
+      textShadow: false,
+      textBold: true,
+      textItalic: false,
+      margin: 150,
+      customBackgroundImage: null, // Reset imagen personalizada
+    });
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
