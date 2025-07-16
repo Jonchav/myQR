@@ -41,9 +41,13 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
       if (visualChanges.includes(key)) {
         // Usar debounce para evitar múltiples llamadas
         clearTimeout(window.qrRegenerateTimeout);
+        
+        // Para textContent, usar un delay más largo para evitar regenerar mientras se escribe
+        const delay = key === 'textContent' ? 800 : 150;
+        
         window.qrRegenerateTimeout = setTimeout(() => {
           onGenerate();
-        }, 300); // Delay más rápido para mejor UX
+        }, delay);
       }
     }
   };

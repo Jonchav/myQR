@@ -12,11 +12,13 @@ Preferred communication style: Simple, everyday language.
 
 ### January 2025
 - **Optimización de Tamaño de Imagen**: Reducido tamaño de vista previa de imagen QR a 280px manteniendo calidad 4K/2K de descarga
-- **Regeneración Automática en Tiempo Real**: Implementada actualización automática inmediata para todos los cambios visuales (300ms delay)
+- **Regeneración Automática Inteligente**: Implementada actualización automática con delays diferenciados (150ms para cambios visuales, 800ms para texto)
 - **Eliminación de Sección de Logos**: Removida completamente la sección de logos del apartado de diseño para interfaz más limpia
-- **Medición de Texto Mejorada**: Algoritmo de medición preciso con multiplicadores específicos por fuente para evitar texto cortado
-- **Optimización de Espacio de Pantalla**: Reducido padding y tamaños de elementos visuales sin comprometer funcionalidad
-- **Debounce Optimizado**: Sistema de retraso mejorado para evitar llamadas múltiples en regeneración automática
+- **Algoritmo de Texto Robusto**: Corregido completamente el problema de texto cortado con multiplicadores conservadores (0.8 base) y buffer del 60%
+- **Vista Previa Estilo Canva**: Implementada vista previa en tiempo real con simulación visual del texto final
+- **Optimización de Rendimiento**: Reducida calidad de procesamiento Sharp de 100 a 90 y kernel cubic para mayor velocidad
+- **Límite de Caracteres Extendido**: Aumentado límite de texto a 50 caracteres para mayor flexibilidad
+- **Padding Ultra-Conservador**: Incrementado padding de texto a 80px para prevenir cualquier corte
 - **Sistema de Edición de Texto Avanzado**: Implementado control completo sobre el texto en tarjetas QR
 - **Posicionamiento de Texto**: Opciones para posicionar texto arriba, centro o abajo del QR
 - **Alineación de Texto**: Controles para alinear texto a la izquierda, centro o derecha

@@ -469,36 +469,36 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
     const qrBase64 = qrDataUrl.replace(/^data:image\/[a-z]+;base64,/, '');
     const qrBuffer = Buffer.from(qrBase64, 'base64');
     
-    // Create background from SVG with high quality settings
+    // Create background from SVG with optimized settings for speed
     const backgroundBuffer = Buffer.from(cardBackgroundSVG);
     const backgroundImage = await sharp(backgroundBuffer)
       .png({
-        quality: 100,
-        compressionLevel: 0,
+        quality: 90, // Reducido para mayor velocidad
+        compressionLevel: 6, // Compresión moderada
         progressive: false,
         force: true
       })
       .resize(width, height, {
-        kernel: sharp.kernel.lanczos3,
+        kernel: sharp.kernel.cubic, // Más rápido que lanczos3
         fit: 'fill'
       })
       .toBuffer();
     
-    // Resize QR code with high quality resampling
+    // Resize QR code with optimized quality
     const resizedQRBuffer = await sharp(qrBuffer)
       .resize(Math.floor(qrSize), Math.floor(qrSize), {
-        kernel: sharp.kernel.lanczos3,
+        kernel: sharp.kernel.cubic, // Más rápido
         fit: 'fill'
       })
       .png({
-        quality: 100,
-        compressionLevel: 0,
+        quality: 90, // Reducido para mayor velocidad
+        compressionLevel: 6,
         progressive: false,
         force: true
       })
       .toBuffer();
     
-    // Composite the background and QR code with higher quality settings
+    // Composite the background and QR code with optimized settings
     const result = await sharp(backgroundImage)
       .composite([
         {
@@ -508,8 +508,8 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
         }
       ])
       .png({
-        quality: 100,
-        compressionLevel: 0,
+        quality: 90, // Reducido para mayor velocidad
+        compressionLevel: 6,
         progressive: false,
         force: true
       })
