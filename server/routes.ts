@@ -8,6 +8,7 @@ import { setupAuth, isAuthenticated } from "./replitAuth";
 import sharp from "sharp";
 import * as XLSX from "xlsx";
 import Stripe from "stripe";
+import QRCodeStyling from "qr-code-styling";
 
 // Cache para imágenes procesadas - mejora significativa de velocidad
 const imageCache = new Map<string, Buffer>();
@@ -673,32 +674,286 @@ async function generateCreativeQR(options: any): Promise<string> {
   return qrDataUrl;
 }
 
-// Function to apply creative styling with multiple colors and patterns
+// Function to apply creative styling with qr-code-styling
 async function applyCreativeStyle(qrDataUrl: string, style: string, options: any): Promise<string> {
   try {
-    const qrBase64 = qrDataUrl.replace(/^data:image\/[a-z]+;base64,/, '');
-    const qrBuffer = Buffer.from(qrBase64, 'base64');
+    console.log('Applying creative style with qr-code-styling:', style);
     
-    const { width, height } = await sharp(qrBuffer).metadata();
-    if (!width || !height) return qrDataUrl;
+    // Create QR code with creative styling using qr-code-styling
+    const qrCodeStyling = new QRCodeStyling({
+      width: 800,
+      height: 800,
+      data: options.data || options.url,
+      margin: 0,
+      qrOptions: {
+        typeNumber: 0,
+        mode: 'Byte',
+        errorCorrectionLevel: 'M'
+      },
+      imageOptions: {
+        hideBackgroundDots: true,
+        imageSize: 0,
+        margin: 0
+      },
+      dotsOptions: getCreativeDotsOptions(style),
+      backgroundOptions: getCreativeBackgroundOptions(style),
+      cornersSquareOptions: getCreativeCornersSquareOptions(style),
+      cornersDotOptions: getCreativeCornersDotOptions(style)
+    });
+
+    // Generate the QR code as buffer
+    const qrBuffer = await qrCodeStyling.getRawData('png');
     
-    // Create SVG with creative styling
-    const creativeSVG = await generateCreativeQRSVG(style, width, height, options);
-    
-    // Convert SVG to buffer and composite with base QR
-    const svgBuffer = Buffer.from(creativeSVG);
-    const styledQR = await sharp(svgBuffer)
-      .png({ quality: 90, compressionLevel: 4 })
-      .composite([{
-        input: qrBuffer,
-        blend: 'multiply' // This preserves QR functionality while adding style
-      }])
-      .toBuffer();
-    
-    return `data:image/png;base64,${styledQR.toString('base64')}`;
+    return `data:image/png;base64,${qrBuffer.toString('base64')}`;
   } catch (error) {
     console.error('Error applying creative style:', error);
-    return qrDataUrl;
+    return qrDataUrl; // Return original if fails
+  }
+}
+
+// Helper functions for creative styling options
+function getCreativeDotsOptions(style: string) {
+  const baseOptions = {
+    type: 'rounded' as const,
+    color: '#000000'
+  };
+  
+  switch (style) {
+    case 'colorful':
+      return {
+        ...baseOptions,
+        type: 'rounded' as const,
+        gradient: {
+          type: 'radial' as const,
+          rotation: 0,
+          colorStops: [
+            { offset: 0, color: '#FF4757' },
+            { offset: 0.3, color: '#5352ED' },
+            { offset: 0.6, color: '#2ED573' },
+            { offset: 1, color: '#FFA726' }
+          ]
+        }
+      };
+    case 'rainbow':
+      return {
+        ...baseOptions,
+        type: 'dots' as const,
+        gradient: {
+          type: 'linear' as const,
+          rotation: 45,
+          colorStops: [
+            { offset: 0, color: '#FF6B6B' },
+            { offset: 0.2, color: '#4ECDC4' },
+            { offset: 0.4, color: '#45B7D1' },
+            { offset: 0.6, color: '#F7DC6F' },
+            { offset: 0.8, color: '#BB8FCE' },
+            { offset: 1, color: '#FF6B6B' }
+          ]
+        }
+      };
+    case 'sunset':
+      return {
+        ...baseOptions,
+        type: 'classy-rounded' as const,
+        gradient: {
+          type: 'radial' as const,
+          rotation: 0,
+          colorStops: [
+            { offset: 0, color: '#FF5722' },
+            { offset: 0.5, color: '#FF9800' },
+            { offset: 1, color: '#FFC107' }
+          ]
+        }
+      };
+    case 'ocean':
+      return {
+        ...baseOptions,
+        type: 'extra-rounded' as const,
+        gradient: {
+          type: 'linear' as const,
+          rotation: 90,
+          colorStops: [
+            { offset: 0, color: '#0277BD' },
+            { offset: 0.3, color: '#0288D1' },
+            { offset: 0.6, color: '#039BE5' },
+            { offset: 1, color: '#29B6F6' }
+          ]
+        }
+      };
+    default:
+      return baseOptions;
+  }
+}
+
+function getCreativeBackgroundOptions(style: string) {
+  const baseOptions = {
+    color: '#ffffff'
+  };
+  
+  switch (style) {
+    case 'colorful':
+      return {
+        gradient: {
+          type: 'radial' as const,
+          rotation: 0,
+          colorStops: [
+            { offset: 0, color: '#ffffff' },
+            { offset: 1, color: '#f8f9fa' }
+          ]
+        }
+      };
+    case 'rainbow':
+      return {
+        gradient: {
+          type: 'linear' as const,
+          rotation: 135,
+          colorStops: [
+            { offset: 0, color: '#ffeaa7' },
+            { offset: 1, color: '#fab1a0' }
+          ]
+        }
+      };
+    case 'sunset':
+      return {
+        gradient: {
+          type: 'radial' as const,
+          rotation: 0,
+          colorStops: [
+            { offset: 0, color: '#fff3e0' },
+            { offset: 1, color: '#ffe0b2' }
+          ]
+        }
+      };
+    case 'ocean':
+      return {
+        gradient: {
+          type: 'linear' as const,
+          rotation: 180,
+          colorStops: [
+            { offset: 0, color: '#e3f2fd' },
+            { offset: 1, color: '#bbdefb' }
+          ]
+        }
+      };
+    default:
+      return baseOptions;
+  }
+}
+
+function getCreativeCornersSquareOptions(style: string) {
+  const baseOptions = {
+    type: 'square' as const,
+    color: '#000000'
+  };
+  
+  switch (style) {
+    case 'colorful':
+      return {
+        type: 'extra-rounded' as const,
+        gradient: {
+          type: 'linear' as const,
+          rotation: 45,
+          colorStops: [
+            { offset: 0, color: '#FF4757' },
+            { offset: 0.5, color: '#5352ED' },
+            { offset: 1, color: '#2ED573' }
+          ]
+        }
+      };
+    case 'rainbow':
+      return {
+        type: 'dot' as const,
+        gradient: {
+          type: 'radial' as const,
+          rotation: 0,
+          colorStops: [
+            { offset: 0, color: '#FF6B6B' },
+            { offset: 0.5, color: '#4ECDC4' },
+            { offset: 1, color: '#45B7D1' }
+          ]
+        }
+      };
+    case 'sunset':
+      return {
+        type: 'classy-rounded' as const,
+        gradient: {
+          type: 'linear' as const,
+          rotation: 180,
+          colorStops: [
+            { offset: 0, color: '#FF5722' },
+            { offset: 1, color: '#FFC107' }
+          ]
+        }
+      };
+    case 'ocean':
+      return {
+        type: 'extra-rounded' as const,
+        gradient: {
+          type: 'radial' as const,
+          rotation: 0,
+          colorStops: [
+            { offset: 0, color: '#0277BD' },
+            { offset: 1, color: '#29B6F6' }
+          ]
+        }
+      };
+    default:
+      return baseOptions;
+  }
+}
+
+function getCreativeCornersDotOptions(style: string) {
+  const baseOptions = {
+    color: '#000000'
+  };
+  
+  switch (style) {
+    case 'colorful':
+      return {
+        gradient: {
+          type: 'radial' as const,
+          rotation: 0,
+          colorStops: [
+            { offset: 0, color: '#FFA726' },
+            { offset: 1, color: '#FF4757' }
+          ]
+        }
+      };
+    case 'rainbow':
+      return {
+        gradient: {
+          type: 'linear' as const,
+          rotation: 90,
+          colorStops: [
+            { offset: 0, color: '#F7DC6F' },
+            { offset: 1, color: '#BB8FCE' }
+          ]
+        }
+      };
+    case 'sunset':
+      return {
+        gradient: {
+          type: 'radial' as const,
+          rotation: 0,
+          colorStops: [
+            { offset: 0, color: '#FFEB3B' },
+            { offset: 1, color: '#FF9800' }
+          ]
+        }
+      };
+    case 'ocean':
+      return {
+        gradient: {
+          type: 'linear' as const,
+          rotation: 45,
+          colorStops: [
+            { offset: 0, color: '#03A9F4' },
+            { offset: 1, color: '#0288D1' }
+          ]
+        }
+      };
+    default:
+      return baseOptions;
   }
 }
 
