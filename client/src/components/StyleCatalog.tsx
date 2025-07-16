@@ -142,14 +142,6 @@ export function StyleCatalog({ onStyleSelect, selectedStyle, isGenerating }: Sty
         <h3 className="text-lg font-semibold">Estilos Creativos</h3>
         <div className="flex gap-2">
           <Button
-            onClick={handleManualUpdate}
-            disabled={isLoading}
-            size="sm"
-            variant="outline"
-          >
-            {isLoading ? 'Generando...' : 'Actualizar Vista Previa'}
-          </Button>
-          <Button
             variant="outline"
             size="sm"
             onClick={() => scrollContainer('left')}

@@ -152,7 +152,6 @@ export const insertQRCodeSchema = createInsertSchema(qrCodes).pick({
 }).extend({
   creativeStyle: z.enum([
     "classic",
-    "rainbow_gradient",
     "vibrant_rainbow",
     "neon_cyber", 
     "electric_blue",
@@ -168,7 +167,7 @@ export const insertQRCodeSchema = createInsertSchema(qrCodes).pick({
     "autumn_leaves",
     "monochrome_red",
     "pastel_dream",
-    // 36 nuevos estilos creativos
+    // TODOS los estilos creativos del frontend
     "cosmic_purple",
     "laser_green",
     "neon_pink",

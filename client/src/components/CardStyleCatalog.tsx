@@ -131,14 +131,6 @@ export function CardStyleCatalog({ onStyleSelect, selectedStyle, isGenerating }:
           <Button
             variant="outline"
             size="sm"
-            onClick={generateAllPreviews}
-            disabled={isLoading}
-          >
-            {isLoading ? 'Generando...' : 'Actualizar'}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
             onClick={scrollLeft}
             disabled={isLoading}
           >
