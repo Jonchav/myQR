@@ -192,6 +192,96 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
         {/* Unified Customization Interface */}
         <div className="space-y-6">
           
+          {/* Colors and Patterns - MOVED TO FIRST POSITION */}
+          <Card className="border-purple-200 dark:border-purple-700">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Palette className="w-5 h-5 text-purple-500" />
+                Colores y Patrones
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Personaliza los colores y patrones del QR
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Color de Fondo</Label>
+                  <div className="flex gap-2">
+                    <input
+                      type="color"
+                      value={settings.backgroundColor}
+                      onChange={(e) => applyRealTimeChange("backgroundColor", e.target.value)}
+                      className="w-12 h-10 rounded border border-gray-300 dark:border-gray-600 cursor-pointer"
+                    />
+                    <Input
+                      type="text"
+                      value={settings.backgroundColor}
+                      onChange={(e) => applyRealTimeChange("backgroundColor", e.target.value)}
+                      placeholder="#ffffff"
+                      className="font-mono text-sm"
+                    />
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label>Color del QR</Label>
+                  <div className="flex gap-2">
+                    <input
+                      type="color"
+                      value={settings.foregroundColor}
+                      onChange={(e) => applyRealTimeChange("foregroundColor", e.target.value)}
+                      className="w-12 h-10 rounded border border-gray-300 dark:border-gray-600 cursor-pointer"
+                    />
+                    <Input
+                      type="text"
+                      value={settings.foregroundColor}
+                      onChange={(e) => applyRealTimeChange("foregroundColor", e.target.value)}
+                      placeholder="#000000"
+                      className="font-mono text-sm"
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Patrón Avanzado</Label>
+                  <Select value={settings.pattern} onValueChange={(value) => applyRealTimeChange("pattern", value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="standard">◼️ Estándar</SelectItem>
+                      <SelectItem value="dots">⚫ Puntos</SelectItem>
+                      <SelectItem value="rounded">🔵 Redondeado</SelectItem>
+                      <SelectItem value="heart">❤️ Corazón</SelectItem>
+                      <SelectItem value="star">⭐ Estrella</SelectItem>
+                      <SelectItem value="diamond">💎 Diamante</SelectItem>
+                      <SelectItem value="hexagon">⬡ Hexágono</SelectItem>
+                      <SelectItem value="flower">🌸 Flor</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label>Estilo del QR</Label>
+                  <Select value={settings.style} onValueChange={(value) => applyRealTimeChange("style", value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="square">◼️ Cuadrado Clásico</SelectItem>
+                      <SelectItem value="rounded">🔵 Redondeado Suave</SelectItem>
+                      <SelectItem value="circle">⭕ Circular</SelectItem>
+                      <SelectItem value="dots">⚫ Puntos</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Templates Section */}
           <Card className="border-purple-200 dark:border-purple-700">
             <CardHeader className="pb-3">
@@ -296,96 +386,6 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                     <span>50px</span>
                     <span>300px</span>
                   </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Colors and Patterns */}
-          <Card className="border-purple-200 dark:border-purple-700">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Palette className="w-5 h-5 text-purple-500" />
-                Colores y Patrones
-              </CardTitle>
-              <p className="text-sm text-muted-foreground">
-                Personaliza los colores y patrones del QR
-              </p>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Color de Fondo</Label>
-                  <div className="flex gap-2">
-                    <input
-                      type="color"
-                      value={settings.backgroundColor}
-                      onChange={(e) => applyRealTimeChange("backgroundColor", e.target.value)}
-                      className="w-12 h-10 rounded border border-gray-300 dark:border-gray-600 cursor-pointer"
-                    />
-                    <Input
-                      type="text"
-                      value={settings.backgroundColor}
-                      onChange={(e) => applyRealTimeChange("backgroundColor", e.target.value)}
-                      placeholder="#ffffff"
-                      className="font-mono text-sm"
-                    />
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label>Color del QR</Label>
-                  <div className="flex gap-2">
-                    <input
-                      type="color"
-                      value={settings.foregroundColor}
-                      onChange={(e) => applyRealTimeChange("foregroundColor", e.target.value)}
-                      className="w-12 h-10 rounded border border-gray-300 dark:border-gray-600 cursor-pointer"
-                    />
-                    <Input
-                      type="text"
-                      value={settings.foregroundColor}
-                      onChange={(e) => applyRealTimeChange("foregroundColor", e.target.value)}
-                      placeholder="#000000"
-                      className="font-mono text-sm"
-                    />
-                  </div>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Patrón Avanzado</Label>
-                  <Select value={settings.pattern} onValueChange={(value) => applyRealTimeChange("pattern", value)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="standard">◼️ Estándar</SelectItem>
-                      <SelectItem value="dots">⚫ Puntos</SelectItem>
-                      <SelectItem value="rounded">🔵 Redondeado</SelectItem>
-                      <SelectItem value="heart">❤️ Corazón</SelectItem>
-                      <SelectItem value="star">⭐ Estrella</SelectItem>
-                      <SelectItem value="diamond">💎 Diamante</SelectItem>
-                      <SelectItem value="hexagon">⬡ Hexágono</SelectItem>
-                      <SelectItem value="flower">🌸 Flor</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label>Estilo del QR</Label>
-                  <Select value={settings.style} onValueChange={(value) => applyRealTimeChange("style", value)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="square">◼️ Cuadrado Clásico</SelectItem>
-                      <SelectItem value="rounded">🔵 Redondeado Suave</SelectItem>
-                      <SelectItem value="circle">⭕ Circular</SelectItem>
-                      <SelectItem value="dots">⚫ Puntos</SelectItem>
-                    </SelectContent>
-                  </Select>
                 </div>
               </div>
             </CardContent>

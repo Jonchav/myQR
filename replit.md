@@ -12,6 +12,9 @@ Preferred communication style: Simple, everyday language.
 
 ### January 2025
 - **Interfaz Unificada**: Creada interfaz fusionada que elimina pestañas y presenta todas las opciones en secciones directas para mejor flujo de usuario
+- **Priorización de Colores**: Movida sección de colores y patrones como primer parámetro de personalización, justo después de la vista previa del QR
+- **Corrección de Colores**: Solucionado problema donde colores personalizados no se aplicaban correctamente debido a sobrescritura automática de colores de marca
+- **Experiencia de Usuario Mejorada**: Reorganizado orden de secciones para flujo más intuitivo: Colores → Plantillas → Tamaños → Texto
 - **Control de Margen**: Implementado control deslizante para ajustar margen del QR (50-300px) con actualización en tiempo real
 - **Dimensiones Redes Sociales**: Agregadas opciones específicas para Instagram, Facebook, Twitter, LinkedIn, YouTube y TikTok con píxeles exactos
 - **Plantillas Rápidas**: Sección compacta con temas predefinidos (Moderno, Vibrante, Elegante, Natural, Tecnológico, Minimalista) de aplicación instantánea
