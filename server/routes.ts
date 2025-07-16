@@ -525,7 +525,7 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
     }
     
     // Calculate QR code size and position - perfectamente centrado
-    const qrSize = Math.min(width, height) * 0.4; // Tamaño más apropiado para centrado
+    const qrSize = Math.min(width, height) * 0.35; // Tamaño más conservador para evitar overflow
     const qrX = Math.round((width - qrSize) / 2); // Center horizontally con redondeo
     const qrY = Math.round((height - qrSize) / 2); // Center vertically con redondeo
     
@@ -567,8 +567,17 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
       imageCache.set(cacheKey, backgroundImage);
     }
     
-    // Obtener dimensiones reales del QR para centrado perfecto en todos los casos
-    const qrMetadata = await sharp(qrBuffer).metadata();
+    // Redimensionar QR al tamaño correcto para el canvas
+    const qrResized = await sharp(qrBuffer)
+      .resize(qrSize, qrSize, { 
+        fit: 'fill',
+        kernel: sharp.kernel.nearest // Mantener bordes nítidos del QR
+      })
+      .png({ quality: 100 })
+      .toBuffer();
+    
+    // Obtener dimensiones reales del QR redimensionado
+    const qrMetadata = await sharp(qrResized).metadata();
     const qrActualWidth = qrMetadata.width || qrSize;
     const qrActualHeight = qrMetadata.height || qrSize;
     
@@ -592,7 +601,7 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
         })
         .composite([
           {
-            input: qrBuffer,
+            input: qrResized,
             top: perfectCenterY,
             left: perfectCenterX
           }
@@ -609,7 +618,7 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
       result = await sharp(backgroundImage)
         .composite([
           {
-            input: qrBuffer,
+            input: qrResized,
             top: perfectCenterY,
             left: perfectCenterX
           }
