@@ -663,10 +663,10 @@ async function generateAdvancedQRCode(options: any): Promise<string> {
   // Professional QR code options with brand colors
   const qrOptions = {
     width: size,
-    margin: 1,
+    margin: options.margin || 1,
     color: {
       dark: qrForegroundColor,
-      light: options.backgroundImage ? '#FFFFFF' : qrBackgroundColor
+      light: qrBackgroundColor
     },
     errorCorrectionLevel,
     type: 'image/png',
