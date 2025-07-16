@@ -72,6 +72,7 @@ export const qrCodes = pgTable("qr_codes", {
   // Creative card options
   cardTemplate: varchar("card_template").default("none"), // none, instagram-post, instagram-story, etc.
   cardStyle: varchar("card_style").default("gradient1"), // gradient1, gradient2, neon, etc.
+  margin: integer("margin").default(150), // Margin in pixels for QR positioning
   
   errorCorrection: varchar("error_correction").default("M"), // L, M, Q, H
   
