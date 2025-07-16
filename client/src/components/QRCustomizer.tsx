@@ -31,16 +31,25 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
     const newSettings = { ...settings, [key]: value };
     onChange(newSettings);
     
+    // Debug logging
+    console.log('QR Customizer - Changed:', key, 'to:', value);
+    console.log('Current settings.url:', settings.url);
+    console.log('onGenerate available:', !!onGenerate);
+    console.log('isGenerating:', isGenerating);
+    
     // Si hay una URL y el cambio es visual, regenerar automáticamente
     if (settings.url && onGenerate && !isGenerating) {
       const visualChanges = ['backgroundColor', 'foregroundColor', 'style', 'pattern', 'gradient', 'frame', 'size', 'border', 'logo', 'errorCorrection', 'includeText', 'textContent', 'textPosition', 'textAlign', 'textSize', 'textColor', 'textOpacity', 'textFont', 'textShadow', 'textBold', 'textItalic', 'cardTemplate', 'cardStyle', 'margin'];
       if (visualChanges.includes(key)) {
+        console.log('Triggering QR regeneration for:', key);
         // Usar debounce para evitar múltiples llamadas
         clearTimeout(window.qrRegenerateTimeout);
         
-        // Para textContent, usar un delay más corto para mayor responsividad
-        const delay = key === 'textContent' ? 300 : 150;
+        // Para cambios de color, usar un delay más corto para mayor responsividad
+        const delay = ['backgroundColor', 'foregroundColor'].includes(key) ? 100 : 
+                     key === 'textContent' ? 300 : 150;
         window.qrRegenerateTimeout = setTimeout(() => {
+          console.log('Executing QR regeneration');
           onGenerate();
         }, delay);
       }
