@@ -46,12 +46,52 @@ export default function Home() {
     includeText: false,
     textContent: "",
     errorCorrection: "M",
+    // Configuración por defecto para tarjeta PRO
+    cardTemplate: "none",
+    cardStyle: "modern_gradient",
+    textPosition: "bottom",
+    textAlign: "center",
+    textSize: 24,
+    textColor: "#ffffff",
+    textOpacity: 100,
+    textFont: "Arial",
+    textShadow: false,
+    textBold: true,
+    textItalic: false,
+    margin: 150,
   });
 
   // Update URL in settings when input changes
   useEffect(() => {
     setQrSettings(prev => ({ ...prev, url }));
   }, [url]);
+
+  // Activate PRO card configuration when switching to customize tab
+  useEffect(() => {
+    if (activeTab === "customize" && isProActive) {
+      setQrSettings(prev => ({
+        ...prev,
+        includeText: true,
+        textContent: "SCAN ME",
+        cardTemplate: "instagram_post",
+        cardStyle: "scan_me_default",
+        textPosition: "bottom",
+        textAlign: "center",
+        textSize: 32,
+        textColor: "#ffffff",
+        textOpacity: 100,
+        textFont: "Arial",
+        textShadow: false,
+        textBold: true,
+        textItalic: false,
+        backgroundColor: "#ffffff",
+        foregroundColor: "#5b21b6",
+        style: "square",
+        pattern: "standard",
+        margin: 80,
+      }));
+    }
+  }, [activeTab, isProActive]);
 
   const generateQRMutation = useMutation({
     mutationFn: async (settings: any) => {

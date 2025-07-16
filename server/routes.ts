@@ -55,7 +55,8 @@ const qrGenerationSchema = z.object({
   ]).default("none"),
   cardStyle: z.enum([
     "modern_gradient", "neon_waves", "geometric", "organic_flow", "minimalist",
-    "abstract_art", "corporate", "creative_burst", "elegant_lines", "vibrant_blocks"
+    "abstract_art", "corporate", "creative_burst", "elegant_lines", "vibrant_blocks",
+    "scan_me_default"
   ]).default("modern_gradient"),
 });
 
@@ -396,6 +397,17 @@ function generateCardBackground(style: string, width: number, height: number): s
       <rect x="${width*0.5}" y="${height*0.5}" width="${width*0.5}" height="${height*0.5}" fill="#45b7d1"/>
       <rect x="${width*0.5}" y="0" width="${width*0.5}" height="${height*0.5}" fill="#f9ca24"/>
       <rect x="0" y="${height*0.5}" width="${width*0.5}" height="${height*0.5}" fill="#f0932b"/>
+    `,
+    
+    "scan_me_default": `
+      <defs>
+        <linearGradient id="scanMeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+          <stop offset="50%" style="stop-color:#a855f7;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#f97316;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#scanMeGrad)"/>
     `,
   };
   

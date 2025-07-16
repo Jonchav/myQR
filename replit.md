@@ -21,6 +21,9 @@ Preferred communication style: Simple, everyday language.
 - **Formas de Celdas Divertidas**: Implementadas formas personalizadas de celdas QR usando filtros SVG: puntos suaves, redondeado suave, y circular
 - **Velocidad de Respuesta Mejorada**: Reducidos delays de regeneración a 50ms para cambios de color/patrón/estilo para mayor responsividad
 - **Transformaciones SVG**: Implementado sistema de post-procesamiento con filtros SVG para crear efectos visuales sin comprometer escaneabilidad
+- **Tarjeta PRO por Defecto**: Configuración automática de tarjeta minimalista con "SCAN ME" al activar modo PRO
+- **Gradiente Púrpura-Naranja**: Creado estilo "scan_me_default" que replica el diseño del ejemplo con gradiente violeta a naranja
+- **Activación Automática**: El modo PRO se activa automáticamente con configuración predeterminada al cambiar a pestaña de personalización
 - **Control de Margen**: Implementado control deslizante para ajustar margen del QR (50-300px) con actualización en tiempo real
 - **Dimensiones Redes Sociales**: Agregadas opciones específicas para Instagram, Facebook, Twitter, LinkedIn, YouTube y TikTok con píxeles exactos
 - **Plantillas Rápidas**: Sección compacta con temas predefinidos (Moderno, Vibrante, Elegante, Natural, Tecnológico, Minimalista) de aplicación instantánea
