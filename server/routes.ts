@@ -567,23 +567,23 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
       imageCache.set(cacheKey, backgroundImage);
     }
     
+    // Obtener dimensiones reales del QR para centrado perfecto en todos los casos
+    const qrMetadata = await sharp(qrBuffer).metadata();
+    const qrActualWidth = qrMetadata.width || qrSize;
+    const qrActualHeight = qrMetadata.height || qrSize;
+    
+    // Calcular posición de centrado perfecta
+    const perfectCenterX = Math.round((width - qrActualWidth) / 2);
+    const perfectCenterY = Math.round((height - qrActualHeight) / 2);
+    
+    console.log(`Centrado perfecto: Canvas ${width}x${height}, QR ${qrActualWidth}x${qrActualHeight}, Posición (${perfectCenterX}, ${perfectCenterY})`);
+
     // Optimización específica para imágenes personalizadas con centrado perfecto
     let result;
     if (cardStyle === "custom_image") {
       // Para imágenes personalizadas: composición directa sobre la imagen optimizada
       const customImageBase64 = customBackgroundImage.replace(/^data:image\/[a-z]+;base64,/, '');
       const customImageBuffer = Buffer.from(customImageBase64, 'base64');
-      
-      // Obtener dimensiones reales del QR para centrado perfecto
-      const qrMetadata = await sharp(qrBuffer).metadata();
-      const qrActualWidth = qrMetadata.width || qrSize;
-      const qrActualHeight = qrMetadata.height || qrSize;
-      
-      // Calcular posición de centrado perfecta
-      const perfectCenterX = Math.round((width - qrActualWidth) / 2);
-      const perfectCenterY = Math.round((height - qrActualHeight) / 2);
-      
-      console.log(`Centrado perfecto: Canvas ${width}x${height}, QR ${qrActualWidth}x${qrActualHeight}, Posición (${perfectCenterX}, ${perfectCenterY})`);
       
       result = await sharp(customImageBuffer)
         .resize(width, height, { 
@@ -605,13 +605,13 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
         })
         .toBuffer();
     } else {
-      // Para estilos predefinidos: usar el sistema de cache
+      // Para estilos predefinidos: usar el sistema de cache con centrado perfecto
       result = await sharp(backgroundImage)
         .composite([
           {
             input: qrBuffer,
-            top: qrY,
-            left: qrX
+            top: perfectCenterY,
+            left: perfectCenterX
           }
         ])
         .png({
