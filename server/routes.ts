@@ -682,9 +682,7 @@ async function generateCreativeQR(options: any): Promise<string> {
 // Function to apply creative styling with qr-svg
 async function applyCreativeStyle(qrDataUrl: string, style: string, options: any): Promise<string> {
   try {
-    console.log('=== STARTING CREATIVE STYLE APPLICATION ===');
-    console.log('Style:', style);
-    console.log('URL:', options.url);
+    console.log('Applying creative style:', style);
     
     // Skip creative styling for classic style
     if (style === 'classic') {
@@ -692,11 +690,11 @@ async function applyCreativeStyle(qrDataUrl: string, style: string, options: any
       return qrDataUrl;
     }
     
-    // Generate QR code with creative styling using qr-svg
+    // Generate QR code with creative styling using qr-svg at higher resolution
     const qrSvg = QR({
       content: options.data || options.url,
-      width: 400,
-      height: 400,
+      width: 800,
+      height: 800,
       color: '#000000',
       background: '#ffffff',
       ecl: 'M',
@@ -708,24 +706,30 @@ async function applyCreativeStyle(qrDataUrl: string, style: string, options: any
       container: 'svg'
     });
 
-    console.log('QR SVG Generated. Length:', qrSvg.length);
-    console.log('Contains black fills:', qrSvg.includes('fill="#000000"'));
-
     // Apply colors directly to the SVG
     const coloredSvg = applyColorsToSVG(qrSvg, style);
     
-    console.log('Colors applied. New length:', coloredSvg.length);
-    console.log('First 400 chars:', coloredSvg.substring(0, 400));
-    
-    // Convert SVG to PNG using Sharp with error handling
-    const pngBuffer = await sharp(Buffer.from(coloredSvg))
-      .png({ quality: 85, compressionLevel: 6 })
+    // Convert SVG to PNG using Sharp with ultra-high quality settings
+    const pngBuffer = await sharp(Buffer.from(coloredSvg), {
+      density: 300 // High DPI for crisp rendering
+    })
+      .resize(1200, 1200, {
+        kernel: 'lanczos3', // Best quality resampling
+        fit: 'contain',
+        background: { r: 255, g: 255, b: 255, alpha: 1 }
+      })
+      .png({ 
+        quality: 100, 
+        compressionLevel: 0, // No compression for maximum quality
+        progressive: false,
+        force: true
+      })
       .toBuffer();
     
-    console.log('=== CREATIVE STYLE APPLICATION COMPLETED ===');
+    console.log('Creative style applied successfully');
     return `data:image/png;base64,${pngBuffer.toString('base64')}`;
   } catch (error) {
-    console.error('=== ERROR IN CREATIVE STYLE APPLICATION ===', error);
+    console.error('Error in creative style application:', error);
     return qrDataUrl; // Return original if fails
   }
 }
@@ -764,9 +768,6 @@ function applyColorsToSVG(svgContent: string, style: string): string {
     return color;
   };
 
-  // Log original SVG structure for debugging
-  console.log('Original SVG sample:', svgContent.substring(0, 400));
-  
   // Simple approach: add fill attribute to all rect elements
   coloredSvg = coloredSvg.replace(/<rect/g, (match) => {
     const color = getNextColor();
@@ -775,8 +776,6 @@ function applyColorsToSVG(svgContent: string, style: string): string {
 
   // Log transformation details
   console.log(`Applied ${colorIndex} color transformations for style: ${style}`);
-  console.log(`First color in palette: ${colors[0]}`);
-  console.log('Transformed SVG sample:', coloredSvg.substring(0, 400));
   
   return coloredSvg;
 }
