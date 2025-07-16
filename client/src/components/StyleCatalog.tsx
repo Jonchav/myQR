@@ -14,21 +14,21 @@ export function StyleCatalog({ onStyleSelect, selectedStyle, isGenerating }: Sty
 
   const styles = [
     { id: 'classic', name: 'Clásico', colors: ['#000000'] },
-    { id: 'vibrant_rainbow', name: 'Arcoíris Vibrante', colors: ['#FF0080', '#FF4080', '#FF6080', '#FF8080'] },
-    { id: 'neon_cyber', name: 'Neón Cyber', colors: ['#00FFFF', '#40FFFF', '#80FFFF', '#B0FFFF'] },
-    { id: 'electric_blue', name: 'Azul Eléctrico', colors: ['#007BFF', '#4095FF', '#80AFFF', '#B0C9FF'] },
-    { id: 'sunset_fire', name: 'Fuego del Atardecer', colors: ['#FFA500', '#FFB540', '#FFC580', '#FFD5B0'] },
-    { id: 'forest_nature', name: 'Bosque Natural', colors: ['#00FF00', '#40FF40', '#80FF80', '#B0FFB0'] },
-    { id: 'ocean_waves', name: 'Ondas del Océano', colors: ['#0064FF', '#4084FF', '#80A4FF', '#B0C4FF'] },
-    { id: 'multicolor_blocks', name: 'Bloques Multicolor', colors: ['#9400D3', '#A440E3', '#B480F3', '#C4B0FF'] },
-    { id: 'purple_galaxy', name: 'Galaxia Púrpura', colors: ['#8A2BE2', '#9A4BF2', '#AA6BFF', '#BA8BFF'] },
-    { id: 'golden_sunset', name: 'Atardecer Dorado', colors: ['#FFD700', '#FFE140', '#FFEB80', '#FFF5B0'] },
-    { id: 'mint_fresh', name: 'Menta Fresca', colors: ['#00FA9A', '#40E0D0', '#48D1CC', '#20B2AA'] },
-    { id: 'coral_reef', name: 'Arrecife de Coral', colors: ['#FF7F50', '#FFB347', '#FFA07A', '#FF6347'] },
-    { id: 'volcano_red', name: 'Rojo Volcánico', colors: ['#DC143C', '#B22222', '#FF0000', '#8B0000'] },
-    { id: 'autumn_leaves', name: 'Hojas de Otoño', colors: ['#8B4513', '#A0522D', '#CD853F', '#D2691E'] },
-    { id: 'monochrome_red', name: 'Rojo Monocromático', colors: ['#DC143C', '#B22222', '#FF0000', '#FF6347'] },
-    { id: 'pastel_dream', name: 'Sueño Pastel', colors: ['#FFB3BA', '#BAFFC9', '#BAE1FF', '#FFFFBA'] }
+    { id: 'vibrant_rainbow', name: 'Arcoíris Vibrante', colors: ['#FF0080'] },
+    { id: 'neon_cyber', name: 'Neón Cyber', colors: ['#00FFFF'] },
+    { id: 'electric_blue', name: 'Azul Eléctrico', colors: ['#007BFF'] },
+    { id: 'sunset_fire', name: 'Fuego del Atardecer', colors: ['#FFA500'] },
+    { id: 'forest_nature', name: 'Bosque Natural', colors: ['#00FF00'] },
+    { id: 'ocean_waves', name: 'Ondas del Océano', colors: ['#0064FF'] },
+    { id: 'multicolor_blocks', name: 'Bloques Multicolor', colors: ['#9400D3'] },
+    { id: 'purple_galaxy', name: 'Galaxia Púrpura', colors: ['#8A2BE2'] },
+    { id: 'golden_sunset', name: 'Atardecer Dorado', colors: ['#FFD700'] },
+    { id: 'mint_fresh', name: 'Menta Fresca', colors: ['#00FA9A'] },
+    { id: 'coral_reef', name: 'Arrecife de Coral', colors: ['#FF7F50'] },
+    { id: 'volcano_red', name: 'Rojo Volcánico', colors: ['#DC143C'] },
+    { id: 'autumn_leaves', name: 'Hojas de Otoño', colors: ['#8B4513'] },
+    { id: 'monochrome_red', name: 'Rojo Monocromático', colors: ['#DC143C'] },
+    { id: 'pastel_dream', name: 'Sueño Pastel', colors: ['#FFB3BA'] }
   ];
 
   const generateQRPreview = async (styleId: string) => {

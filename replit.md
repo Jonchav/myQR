@@ -20,6 +20,10 @@ Preferred communication style: Simple, everyday language.
 - **Sistema de Coloración Avanzado**: Cada estilo aplica transformaciones únicas de matiz, saturación, brillo y tinte para crear efectos visuales impactantes como los QR de la imagen de referencia
 - **Colores Distintivos Optimizados**: Ajustados efectos de color para máxima distinción: Rosa vibrante, Turquesa eléctrico, Azul cobalto, Naranja intenso, Verde brillante, Púrpura profundo, Amarillo dorado con configuraciones Sharp simplificadas para mejor rendimiento
 - **Vistas Previas Precisas**: Actualizadas paletas de colores en catálogo para reflejar exactamente los tintes aplicados en cada estilo creativo
+- **Sistema de Colores Base**: Implementado sistema revolucionario que genera QR codes con colores base específicos para cada estilo en lugar de aplicar efectos sobre negro
+- **Reemplazo Completo de Negro**: Las partes negras del QR son completamente reemplazadas por colores vibrantes específicos: #FF0080 (rosa vibrante), #00FFFF (cyan), #007BFF (azul), #FFA500 (naranja), #00FF00 (verde), #0064FF (océano), #9400D3 (púrpura), #8A2BE2 (galaxia), #FFD700 (dorado), #00FA9A (menta), #FF7F50 (coral), #DC143C (rojo volcánico), #8B4513 (otoño), #FFB3BA (pastel)
+- **Colores Únicos por Estilo**: Cada uno de los 15 estilos creativos tiene un color base único y distintivo que se aplica directamente en la generación del QR
+- **Eliminación de Efectos Sharp**: Simplificado sistema eliminando procesamiento Sharp adicional para mejor rendimiento y colores más puros
 - **Carrete Horizontal de Estilos**: Rediseñado completamente el catálogo de estilos en formato carrete horizontal con 15 estilos únicos, vista previa automática con colores representativos, y scroll suave sin barra visible
 - **Vista Previa Automática**: Implementado sistema de generación automática de vistas previas para todos los estilos al cargar la página, con función de actualización manual e indicadores de carga
 - **Interfaz Intuitiva**: Creada selección visual con escala de hover, indicadores de selección con punto circular, y información contextual del estilo seleccionado

@@ -656,13 +656,16 @@ async function generateCreativeQR(options: any): Promise<string> {
   const size = getQRSize(options.size);
   const errorCorrectionLevel = getErrorCorrectionLevel(options.errorCorrection);
   
-  // Generate base QR code
+  // Obtener colores específicos para cada estilo
+  const styleColors = getCreativeStyleColors(options.creativeStyle);
+  
+  // Generate base QR code con colores específicos del estilo
   const qrOptions = {
     width: size,
     margin: Math.floor((options.margin || 150) / 30),
     color: {
-      dark: "#000000",
-      light: "#ffffff"
+      dark: styleColors.foreground,  // Color específico para cada estilo
+      light: styleColors.background
     },
     errorCorrectionLevel,
     type: 'image/png',
@@ -672,12 +675,33 @@ async function generateCreativeQR(options: any): Promise<string> {
   const dataToEncode = options.data || options.url;
   let qrDataUrl = await QRCode.toDataURL(dataToEncode, qrOptions);
   
-  // Apply creative styling
-  if (options.creativeStyle && options.creativeStyle !== "classic") {
-    qrDataUrl = await applyCreativeStyle(qrDataUrl, options.creativeStyle, options);
-  }
+  // NO aplicar efectos adicionales - el QR ya tiene los colores correctos
   
   return qrDataUrl;
+}
+
+// Función para obtener colores específicos de cada estilo
+function getCreativeStyleColors(style: string): { foreground: string; background: string } {
+  const styleColors = {
+    'classic': { foreground: '#000000', background: '#ffffff' },
+    'vibrant_rainbow': { foreground: '#FF0080', background: '#ffffff' },
+    'neon_cyber': { foreground: '#00FFFF', background: '#ffffff' },
+    'electric_blue': { foreground: '#007BFF', background: '#ffffff' },
+    'sunset_fire': { foreground: '#FFA500', background: '#ffffff' },
+    'forest_nature': { foreground: '#00FF00', background: '#ffffff' },
+    'ocean_waves': { foreground: '#0064FF', background: '#ffffff' },
+    'multicolor_blocks': { foreground: '#9400D3', background: '#ffffff' },
+    'purple_galaxy': { foreground: '#8A2BE2', background: '#ffffff' },
+    'golden_sunset': { foreground: '#FFD700', background: '#ffffff' },
+    'mint_fresh': { foreground: '#00FA9A', background: '#ffffff' },
+    'coral_reef': { foreground: '#FF7F50', background: '#ffffff' },
+    'volcano_red': { foreground: '#DC143C', background: '#ffffff' },
+    'autumn_leaves': { foreground: '#8B4513', background: '#ffffff' },
+    'monochrome_red': { foreground: '#DC143C', background: '#ffffff' },
+    'pastel_dream': { foreground: '#FFB3BA', background: '#ffffff' }
+  };
+  
+  return styleColors[style] || styleColors.classic;
 }
 
 // Function to apply creative styling to existing functional QR
