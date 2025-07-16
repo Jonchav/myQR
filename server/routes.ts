@@ -679,7 +679,7 @@ async function generateCreativeQR(options: any): Promise<string> {
   return qrDataUrl;
 }
 
-// Function to apply creative styling with qr-svg
+// Function to apply creative styling to existing functional QR
 async function applyCreativeStyle(qrDataUrl: string, style: string, options: any): Promise<string> {
   try {
     console.log('Applying creative style:', style);
@@ -690,52 +690,132 @@ async function applyCreativeStyle(qrDataUrl: string, style: string, options: any
       return qrDataUrl;
     }
     
-    // Use the original URL/data, not the internal scan URL
-    const originalContent = options.url || options.data;
-    console.log('QR Content:', originalContent);
+    console.log('QR Content:', options.url || options.data);
     
-    // Generate QR code with creative styling using qr-svg at higher resolution
-    const qrSvg = QR({
-      content: originalContent,
-      width: 800,
-      height: 800,
-      color: '#000000',
-      background: '#ffffff',
-      ecl: 'M',
-      join: true,
-      predefined: false,
-      pretty: false,
-      swap: false,
-      xmlDeclaration: false,
-      container: 'svg'
-    });
-
-    // Apply colors directly to the SVG
-    const coloredSvg = applyColorsToSVG(qrSvg, style);
+    // Extract the base64 data from the data URL
+    const base64Data = qrDataUrl.split(',')[1];
+    const qrBuffer = Buffer.from(base64Data, 'base64');
     
-    // Convert SVG to PNG using Sharp with ultra-high quality settings
-    const pngBuffer = await sharp(Buffer.from(coloredSvg), {
-      density: 300 // High DPI for crisp rendering
-    })
+    // Get creative colors for the style
+    const colors = getCreativeColors(style);
+    
+    // Apply color transformations to the existing functional QR
+    const coloredBuffer = await sharp(qrBuffer)
       .resize(1200, 1200, {
-        kernel: 'lanczos3', // Best quality resampling
+        kernel: 'lanczos3',
         fit: 'contain',
         background: { r: 255, g: 255, b: 255, alpha: 1 }
       })
+      .modulate({
+        brightness: getBrightness(style),
+        saturation: getSaturation(style),
+        hue: getStyleHueShift(style)
+      })
+      .tint(getStyleTint(style))
       .png({ 
         quality: 100, 
-        compressionLevel: 0, // No compression for maximum quality
+        compressionLevel: 0,
         progressive: false,
         force: true
       })
       .toBuffer();
     
     console.log('Creative style applied successfully');
-    return `data:image/png;base64,${pngBuffer.toString('base64')}`;
+    return `data:image/png;base64,${coloredBuffer.toString('base64')}`;
   } catch (error) {
     console.error('Error in creative style application:', error);
     return qrDataUrl; // Return original if fails
   }
+}
+
+// Function to get creative colors for a style
+function getCreativeColors(style: string): string[] {
+  const colorSchemes = {
+    classic: ['#000000'],
+    multicolor_blocks: ['#FF4757', '#5352ED', '#2ED573', '#FFA726', '#26C6DA'],
+    rainbow_gradient: ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF'],
+    neon_cyber: ['#00FFFF', '#FF00FF', '#00FF00', '#FFFF00', '#FF0080'],
+    forest_nature: ['#228B22', '#32CD32', '#90EE90', '#006400', '#8FBC8F'],
+    ocean_waves: ['#0077BE', '#0099CC', '#00BFFF', '#1E90FF', '#4169E1'],
+    sunset_fire: ['#FF6B35', '#F7931E', '#FFD23F', '#FF8C42', '#FF5722'],
+    pastel_dream: ['#FFB3BA', '#FFDFBA', '#FFFFBA', '#BAFFC9', '#BAE1FF'],
+    monochrome_red: ['#B91C1C', '#DC2626', '#EF4444', '#F87171', '#FCA5A5'],
+    autumn_leaves: ['#8B4513', '#D2691E', '#CD853F', '#DEB887', '#F4A460']
+  };
+  
+  return colorSchemes[style] || colorSchemes.classic;
+}
+
+// Function to get hue shift for different styles
+function getStyleHueShift(style: string): number {
+  const hueShifts = {
+    classic: 0,
+    multicolor_blocks: 15,
+    rainbow_gradient: 30,
+    neon_cyber: 45,
+    forest_nature: -30,
+    ocean_waves: 60,
+    sunset_fire: -45,
+    pastel_dream: 10,
+    monochrome_red: -15,
+    autumn_leaves: -60
+  };
+  
+  return hueShifts[style] || 0;
+}
+
+// Function to get brightness adjustment for different styles
+function getBrightness(style: string): number {
+  const brightness = {
+    classic: 1.0,
+    multicolor_blocks: 1.1,
+    rainbow_gradient: 1.2,
+    neon_cyber: 1.3,
+    forest_nature: 0.9,
+    ocean_waves: 1.1,
+    sunset_fire: 1.15,
+    pastel_dream: 1.25,
+    monochrome_red: 1.0,
+    autumn_leaves: 0.95
+  };
+  
+  return brightness[style] || 1.0;
+}
+
+// Function to get saturation adjustment for different styles
+function getSaturation(style: string): number {
+  const saturation = {
+    classic: 1.0,
+    multicolor_blocks: 1.5,
+    rainbow_gradient: 1.8,
+    neon_cyber: 2.0,
+    forest_nature: 1.3,
+    ocean_waves: 1.4,
+    sunset_fire: 1.6,
+    pastel_dream: 0.7,
+    monochrome_red: 1.2,
+    autumn_leaves: 1.4
+  };
+  
+  return saturation[style] || 1.0;
+}
+
+// Function to get tint color for different styles
+function getStyleTint(style: string): { r: number; g: number; b: number } {
+  const tints = {
+    classic: { r: 0, g: 0, b: 0 },
+    multicolor_blocks: { r: 255, g: 50, b: 50 },
+    rainbow_gradient: { r: 255, g: 100, b: 0 },
+    neon_cyber: { r: 0, g: 255, b: 255 },
+    forest_nature: { r: 50, g: 150, b: 50 },
+    ocean_waves: { r: 0, g: 100, b: 200 },
+    sunset_fire: { r: 255, g: 100, b: 0 },
+    pastel_dream: { r: 255, g: 200, b: 255 },
+    monochrome_red: { r: 200, g: 0, b: 0 },
+    autumn_leaves: { r: 150, g: 100, b: 50 }
+  };
+  
+  return tints[style] || tints.classic;
 }
 
 // Enhanced function to apply colors to SVG with better pattern recognition

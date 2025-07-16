@@ -11,6 +11,11 @@ Preferred communication style: Simple, everyday language.
 ## Recent Changes
 
 ### January 2025
+- **QR Funcionalidad Crítica Solucionada**: Corregido problema donde códigos QR no eran funcionales al escanearse - ahora contienen URL original del usuario en lugar de URL de tracking interno
+- **Nuevo Sistema de Colores Creativos**: Implementado aplicación de colores creativos directamente sobre QR funcional usando Sharp con transformaciones de matiz, saturación, brillo y tinte
+- **Mejoras de Rendimiento**: Eliminado uso de qr-svg problemático y reemplazado por sistema de modulación de color que preserva funcionalidad completa del QR
+- **Descarga Directa**: Implementado sistema de descarga directo desde el navegador sin depender de endpoints del servidor para PNG/JPG/SVG/PDF/DOCX
+- **10 Estilos Creativos Funcionales**: Todos los estilos (neon_cyber, rainbow_gradient, sunset_fire, forest_nature, ocean_waves, multicolor_blocks, pastel_dream, monochrome_red, autumn_leaves) ahora funcionan correctamente
 - **Carrete Horizontal de Estilos**: Rediseñado completamente el catálogo de estilos en formato carrete horizontal con 15 estilos únicos, vista previa automática con colores representativos, y scroll suave sin barra visible
 - **Vista Previa Automática**: Implementado sistema de generación automática de vistas previas para todos los estilos al cargar la página, con función de actualización manual e indicadores de carga
 - **Interfaz Intuitiva**: Creada selección visual con escala de hover, indicadores de selección con punto circular, y información contextual del estilo seleccionado
