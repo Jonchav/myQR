@@ -1787,9 +1787,17 @@ async function generateAdvancedQRCode(options: any): Promise<string> {
   const size = getQRSize(options.size);
   const errorCorrectionLevel = getErrorCorrectionLevel(options.errorCorrection);
   
-  // ALWAYS use user-selected colors - never override with brand colors
-  const qrForegroundColor = options.foregroundColor || "#000000";
-  const qrBackgroundColor = options.backgroundColor || "#ffffff";
+  // Use creative style colors if available, otherwise use user-selected colors
+  let qrForegroundColor = options.foregroundColor || "#000000";
+  let qrBackgroundColor = options.backgroundColor || "#ffffff";
+  
+  // Override with creative style colors if specified
+  if (options.creativeStyle && options.creativeStyle !== "classic") {
+    const styleColors = getCreativeStyleColors(options.creativeStyle);
+    qrForegroundColor = styleColors.foreground;
+    qrBackgroundColor = styleColors.background;
+    console.log('Using creative style colors:', options.creativeStyle, 'Foreground:', qrForegroundColor);
+  }
   
   // Log the colors being used for debugging
   console.log('QR Colors - Foreground:', qrForegroundColor, 'Background:', qrBackgroundColor);
@@ -1814,14 +1822,14 @@ async function generateAdvancedQRCode(options: any): Promise<string> {
   const dataToEncode = options.data || options.url;
   let qrDataUrl = await QRCode.toDataURL(dataToEncode, qrOptions);
   
-  // Apply creative styling if specified
+  // Apply enhanced styling with API if specified  
   console.log('Checking creative style:', options.creativeStyle);
   if (options.creativeStyle && options.creativeStyle !== "classic") {
-    console.log('Applying creative styling:', options.creativeStyle);
-    qrDataUrl = await applyCreativeStyle(qrDataUrl, options.creativeStyle, options);
-    console.log('Creative styling applied successfully');
+    console.log('Applying enhanced styling with API:', options.creativeStyle);
+    qrDataUrl = await enhanceQRWithAPI(qrDataUrl, options.creativeStyle, options);
+    console.log('Enhanced styling applied successfully');
   } else {
-    console.log('Creative styling skipped - style is classic or undefined');
+    console.log('Enhanced styling skipped - style is classic or undefined');
   }
   
   // Apply custom cell shapes first if specified

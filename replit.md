@@ -27,6 +27,9 @@ Preferred communication style: Simple, everyday language.
 - **Integración API de Mejora**: Implementado sistema de mejora de QR codes usando API externa para estilos y colores más avanzados
 - **Efectos Mejorados con API**: Cada estilo creativo ahora usa algoritmos de mejora específicos con gradientes, brillos y saturaciones optimizadas
 - **Configuración Segura de API**: API key configurada como variable de entorno segura (QR_ENHANCEMENT_API_KEY) para acceso protegido a servicios externos
+- **Corrección Crítica de Colores**: Solucionado problema donde color púrpura del usuario (#5b21b6) sobrescribía colores específicos de estilos creativos
+- **Prioridad de Colores de Estilo**: Sistema ahora usa colores específicos de cada estilo (electric_blue: #007BFF, vibrant_rainbow: #FF0080) en lugar de colores del usuario
+- **Generación QR Correcta**: QR codes ahora se generan directamente con colores base específicos del estilo y se mejoran con API para máxima viveza
 - **Carrete Horizontal de Estilos**: Rediseñado completamente el catálogo de estilos en formato carrete horizontal con 15 estilos únicos, vista previa automática con colores representativos, y scroll suave sin barra visible
 - **Vista Previa Automática**: Implementado sistema de generación automática de vistas previas para todos los estilos al cargar la página, con función de actualización manual e indicadores de carga
 - **Interfaz Intuitiva**: Creada selección visual con escala de hover, indicadores de selección con punto circular, y información contextual del estilo seleccionado
