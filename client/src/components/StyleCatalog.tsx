@@ -1,8 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Loader2 } from "lucide-react";
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface StyleCatalogProps {
   onStyleSelect: (style: string) => void;
@@ -11,257 +9,174 @@ interface StyleCatalogProps {
 }
 
 export function StyleCatalog({ onStyleSelect, selectedStyle, isGenerating }: StyleCatalogProps) {
-  const [previewImages, setPreviewImages] = useState<{ [key: string]: string }>({});
-  const [loadingPreviews, setLoadingPreviews] = useState<{ [key: string]: boolean }>({});
-  const [isGeneratingPreviews, setIsGeneratingPreviews] = useState(false);
+  const [previews, setPreviews] = useState<{ [key: string]: string }>({});
+  const [isLoading, setIsLoading] = useState(false);
 
-  const creativeStyles = [
-    {
-      id: "classic",
-      name: "Clásico",
-      description: "QR tradicional en blanco y negro",
-      previewColors: ["#000000", "#ffffff"]
-    },
-    {
-      id: "multicolor_blocks",
-      name: "Bloques Multicolor",
-      description: "Bloques de colores vibrantes como un mosaico",
-      previewColors: ["#FF4757", "#5352ED", "#2ED573", "#FFA726"]
-    },
-    {
-      id: "rainbow_gradient",
-      name: "Gradiente Arcoíris",
-      description: "Transición suave de colores del arcoíris",
-      previewColors: ["#FF0000", "#FF7F00", "#FFFF00", "#00FF00", "#0000FF"]
-    },
-    {
-      id: "neon_cyber",
-      name: "Neón Cibernético",
-      description: "Colores neón brillantes estilo cyberpunk",
-      previewColors: ["#00FFFF", "#FF00FF", "#00FF00", "#FFFF00"]
-    },
-    {
-      id: "forest_nature",
-      name: "Bosque Natural",
-      description: "Tonos verdes naturales y orgánicos",
-      previewColors: ["#228B22", "#32CD32", "#90EE90", "#006400"]
-    },
-    {
-      id: "ocean_waves",
-      name: "Ondas Oceánicas",
-      description: "Azules profundos como el océano",
-      previewColors: ["#0077BE", "#0099CC", "#00BFFF", "#1E90FF"]
-    },
-    {
-      id: "sunset_fire",
-      name: "Fuego del Atardecer",
-      description: "Rojos, naranjas y amarillos ardientes",
-      previewColors: ["#FF4500", "#FF6347", "#FFA500", "#FFD700"]
-    },
-    {
-      id: "purple_galaxy",
-      name: "Galaxia Púrpura",
-      description: "Tonos púrpuras y violetas espaciales",
-      previewColors: ["#8A2BE2", "#9370DB", "#9400D3", "#8B008B"]
-    },
-    {
-      id: "mint_fresh",
-      name: "Menta Fresca",
-      description: "Verdes menta y turquesas refrescantes",
-      previewColors: ["#00FA9A", "#40E0D0", "#48D1CC", "#20B2AA"]
-    },
-    {
-      id: "golden_luxury",
-      name: "Lujo Dorado",
-      description: "Dorados y amarillos elegantes",
-      previewColors: ["#FFD700", "#FFA500", "#FF8C00", "#DAA520"]
-    },
-    {
-      id: "cherry_blossom",
-      name: "Flor de Cerezo",
-      description: "Rosas suaves y blancos delicados",
-      previewColors: ["#FFB6C1", "#FFC0CB", "#FFCCCB", "#FFE4E1"]
-    },
-    {
-      id: "electric_blue",
-      name: "Azul Eléctrico",
-      description: "Azules intensos y energéticos",
-      previewColors: ["#0000FF", "#0080FF", "#00BFFF", "#1E90FF"]
-    },
-    {
-      id: "autumn_leaves",
-      name: "Hojas de Otoño",
-      description: "Marrones, naranjas y rojos otoñales",
-      previewColors: ["#8B4513", "#A0522D", "#CD853F", "#D2691E"]
-    },
-    {
-      id: "monochrome_red",
-      name: "Monocromático Rojo",
-      description: "Diferentes tonos de rojo intenso",
-      previewColors: ["#DC143C", "#B22222", "#FF0000", "#FF6347"]
-    },
-    {
-      id: "pastel_dream",
-      name: "Sueño Pastel",
-      description: "Colores pasteles suaves y relajantes",
-      previewColors: ["#FFB3BA", "#BAFFC9", "#BAE1FF", "#FFFFBA"]
-    }
+  const styles = [
+    { id: 'classic', name: 'Clásico', colors: ['#000000'] },
+    { id: 'multicolor_blocks', name: 'Bloques Multicolor', colors: ['#FF4757', '#5352ED', '#2ED573', '#FFA726'] },
+    { id: 'rainbow_gradient', name: 'Arcoíris', colors: ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF'] },
+    { id: 'neon_cyber', name: 'Neón Cyber', colors: ['#00FFFF', '#FF00FF', '#00FF00', '#FFFF00'] },
+    { id: 'forest_nature', name: 'Bosque Natural', colors: ['#228B22', '#32CD32', '#90EE90', '#006400'] },
+    { id: 'ocean_waves', name: 'Ondas del Océano', colors: ['#0077BE', '#0099CC', '#00BFFF', '#1E90FF'] },
+    { id: 'sunset_fire', name: 'Fuego del Atardecer', colors: ['#FF4500', '#FF6347', '#FFA500', '#FFD700'] },
+    { id: 'purple_galaxy', name: 'Galaxia Púrpura', colors: ['#8A2BE2', '#9370DB', '#9400D3', '#8B008B'] },
+    { id: 'mint_fresh', name: 'Menta Fresca', colors: ['#00FA9A', '#40E0D0', '#48D1CC', '#20B2AA'] },
+    { id: 'golden_luxury', name: 'Lujo Dorado', colors: ['#FFD700', '#FFA500', '#FF8C00', '#DAA520'] },
+    { id: 'cherry_blossom', name: 'Flor de Cerezo', colors: ['#FFB6C1', '#FFC0CB', '#FFCCCB', '#FFE4E1'] },
+    { id: 'electric_blue', name: 'Azul Eléctrico', colors: ['#0000FF', '#0080FF', '#00BFFF', '#1E90FF'] },
+    { id: 'autumn_leaves', name: 'Hojas de Otoño', colors: ['#8B4513', '#A0522D', '#CD853F', '#D2691E'] },
+    { id: 'monochrome_red', name: 'Rojo Monocromático', colors: ['#DC143C', '#B22222', '#FF0000', '#FF6347'] },
+    { id: 'pastel_dream', name: 'Sueño Pastel', colors: ['#FFB3BA', '#BAFFC9', '#BAE1FF', '#FFFFBA'] }
   ];
 
-  const generateAllPreviews = async () => {
-    setIsGeneratingPreviews(true);
-    
-    for (const style of creativeStyles) {
-      if (!previewImages[style.id] && !loadingPreviews[style.id]) {
-        setLoadingPreviews(prev => ({ ...prev, [style.id]: true }));
-        
-        try {
-          const response = await fetch('/api/qr/generate', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              url: 'https://example.com',
-              creativeStyle: style.id,
-              size: 'small',
-              backgroundColor: '#ffffff',
-              foregroundColor: '#000000',
-              style: 'square',
-              pattern: 'standard',
-              frame: 'none',
-              gradient: 'none',
-              border: 'none',
-              logo: 'none',
-              type: 'url',
-              includeText: false,
-              errorCorrection: 'M',
-              cardTemplate: 'none',
-              cardStyle: 'none',
-              margin: 50
-            })
-          });
+  const generateQRPreview = async (styleId: string) => {
+    try {
+      const response = await fetch('/api/qr/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          url: 'https://myqr.app',
+          creativeStyle: styleId,
+          size: 'small',
+          backgroundColor: '#ffffff',
+          foregroundColor: '#000000'
+        }),
+      });
 
-          const data = await response.json();
-          if (data.success) {
-            setPreviewImages(prev => ({ ...prev, [style.id]: data.qrCode }));
-          }
-        } catch (error) {
-          console.error('Error generating preview for', style.id, ':', error);
-        } finally {
-          setLoadingPreviews(prev => ({ ...prev, [style.id]: false }));
-        }
+      const data = await response.json();
+      if (data.success) {
+        return data.qrCode;
       }
+    } catch (error) {
+      console.error('Error generating QR preview:', error);
     }
-    
-    setIsGeneratingPreviews(false);
+    return null;
   };
 
-  // Generar vista previa para todos los estilos al cargar
+  const generateAllPreviews = async () => {
+    setIsLoading(true);
+    const newPreviews: { [key: string]: string } = {};
+    
+    // Generate previews in batches of 3 to avoid overwhelming the server
+    for (let i = 0; i < styles.length; i += 3) {
+      const batch = styles.slice(i, i + 3);
+      const batchPromises = batch.map(style => generateQRPreview(style.id));
+      const batchResults = await Promise.all(batchPromises);
+      
+      batch.forEach((style, index) => {
+        if (batchResults[index]) {
+          newPreviews[style.id] = batchResults[index];
+        }
+      });
+    }
+    
+    setPreviews(newPreviews);
+    setIsLoading(false);
+  };
+
   useEffect(() => {
     generateAllPreviews();
   }, []);
+
+  const handleManualUpdate = () => {
+    generateAllPreviews();
+  };
+
+  const scrollContainer = (direction: 'left' | 'right') => {
+    const container = document.getElementById('styles-carousel');
+    if (container) {
+      const scrollAmount = 240; // Ancho aproximado de 3 elementos
+      container.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">Estilos Creativos</h3>
         <Button
-          variant="outline"
+          onClick={handleManualUpdate}
+          disabled={isLoading}
           size="sm"
-          onClick={generateAllPreviews}
-          disabled={isGeneratingPreviews}
+          variant="outline"
         >
-          {isGeneratingPreviews ? (
-            <>
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Generando...
-            </>
-          ) : (
-            'Actualizar Vista Previa'
-          )}
+          {isLoading ? 'Actualizando...' : 'Actualizar Vista Previa'}
         </Button>
       </div>
 
-      {/* Carrete horizontal */}
       <div className="relative">
-        <div className="flex gap-3 overflow-x-auto pb-4 style-catalog-scroll">
-          {creativeStyles.map(style => (
+        {/* Flecha izquierda */}
+        <button
+          onClick={() => scrollContainer('left')}
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full p-2 shadow-lg hover:shadow-xl transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-700"
+        >
+          <ChevronLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+        </button>
+
+        {/* Flecha derecha */}
+        <button
+          onClick={() => scrollContainer('right')}
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full p-2 shadow-lg hover:shadow-xl transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-700"
+        >
+          <ChevronRight className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+        </button>
+
+        <div 
+          id="styles-carousel"
+          className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide px-8"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          {styles.map((style) => (
             <div
               key={style.id}
-              className={`flex-shrink-0 w-32 cursor-pointer transition-all duration-200 ${
-                selectedStyle === style.id
-                  ? 'scale-105'
-                  : 'hover:scale-102'
+              className={`relative flex-shrink-0 cursor-pointer transition-all duration-200 hover:scale-105 ${
+                selectedStyle === style.id ? 'scale-110' : ''
               }`}
               onClick={() => onStyleSelect(style.id)}
             >
-              <Card className={`${
-                selectedStyle === style.id
-                  ? 'ring-2 ring-primary shadow-lg bg-primary/5'
-                  : 'hover:shadow-md'
+              <div className={`relative w-20 h-20 rounded-lg border-2 overflow-hidden ${
+                selectedStyle === style.id 
+                  ? 'border-purple-500 shadow-lg shadow-purple-500/25' 
+                  : 'border-gray-200 dark:border-gray-700'
               }`}>
-                <CardContent className="p-3 space-y-2">
-                  {/* Preview Area */}
-                  <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center relative overflow-hidden">
-                    {previewImages[style.id] ? (
-                      <img
-                        src={previewImages[style.id]}
-                        alt={`Preview ${style.name}`}
-                        className="w-full h-full object-cover rounded-lg"
-                      />
-                    ) : loadingPreviews[style.id] ? (
-                      <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
-                    ) : (
-                      <div className="grid grid-cols-2 gap-1 w-full h-full p-2">
-                        {style.previewColors.map((color, index) => (
-                          <div
-                            key={index}
-                            className="rounded-sm"
-                            style={{ backgroundColor: color }}
-                          />
-                        ))}
-                      </div>
-                    )}
+                {previews[style.id] && (
+                  <img 
+                    src={previews[style.id]} 
+                    alt={style.name}
+                    className="w-full h-full object-cover"
+                  />
+                )}
+                {isLoading && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800">
+                    <div className="animate-spin w-4 h-4 border-2 border-purple-500 border-t-transparent rounded-full"></div>
                   </div>
-
-                  {/* Style Info */}
-                  <div className="text-center">
-                    <h5 className="font-medium text-sm truncate">{style.name}</h5>
-                    <p className="text-xs text-muted-foreground truncate">
-                      {style.description.split(' ').slice(0, 3).join(' ')}...
-                    </p>
+                )}
+                {!previews[style.id] && !isLoading && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800">
+                    <div className="text-xs text-gray-500 text-center">
+                      Vista<br/>Previa
+                    </div>
                   </div>
-
-                  {/* Selected Indicator */}
-                  {selectedStyle === style.id && (
-                    <div className="absolute top-2 right-2 w-3 h-3 bg-primary rounded-full border-2 border-white shadow-sm" />
-                  )}
-                </CardContent>
-              </Card>
+                )}
+              </div>
+              
+              {selectedStyle === style.id && (
+                <div className="absolute -top-1 -right-1 w-4 h-4 bg-purple-500 rounded-full border-2 border-white"></div>
+              )}
+              
+              <p className="mt-2 text-xs text-center text-gray-600 dark:text-gray-400 max-w-20 truncate">
+                {style.name}
+              </p>
             </div>
           ))}
         </div>
       </div>
-
-      {/* Selected Style Info */}
-      {selectedStyle && (
-        <div className="mt-4 p-3 bg-muted/50 rounded-lg">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
-              <span className="text-white text-xs font-bold">✓</span>
-            </div>
-            <div>
-              <h4 className="font-medium text-sm">
-                {creativeStyles.find(s => s.id === selectedStyle)?.name}
-              </h4>
-              <p className="text-xs text-muted-foreground">
-                {creativeStyles.find(s => s.id === selectedStyle)?.description}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
