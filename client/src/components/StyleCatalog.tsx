@@ -140,79 +140,100 @@ export function StyleCatalog({ onStyleSelect, selectedStyle, isGenerating }: Sty
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">Estilos Creativos</h3>
-        <Button
-          onClick={handleManualUpdate}
-          disabled={isLoading}
-          size="sm"
-          variant="outline"
-        >
-          {isLoading ? 'Actualizando...' : 'Actualizar Vista Previa'}
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            onClick={handleManualUpdate}
+            disabled={isLoading}
+            size="sm"
+            variant="outline"
+          >
+            {isLoading ? 'Generando...' : 'Actualizar Vista Previa'}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => scrollContainer('left')}
+            disabled={isLoading}
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => scrollContainer('right')}
+            disabled={isLoading}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
       <div className="relative">
-        {/* Flecha izquierda */}
-        <button
-          onClick={() => scrollContainer('left')}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full p-2 shadow-lg hover:shadow-xl transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-700"
-        >
-          <ChevronLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-        </button>
-
-        {/* Flecha derecha */}
-        <button
-          onClick={() => scrollContainer('right')}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full p-2 shadow-lg hover:shadow-xl transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-700"
-        >
-          <ChevronRight className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-        </button>
-
         <div 
           id="styles-carousel"
-          className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide px-8"
+          className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
           {styles.map((style) => (
             <div
               key={style.id}
-              className={`relative flex-shrink-0 cursor-pointer transition-all duration-200 hover:scale-105 ${
-                selectedStyle === style.id ? 'scale-110' : ''
+              className={`relative flex-shrink-0 w-32 h-32 rounded-xl border-2 cursor-pointer transition-all duration-300 ${
+                selectedStyle === style.id
+                  ? 'border-purple-500 dark:border-purple-400 ring-2 ring-purple-500/20 transform scale-105'
+                  : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:scale-102'
               }`}
               onClick={() => onStyleSelect(style.id)}
             >
-              <div className={`relative w-20 h-20 rounded-lg border-2 overflow-hidden ${
-                selectedStyle === style.id 
-                  ? 'border-purple-500 shadow-lg shadow-purple-500/25' 
-                  : 'border-gray-200 dark:border-gray-700'
-              }`}>
-                {previews[style.id] && (
-                  <img 
-                    src={previews[style.id]} 
+              {previews[style.id] ? (
+                <div className="relative w-full h-full">
+                  <img
+                    src={previews[style.id]}
                     alt={style.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover rounded-lg"
                   />
-                )}
-                {isLoading && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800">
-                    <div className="animate-spin w-4 h-4 border-2 border-purple-500 border-t-transparent rounded-full"></div>
+                  <div className="absolute inset-0 bg-black/40 rounded-lg flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-200">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        generateQRPreview(style.id);
+                      }}
+                      className="text-xs"
+                    >
+                      Regenerar
+                    </Button>
                   </div>
-                )}
-                {!previews[style.id] && !isLoading && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800">
-                    <div className="text-xs text-gray-500 text-center">
-                      Vista<br/>Previa
-                    </div>
+                </div>
+              ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center p-3">
+                  <div 
+                    className="w-16 h-16 rounded-lg mb-2 bg-gradient-to-br flex items-center justify-center"
+                    style={{
+                      backgroundImage: `linear-gradient(135deg, ${style.colors[0]}, ${style.colors[1] || style.colors[0]})`
+                    }}
+                  >
+                    <div className="text-white text-xs font-bold text-center">Vista<br/>Previa</div>
                   </div>
-                )}
-              </div>
-              
-              {selectedStyle === style.id && (
-                <div className="absolute -top-1 -right-1 w-4 h-4 bg-purple-500 rounded-full border-2 border-white"></div>
+                  <div className="text-center">
+                    <p className="text-xs font-medium text-gray-700 dark:text-gray-300 leading-tight">
+                      {style.name}
+                    </p>
+                  </div>
+                </div>
               )}
-              
-              <p className="mt-2 text-xs text-center text-gray-600 dark:text-gray-400 max-w-20 truncate">
-                {style.name}
-              </p>
+
+              {/* Indicador de selección */}
+              {selectedStyle === style.id && (
+                <div className="absolute -top-2 -right-2 w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center">
+                  <div className="w-3 h-3 bg-white rounded-full"></div>
+                </div>
+              )}
+
+              {/* Nombre del estilo */}
+              <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-1 rounded-b-lg">
+                <p className="text-center truncate">{style.name}</p>
+              </div>
             </div>
           ))}
         </div>

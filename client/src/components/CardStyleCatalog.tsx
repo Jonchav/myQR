@@ -195,11 +195,13 @@ export function CardStyleCatalog({ onStyleSelect, selectedStyle, isGenerating }:
               ) : (
                 <div className="w-full h-full flex flex-col items-center justify-center p-3">
                   <div 
-                    className="w-16 h-16 rounded-lg mb-2 bg-gradient-to-br"
+                    className="w-16 h-16 rounded-lg mb-2 bg-gradient-to-br flex items-center justify-center"
                     style={{
                       backgroundImage: `linear-gradient(135deg, ${style.colors[0]}, ${style.colors[1]})`
                     }}
-                  />
+                  >
+                    <div className="text-white text-xs font-bold text-center">Vista<br/>Previa</div>
+                  </div>
                   <div className="text-center">
                     <p className="text-xs font-medium text-gray-700 dark:text-gray-300 leading-tight">
                       {style.name}
