@@ -524,8 +524,8 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
       background = generateCardBackground(cardStyle, width, height);
     }
     
-    // Calculate QR code size and position - perfectamente centrado (aumentado 20%)
-    const qrSize = Math.min(width, height) * 0.42; // Aumentado de 0.35 a 0.42 (20% más grande)
+    // Calculate QR code size and position - perfectamente centrado (aumentado 50% total)
+    const qrSize = Math.min(width, height) * 0.55; // Aumentado de 0.42 a 0.55 (30% adicional)
     const qrX = Math.round((width - qrSize) / 2); // Center horizontally con redondeo
     const qrY = Math.round((height - qrSize) / 2); // Center vertically con redondeo
     
