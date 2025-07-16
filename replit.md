@@ -11,7 +11,9 @@ Preferred communication style: Simple, everyday language.
 ## Recent Changes
 
 ### January 2025
-- **Estilos Creativos Avanzados**: Implementado sistema completo de QR codes con colores múltiples, esquinas distintivas y patrones decorativos. Incluye 4 estilos: Colorido (rojo, azul, amarillo), Arcoíris, Atardecer, y Océano con formas redondeadas y elementos visuales que preservan funcionalidad
+- **Catálogo de 15 Estilos Creativos**: Implementado sistema completo de catálogo visual con 15 estilos únicos organizados por categorías: Básico, Colorido, Moderno, Naturaleza, Cálido, Cósmico, Fresco, Elegante, Delicado, Energético, Estacional, Monocromático, Suave. Cada estilo incluye paleta de colores específica y vista previa interactiva
+- **Migración a qr-svg**: Solucionado problema de compatibilidad con Node.js reemplazando qr-code-styling por qr-svg, eliminando error "window is not defined" y mejorando estabilidad del servidor
+- **Interfaz de Catálogo Visual**: Creado componente StyleCatalog con grid de tarjetas, categorización automática, vista previa bajo demanda, y selección visual intuitiva que reemplaza dropdown simple
 - **Esquinas Personalizadas**: Cada esquina tiene diseño único con gradientes radiales, formas geométricas (rectángulos redondeados, triángulos, círculos, curvas) y colores distintivos que se adaptan al esquema seleccionado
 - **Patrones Decorativos**: Elementos visuales como círculos, ondas, elipses y paths curvos que añaden atractivo sin interferir con el escaneo del QR
 - **Composición SVG Avanzada**: Sistema de generación SVG con defs, gradientes, filtros y patrones que se compone con el QR base usando blend mode 'multiply' para preservar legibilidad

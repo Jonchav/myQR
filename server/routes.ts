@@ -69,7 +69,11 @@ const qrGenerationSchema = z.object({
     "instagram", "facebook", "twitter", "linkedin", "youtube", "tiktok",
     "spotify", "netflix", "twitch", "discord", "whatsapp", "telegram"
   ]).default("none"),
-  creativeStyle: z.enum(["classic", "colorful", "rainbow", "sunset", "ocean"]).default("classic"),
+  creativeStyle: z.enum([
+    "classic", "multicolor_blocks", "rainbow_gradient", "neon_cyber", "forest_nature", 
+    "ocean_waves", "sunset_fire", "purple_galaxy", "mint_fresh", "golden_luxury",
+    "cherry_blossom", "electric_blue", "autumn_leaves", "monochrome_red", "pastel_dream"
+  ]).default("classic"),
   includeText: z.boolean().default(false),
   errorCorrection: z.enum(["L", "M", "Q", "H"]).default("M"),
   backgroundImage: z.string().optional(), // Data URL for background image
@@ -680,17 +684,22 @@ async function applyCreativeStyle(qrDataUrl: string, style: string, options: any
   try {
     console.log('Applying creative style with qr-svg:', style);
     
+    // Skip creative styling for classic style
+    if (style === 'classic') {
+      return qrDataUrl;
+    }
+    
     // Generate QR code with creative styling using qr-svg
     const qrSvg = QR({
       content: options.data || options.url,
-      width: 800,
-      height: 800,
+      width: 400,
+      height: 400,
       color: '#000000',
       background: '#ffffff',
       ecl: 'M',
       join: true,
       predefined: false,
-      pretty: true,
+      pretty: false,
       swap: false,
       xmlDeclaration: false,
       container: 'svg'
@@ -699,9 +708,9 @@ async function applyCreativeStyle(qrDataUrl: string, style: string, options: any
     // Create creative SVG with styled elements
     const creativeSVG = await generateCreativeSVG(qrSvg, style, options);
     
-    // Convert SVG to PNG using Sharp
+    // Convert SVG to PNG using Sharp with error handling
     const pngBuffer = await sharp(Buffer.from(creativeSVG))
-      .png({ quality: 90, compressionLevel: 4 })
+      .png({ quality: 85, compressionLevel: 6 })
       .toBuffer();
     
     return `data:image/png;base64,${pngBuffer.toString('base64')}`;
@@ -715,25 +724,69 @@ async function applyCreativeStyle(qrDataUrl: string, style: string, options: any
 async function generateCreativeSVG(baseSvg: string, style: string, options: any): Promise<string> {
   // Define color schemes for each style based on the examples
   const colorSchemes = {
-    colorful: {
-      colors: ['#FF4757', '#5352ED', '#2ED573', '#FFA726', '#26C6DA', '#E74C3C', '#8E44AD', '#3498DB'],
+    classic: {
+      colors: ['#000000'],
+      cornerColors: ['#000000']
+    },
+    multicolor_blocks: {
+      colors: ['#FF4757', '#5352ED', '#2ED573', '#FFA726', '#26C6DA', '#E74C3C', '#8E44AD', '#3498DB', '#F39C12', '#E67E22'],
       cornerColors: ['#FF4757', '#5352ED', '#2ED573']
     },
-    rainbow: {
-      colors: ['#FF6B6B', '#4ECDC4', '#45B7D1', '#F7DC6F', '#BB8FCE', '#A8E6CF', '#FFB6C1', '#98FB98'],
-      cornerColors: ['#FF6B6B', '#4ECDC4', '#45B7D1']
+    rainbow_gradient: {
+      colors: ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF', '#4B0082', '#9400D3', '#FF1493', '#00CED1', '#32CD32'],
+      cornerColors: ['#FF0000', '#00FF00', '#0000FF']
     },
-    sunset: {
-      colors: ['#FF5722', '#FF9800', '#FFC107', '#FFEB3B', '#CDDC39', '#FF8A65', '#FFB74D'],
-      cornerColors: ['#FF5722', '#FF9800', '#FFC107']
+    neon_cyber: {
+      colors: ['#00FFFF', '#FF00FF', '#00FF00', '#FFFF00', '#FF0080', '#8000FF', '#0080FF', '#80FF00', '#FF8000', '#FF0040'],
+      cornerColors: ['#00FFFF', '#FF00FF', '#00FF00']
     },
-    ocean: {
-      colors: ['#0277BD', '#0288D1', '#039BE5', '#03A9F4', '#29B6F6', '#4FC3F7', '#81C784'],
-      cornerColors: ['#0277BD', '#0288D1', '#039BE5']
+    forest_nature: {
+      colors: ['#228B22', '#32CD32', '#90EE90', '#006400', '#8FBC8F', '#9ACD32', '#ADFF2F', '#7CFC00', '#00FF7F', '#66CDAA'],
+      cornerColors: ['#228B22', '#32CD32', '#006400']
+    },
+    ocean_waves: {
+      colors: ['#0077BE', '#0099CC', '#00BFFF', '#1E90FF', '#4169E1', '#6495ED', '#87CEEB', '#87CEFA', '#ADD8E6', '#B0E0E6'],
+      cornerColors: ['#0077BE', '#0099CC', '#00BFFF']
+    },
+    sunset_fire: {
+      colors: ['#FF4500', '#FF6347', '#FF7F50', '#FFA500', '#FFB347', '#FFCCCB', '#FFD700', '#FFA07A', '#FF8C00', '#FF1493'],
+      cornerColors: ['#FF4500', '#FF6347', '#FFA500']
+    },
+    purple_galaxy: {
+      colors: ['#8A2BE2', '#9370DB', '#9400D3', '#8B008B', '#800080', '#DA70D6', '#DDA0DD', '#EE82EE', '#BA55D3', '#C71585'],
+      cornerColors: ['#8A2BE2', '#9370DB', '#9400D3']
+    },
+    mint_fresh: {
+      colors: ['#00FA9A', '#40E0D0', '#48D1CC', '#20B2AA', '#5F9EA0', '#66CDAA', '#7FFFD4', '#AFEEEE', '#E0FFFF', '#F0FFFF'],
+      cornerColors: ['#00FA9A', '#40E0D0', '#48D1CC']
+    },
+    golden_luxury: {
+      colors: ['#FFD700', '#FFA500', '#FF8C00', '#DAA520', '#B8860B', '#F0E68C', '#EEE8AA', '#F5DEB3', '#DEB887', '#CD853F'],
+      cornerColors: ['#FFD700', '#FFA500', '#FF8C00']
+    },
+    cherry_blossom: {
+      colors: ['#FFB6C1', '#FFC0CB', '#FFCCCB', '#FFE4E1', '#FFEFD5', '#FFF0F5', '#FFFAFA', '#F8F8FF', '#E6E6FA', '#D8BFD8'],
+      cornerColors: ['#FFB6C1', '#FFC0CB', '#FFCCCB']
+    },
+    electric_blue: {
+      colors: ['#0000FF', '#0080FF', '#00BFFF', '#1E90FF', '#4169E1', '#6495ED', '#4682B4', '#5F9EA0', '#87CEEB', '#87CEFA'],
+      cornerColors: ['#0000FF', '#0080FF', '#00BFFF']
+    },
+    autumn_leaves: {
+      colors: ['#8B4513', '#A0522D', '#CD853F', '#D2691E', '#DEB887', '#F4A460', '#BC8F8F', '#F5DEB3', '#FFE4B5', '#FFEFD5'],
+      cornerColors: ['#8B4513', '#A0522D', '#CD853F']
+    },
+    monochrome_red: {
+      colors: ['#DC143C', '#B22222', '#FF0000', '#FF6347', '#FF4500', '#FF1493', '#C71585', '#8B0000', '#A52A2A', '#800000'],
+      cornerColors: ['#DC143C', '#B22222', '#FF0000']
+    },
+    pastel_dream: {
+      colors: ['#FFB3BA', '#BAFFC9', '#BAE1FF', '#FFFFBA', '#FFDFBA', '#E0BBE4', '#957DAD', '#D291BC', '#FEC8D8', '#FFDFD3'],
+      cornerColors: ['#FFB3BA', '#BAFFC9', '#BAE1FF']
     }
   };
 
-  const scheme = colorSchemes[style as keyof typeof colorSchemes] || colorSchemes.colorful;
+  const scheme = colorSchemes[style as keyof typeof colorSchemes] || colorSchemes.classic;
   
   // Clean the SVG content and apply creative coloring
   const coloredSvg = applyCreativeColorsToSVG(baseSvg, scheme.colors, scheme.cornerColors);
@@ -745,18 +798,24 @@ async function generateCreativeSVG(baseSvg: string, style: string, options: any)
 function applyCreativeColorsToSVG(svgContent: string, colors: string[], cornerColors: string[]): string {
   let colorIndex = 0;
   
-  // Parse the SVG content to identify different elements
+  // Clean the SVG content and ensure it's valid
   let processedSvg = svgContent;
+  
+  // Ensure the SVG has proper XML declaration and structure
+  if (!processedSvg.includes('<svg')) {
+    processedSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">${processedSvg}</svg>`;
+  }
   
   // Replace path elements with creative colors
   processedSvg = processedSvg.replace(/<path[^>]*>/g, (match) => {
     const color = colors[colorIndex % colors.length];
     colorIndex++;
     
+    // Ensure proper fill attribute
     if (match.includes('fill=')) {
       return match.replace(/fill="[^"]*"/, `fill="${color}"`);
     } else {
-      return match.replace('>', ` fill="${color}">`);
+      return match.replace(/>/g, ` fill="${color}"/>`);
     }
   });
   
@@ -765,10 +824,11 @@ function applyCreativeColorsToSVG(svgContent: string, colors: string[], cornerCo
     const color = colors[colorIndex % colors.length];
     colorIndex++;
     
+    // Ensure proper fill attribute and self-closing tag
     if (match.includes('fill=')) {
       return match.replace(/fill="[^"]*"/, `fill="${color}"`);
     } else {
-      return match.replace('>', ` fill="${color}">`);
+      return match.replace(/>/g, ` fill="${color}"/>`);
     }
   });
   
@@ -777,10 +837,11 @@ function applyCreativeColorsToSVG(svgContent: string, colors: string[], cornerCo
     const color = colors[colorIndex % colors.length];
     colorIndex++;
     
+    // Ensure proper fill attribute and self-closing tag
     if (match.includes('fill=')) {
       return match.replace(/fill="[^"]*"/, `fill="${color}"`);
     } else {
-      return match.replace('>', ` fill="${color}">`);
+      return match.replace(/>/g, ` fill="${color}"/>`);
     }
   });
   
@@ -789,10 +850,11 @@ function applyCreativeColorsToSVG(svgContent: string, colors: string[], cornerCo
     const color = colors[colorIndex % colors.length];
     colorIndex++;
     
+    // Ensure proper fill attribute and self-closing tag
     if (match.includes('fill=')) {
       return match.replace(/fill="[^"]*"/, `fill="${color}"`);
     } else {
-      return match.replace('>', ` fill="${color}">`);
+      return match.replace(/>/g, ` fill="${color}"/>`);
     }
   });
   

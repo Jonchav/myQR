@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Palette, Frame, Sparkles, Loader2, Home, ArrowLeft, X, Maximize2, Upload } from "lucide-react";
+import { StyleCatalog } from "./StyleCatalog";
 
 interface QRCustomizerProps {
   settings: any;
@@ -172,23 +173,15 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                 </div>
               </div>
               
+              <div className="col-span-full space-y-3">
+                <StyleCatalog 
+                  selectedStyle={settings.creativeStyle || "classic"}
+                  onStyleSelect={(style) => applyRealTimeChange("creativeStyle", style)}
+                  isGenerating={isGenerating}
+                />
+              </div>
+              
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Estilo Creativo</Label>
-                  <Select value={settings.creativeStyle || "classic"} onValueChange={(value) => applyRealTimeChange("creativeStyle", value)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="classic">🎨 Clásico Blanco y Negro</SelectItem>
-                      <SelectItem value="colorful">🌈 Colorido Múltiple (Rojo, Azul, Amarillo)</SelectItem>
-                      <SelectItem value="rainbow">🌈 Arcoíris Vibrante</SelectItem>
-                      <SelectItem value="sunset">🌅 Atardecer (Naranja, Amarillo)</SelectItem>
-                      <SelectItem value="ocean">🌊 Océano (Azules)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
                 <div className="space-y-2">
                   <Label>Patrón Decorativo</Label>
                   <Select value={settings.pattern} onValueChange={(value) => applyRealTimeChange("pattern", value)}>
