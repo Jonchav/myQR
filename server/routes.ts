@@ -522,6 +522,127 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
   }
 }
 
+// Function to apply custom patterns to QR code
+async function applyCustomPattern(qrDataUrl: string, pattern: string, size: number): Promise<string> {
+  if (pattern === "standard") return qrDataUrl;
+  
+  try {
+    // Convert QR code to buffer
+    const qrBase64 = qrDataUrl.replace(/^data:image\/[a-z]+;base64,/, '');
+    const qrBuffer = Buffer.from(qrBase64, 'base64');
+    
+    // Get QR image info
+    const qrImage = sharp(qrBuffer);
+    const { width, height } = await qrImage.metadata();
+    
+    // Create pattern mask based on pattern type
+    let patternSVG = '';
+    const cellSize = Math.floor(size / 25); // Approximate cell size
+    
+    switch (pattern) {
+      case "heart":
+        patternSVG = `
+          <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="heartPattern" patternUnits="userSpaceOnUse" width="${cellSize * 2}" height="${cellSize * 2}">
+                <rect width="${cellSize * 2}" height="${cellSize * 2}" fill="transparent"/>
+                <path d="M${cellSize},${cellSize * 0.7} C${cellSize},${cellSize * 0.3} ${cellSize * 0.5},${cellSize * 0.1} ${cellSize * 0.5},${cellSize * 0.5} C${cellSize * 0.5},${cellSize * 0.1} ${cellSize * 0.1},${cellSize * 0.3} ${cellSize * 0.1},${cellSize * 0.7} C${cellSize * 0.1},${cellSize * 1.1} ${cellSize * 0.5},${cellSize * 1.5} ${cellSize},${cellSize * 1.9} C${cellSize * 1.5},${cellSize * 1.5} ${cellSize * 1.9},${cellSize * 1.1} ${cellSize * 1.9},${cellSize * 0.7} C${cellSize * 1.9},${cellSize * 0.3} ${cellSize * 1.5},${cellSize * 0.1} ${cellSize * 1.5},${cellSize * 0.5} C${cellSize * 1.5},${cellSize * 0.1} ${cellSize},${cellSize * 0.3} ${cellSize},${cellSize * 0.7}Z" fill="rgba(255,255,255,0.3)"/>
+              </pattern>
+            </defs>
+            <rect width="${width}" height="${height}" fill="url(#heartPattern)"/>
+          </svg>
+        `;
+        break;
+        
+      case "star":
+        patternSVG = `
+          <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="starPattern" patternUnits="userSpaceOnUse" width="${cellSize * 2}" height="${cellSize * 2}">
+                <rect width="${cellSize * 2}" height="${cellSize * 2}" fill="transparent"/>
+                <polygon points="${cellSize},${cellSize * 0.2} ${cellSize * 1.2},${cellSize * 0.8} ${cellSize * 1.8},${cellSize * 0.8} ${cellSize * 1.4},${cellSize * 1.4} ${cellSize * 1.6},${cellSize * 2} ${cellSize},${cellSize * 1.6} ${cellSize * 0.4},${cellSize * 2} ${cellSize * 0.6},${cellSize * 1.4} ${cellSize * 0.2},${cellSize * 0.8} ${cellSize * 0.8},${cellSize * 0.8}" fill="rgba(255,255,255,0.4)"/>
+              </pattern>
+            </defs>
+            <rect width="${width}" height="${height}" fill="url(#starPattern)"/>
+          </svg>
+        `;
+        break;
+        
+      case "diamond":
+        patternSVG = `
+          <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="diamondPattern" patternUnits="userSpaceOnUse" width="${cellSize * 2}" height="${cellSize * 2}">
+                <rect width="${cellSize * 2}" height="${cellSize * 2}" fill="transparent"/>
+                <polygon points="${cellSize},${cellSize * 0.5} ${cellSize * 1.5},${cellSize} ${cellSize},${cellSize * 1.5} ${cellSize * 0.5},${cellSize}" fill="rgba(255,255,255,0.3)"/>
+              </pattern>
+            </defs>
+            <rect width="${width}" height="${height}" fill="url(#diamondPattern)"/>
+          </svg>
+        `;
+        break;
+        
+      case "hexagon":
+        patternSVG = `
+          <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="hexPattern" patternUnits="userSpaceOnUse" width="${cellSize * 2}" height="${cellSize * 2}">
+                <rect width="${cellSize * 2}" height="${cellSize * 2}" fill="transparent"/>
+                <polygon points="${cellSize * 0.5},${cellSize * 0.7} ${cellSize * 0.9},${cellSize * 0.5} ${cellSize * 1.5},${cellSize * 0.5} ${cellSize * 1.9},${cellSize * 0.7} ${cellSize * 1.5},${cellSize * 0.9} ${cellSize * 0.9},${cellSize * 0.9}" fill="rgba(255,255,255,0.3)"/>
+              </pattern>
+            </defs>
+            <rect width="${width}" height="${height}" fill="url(#hexPattern)"/>
+          </svg>
+        `;
+        break;
+        
+      case "flower":
+        patternSVG = `
+          <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="flowerPattern" patternUnits="userSpaceOnUse" width="${cellSize * 3}" height="${cellSize * 3}">
+                <rect width="${cellSize * 3}" height="${cellSize * 3}" fill="transparent"/>
+                <circle cx="${cellSize * 1.5}" cy="${cellSize * 0.8}" r="${cellSize * 0.3}" fill="rgba(255,255,255,0.2)"/>
+                <circle cx="${cellSize * 2.2}" cy="${cellSize * 1.5}" r="${cellSize * 0.3}" fill="rgba(255,255,255,0.2)"/>
+                <circle cx="${cellSize * 1.5}" cy="${cellSize * 2.2}" r="${cellSize * 0.3}" fill="rgba(255,255,255,0.2)"/>
+                <circle cx="${cellSize * 0.8}" cy="${cellSize * 1.5}" r="${cellSize * 0.3}" fill="rgba(255,255,255,0.2)"/>
+                <circle cx="${cellSize * 1.5}" cy="${cellSize * 1.5}" r="${cellSize * 0.2}" fill="rgba(255,255,255,0.4)"/>
+              </pattern>
+            </defs>
+            <rect width="${width}" height="${height}" fill="url(#flowerPattern)"/>
+          </svg>
+        `;
+        break;
+        
+      default:
+        return qrDataUrl;
+    }
+    
+    // Convert pattern SVG to buffer
+    const patternBuffer = Buffer.from(patternSVG);
+    const patternImage = await sharp(patternBuffer)
+      .png()
+      .resize(width, height)
+      .toBuffer();
+    
+    // Apply pattern overlay to QR code
+    const result = await sharp(qrBuffer)
+      .composite([
+        {
+          input: patternImage,
+          blend: 'overlay'
+        }
+      ])
+      .png()
+      .toBuffer();
+    
+    return `data:image/png;base64,${result.toString('base64')}`;
+  } catch (error) {
+    console.error('Error applying custom pattern:', error);
+    return qrDataUrl; // Return original if pattern fails
+  }
+}
+
 // Function to generate advanced QR code
 async function generateAdvancedQRCode(options: any): Promise<string> {
   const size = getQRSize(options.size);
@@ -558,6 +679,13 @@ async function generateAdvancedQRCode(options: any): Promise<string> {
   // Generate the QR code
   const dataToEncode = options.data || options.url;
   let qrDataUrl = await QRCode.toDataURL(dataToEncode, qrOptions);
+  
+  // Apply custom pattern if specified
+  if (options.pattern && options.pattern !== "standard") {
+    console.log('Applying custom pattern:', options.pattern);
+    qrDataUrl = await applyCustomPattern(qrDataUrl, options.pattern, size);
+    console.log('Custom pattern applied successfully');
+  }
   
   // If there's a background image, composite it with the QR code
   if (options.backgroundImage) {
