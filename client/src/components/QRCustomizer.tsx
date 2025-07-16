@@ -1,12 +1,10 @@
-import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { Palette, Frame, Sparkles, Type, Loader2, Home, ArrowLeft, Download, X, Maximize2 } from "lucide-react";
+import { Palette, Frame, Sparkles, Loader2, Home, ArrowLeft, Download, X, Maximize2 } from "lucide-react";
 
 interface QRCustomizerProps {
   settings: any;
@@ -48,93 +46,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
     }
   };
 
-  // Temas predefinidos
-  const themeStyles = {
-    modern: {
-      name: "Moderno",
-      icon: "🎨",
-      description: "Diseño limpio y contemporáneo",
-      backgroundColor: "#ffffff",
-      foregroundColor: "#000000",
-      style: "rounded",
-      pattern: "standard",
-      gradient: "none"
-    },
-    vibrant: {
-      name: "Vibrante",
-      icon: "🌈",
-      description: "Colores llamativos y energéticos",
-      backgroundColor: "#ff6b6b",
-      foregroundColor: "#ffffff",
-      style: "rounded",
-      pattern: "dots",
-      gradient: "purple"
-    },
-    elegant: {
-      name: "Elegante",
-      icon: "✨",
-      description: "Estilo sofisticado y profesional",
-      backgroundColor: "#2c3e50",
-      foregroundColor: "#ecf0f1",
-      style: "square",
-      pattern: "standard",
-      gradient: "gold"
-    },
-    nature: {
-      name: "Natural",
-      icon: "🌿",
-      description: "Inspirado en la naturaleza",
-      backgroundColor: "#27ae60",
-      foregroundColor: "#ffffff",
-      style: "rounded",
-      pattern: "flower",
-      gradient: "green"
-    },
-    tech: {
-      name: "Tecnológico",
-      icon: "⚡",
-      description: "Estilo futurista y digital",
-      backgroundColor: "#1e3a8a",
-      foregroundColor: "#60a5fa",
-      style: "square",
-      pattern: "hexagon",
-      gradient: "blue"
-    },
-    minimal: {
-      name: "Minimalista",
-      icon: "⚪",
-      description: "Simplicidad y claridad",
-      backgroundColor: "#f8f9fa",
-      foregroundColor: "#212529",
-      style: "square",
-      pattern: "standard",
-      gradient: "none"
-    }
-  };
 
-  const isThemeActive = (theme: any) => {
-    return settings.backgroundColor === theme.backgroundColor &&
-           settings.foregroundColor === theme.foregroundColor &&
-           settings.style === theme.style &&
-           settings.pattern === theme.pattern &&
-           settings.gradient === theme.gradient;
-  };
-
-  const applyTheme = (themeKey: string) => {
-    const theme = themeStyles[themeKey];
-    if (theme) {
-      Object.entries(theme).forEach(([key, value]) => {
-        if (key !== 'name' && key !== 'icon' && key !== 'description') {
-          applyRealTimeChange(key, value);
-        }
-      });
-      
-      toast({
-        title: "Tema aplicado",
-        description: `Se ha aplicado el tema ${theme.name}`,
-      });
-    }
-  };
 
   return (
     <Card className="w-full max-w-4xl mx-auto shadow-lg border-purple-200 dark:border-purple-700">
@@ -283,41 +195,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
             </CardContent>
           </Card>
 
-          {/* Templates Section */}
-          <Card className="border-purple-200 dark:border-purple-700">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Frame className="w-5 h-5 text-purple-500" />
-                Plantillas Rápidas
-              </CardTitle>
-              <p className="text-sm text-muted-foreground">
-                Selecciona una plantilla optimizada para redes sociales
-              </p>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {Object.entries(themeStyles).map(([key, theme]) => {
-                  const isActive = isThemeActive(theme);
-                  return (
-                    <div
-                      key={key}
-                      className={`p-3 rounded-lg cursor-pointer transition-all duration-200 border-2 ${
-                        isActive 
-                          ? "border-purple-500 bg-purple-50 dark:bg-purple-900/20 shadow-lg" 
-                          : "border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-600"
-                      }`}
-                      onClick={() => applyTheme(key)}
-                    >
-                      <div className="text-center">
-                        <div className="text-2xl mb-1">{theme.icon}</div>
-                        <div className="text-xs font-medium">{theme.name}</div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </CardContent>
-          </Card>
+
 
           {/* Size and Social Media Dimensions */}
           <Card className="border-purple-200 dark:border-purple-700">
@@ -367,100 +245,22 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                 </div>
               </div>
               
-              {/* Margin Control */}
-              <div className="space-y-2">
-                <Label className="flex items-center justify-between">
-                  <span>Margen del QR</span>
-                  <span className="text-sm text-muted-foreground">{settings.margin || 150}px</span>
-                </Label>
-                <div className="px-3">
-                  <input
-                    type="range"
-                    min="50"
-                    max="300"
-                    step="10"
-                    value={settings.margin || 150}
-                    onChange={(e) => applyRealTimeChange("margin", parseInt(e.target.value))}
-                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
-                  />
-                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                    <span>50px</span>
-                    <span>300px</span>
-                  </div>
-                </div>
-              </div>
+
             </CardContent>
           </Card>
 
-          {/* Text and Creative Cards */}
+          {/* Card Style Selection */}
           <Card className="border-purple-200 dark:border-purple-700">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2">
-                <Type className="w-5 h-5 text-purple-500" />
-                Texto y Tarjetas Creativas
+                <Frame className="w-5 h-5 text-purple-500" />
+                Estilo de Tarjeta
               </CardTitle>
               <p className="text-sm text-muted-foreground">
-                Añade texto personalizado y selecciona estilo de tarjeta
+                Selecciona el estilo visual para tu QR
               </p>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label className="flex items-center gap-2">
-                  <Switch
-                    checked={settings.includeText}
-                    onCheckedChange={(checked) => applyRealTimeChange("includeText", checked)}
-                  />
-                  <span>Incluir texto en la tarjeta</span>
-                </Label>
-              </div>
-              
-              {settings.includeText && (
-                <div className="space-y-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                  <div className="space-y-2">
-                    <Label>Texto personalizado</Label>
-                    <Input
-                      value={settings.textContent || ""}
-                      onChange={(e) => applyRealTimeChange("textContent", e.target.value)}
-                      placeholder="Ej: Escanea para más información"
-                      maxLength={50}
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      {(settings.textContent || "").length}/50 caracteres
-                    </p>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Posición del texto</Label>
-                      <Select value={settings.textPosition} onValueChange={(value) => applyRealTimeChange("textPosition", value)}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="top">🔝 Arriba</SelectItem>
-                          <SelectItem value="center">🎯 Centro</SelectItem>
-                          <SelectItem value="bottom">⬇️ Abajo</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label>Alineación</Label>
-                      <Select value={settings.textAlign} onValueChange={(value) => applyRealTimeChange("textAlign", value)}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="left">⬅️ Izquierda</SelectItem>
-                          <SelectItem value="center">🎯 Centro</SelectItem>
-                          <SelectItem value="right">➡️ Derecha</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                </div>
-              )}
-              
+            <CardContent>
               <div className="space-y-2">
                 <Label>Estilo de tarjeta</Label>
                 <Select value={settings.cardStyle} onValueChange={(value) => applyRealTimeChange("cardStyle", value)}>
@@ -478,7 +278,6 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                     <SelectItem value="abstract_art">🌿 Natural</SelectItem>
                     <SelectItem value="elegant_lines">⚡ Tecnológico</SelectItem>
                     <SelectItem value="vibrant_blocks">✨ Lujo</SelectItem>
-                    <SelectItem value="scan_me_default">🎯 SCAN ME</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

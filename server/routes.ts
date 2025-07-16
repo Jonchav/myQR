@@ -46,17 +46,6 @@ const qrGenerationSchema = z.object({
     "spotify", "netflix", "twitch", "discord", "whatsapp", "telegram"
   ]).default("none"),
   includeText: z.boolean().default(false),
-  textContent: z.string().optional(),
-  textPosition: z.enum(["top", "center", "bottom"]).default("bottom"),
-  textAlign: z.enum(["left", "center", "right"]).default("center"),
-  textSize: z.number().default(24),
-  textColor: z.string().default("#ffffff"),
-  textOpacity: z.number().default(100),
-  textFont: z.string().default("Arial"),
-  textShadow: z.boolean().default(false),
-  textBold: z.boolean().default(true),
-  textItalic: z.boolean().default(false),
-  margin: z.number().default(150),
   errorCorrection: z.enum(["L", "M", "Q", "H"]).default("M"),
   backgroundImage: z.string().optional(), // Data URL for background image
   cardTemplate: z.enum([
@@ -424,123 +413,9 @@ function generateCardBackground(style: string, width: number, height: number): s
   return backgrounds[style] || backgrounds["modern_gradient"];
 }
 
-// Function to get conservative text width estimation that prevents text cutoff
-function getTextWidth(text: string, fontSize: number, fontWeight: string, fontFamily: string): number {
-  // Conservative character width multipliers with extra buffer
-  const fontMultipliers: { [key: string]: number } = {
-    "Arial": 0.8,
-    "Helvetica": 0.8,
-    "Georgia": 0.85,
-    "Impact": 0.7,
-    "Verdana": 0.9,
-    "Trebuchet MS": 0.8,
-    "Times New Roman": 0.75,
-    "Courier New": 0.8,
-    "Comic Sans MS": 0.8,
-    "Palatino": 0.8
-  };
-  
-  const multiplier = fontMultipliers[fontFamily] || 0.8;
-  const weightMultiplier = fontWeight === "bold" ? 1.3 : 1.0;
-  
-  // Calculate base width with generous multiplier
-  const baseWidth = text.length * fontSize * multiplier * weightMultiplier;
-  
-  // Add substantial buffer based on text length
-  const lengthBuffer = text.length > 10 ? 1.6 : text.length > 6 ? 1.5 : 1.4;
-  
-  // Add minimum width to handle single characters
-  const minWidth = Math.max(baseWidth * lengthBuffer, fontSize * 2);
-  
-  return minWidth;
-}
 
-// Function to generate text SVG with professional formatting and high contrast
-function generateTextSVG(options: any, cardWidth: number, cardHeight: number, qrX: number, qrY: number, qrSize: number): string {
-  const {
-    textContent,
-    textPosition = "bottom",
-    textAlign = "center",
-    textSize = 40,
-    textColor = "#ffffff",
-    textOpacity = 100,
-    textFont = "Arial",
-    textShadow = true,
-    textBold = true,
-    textItalic = false
-  } = options;
-  
-  if (!textContent || textContent.trim().length === 0) {
-    return "";
-  }
-  
-  // Calculate text position with better spacing
-  let textX = cardWidth / 2;
-  let textY = cardHeight / 2;
-  
-  switch (textPosition) {
-    case "top":
-      textY = qrY - 120; // More space from QR
-      break;
-    case "center":
-      textY = cardHeight / 2;
-      break;
-    case "bottom":
-      textY = qrY + qrSize + 120; // More space from QR
-      break;
-  }
-  
-  // Always center text for cards (professional look)
-  textX = cardWidth / 2;
-  const textAnchor = "middle";
-  
-  // Build font style with professional defaults
-  const fontWeight = textBold ? "bold" : "600"; // Semi-bold minimum
-  const fontStyle = textItalic ? "italic" : "normal";
-  const opacity = textOpacity / 100;
-  
-  // Enhanced shadow for better contrast
-  const shadowStyle = textShadow ? `filter: drop-shadow(3px 3px 6px rgba(0,0,0,0.8))` : "";
-  
-  // Calculate text metrics with ultra-conservative sizing to prevent cutoff
-  const textWidth = getTextWidth(textContent.trim(), textSize, fontWeight, textFont);
-  const textMetrics = {
-    width: textWidth + 80, // Mucho más padding para asegurar que nunca se corte
-    height: textSize * 2.2, // Altura muy generosa
-    x: textX - (textWidth + 80) / 2,
-    y: textY - textSize * 1.3 // Ajustar posición Y generosamente
-  };
-  
-  // Create text with modern background for better readability
-  const backgroundRect = `
-    <rect x="${textMetrics.x}" 
-          y="${textMetrics.y}" 
-          width="${textMetrics.width}" 
-          height="${textMetrics.height}"
-          fill="rgba(0,0,0,0.9)" 
-          rx="20" 
-          opacity="0.95"
-          style="filter: drop-shadow(0 6px 12px rgba(0,0,0,0.4))"/>
-  `;
-  
-  return `
-    ${backgroundRect}
-    <text x="${textX}" y="${textY}" 
-          text-anchor="${textAnchor}" 
-          fill="${textColor}" 
-          font-size="${textSize}" 
-          font-weight="${fontWeight}"
-          font-style="${fontStyle}"
-          font-family="${textFont}, Arial, sans-serif" 
-          opacity="${opacity}"
-          dominant-baseline="central"
-          letter-spacing="2px"
-          style="${shadowStyle}"
-          xml:space="preserve">
-      ${textContent.trim()}
-    </text>
-  `;
-}
+
+
 
 // Function to generate creative card with QR code
 async function generateCreativeCard(qrDataUrl: string, options: any): Promise<string> {
@@ -569,8 +444,7 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
               fill="${options.backgroundColor || 'white'}" rx="25" opacity="0.95" 
               style="filter: drop-shadow(0 8px 16px rgba(0,0,0,0.3))"/>
         
-        <!-- Custom text if enabled -->
-        ${options.includeText && options.textContent ? generateTextSVG(options, width, height, qrX, qrY, qrSize) : ''}
+        <!-- No text support -->
       </svg>
     `;
     

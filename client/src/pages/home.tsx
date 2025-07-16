@@ -71,24 +71,14 @@ export default function Home() {
     if (activeTab === "customize" && isProActive) {
       setQrSettings(prev => ({
         ...prev,
-        includeText: true,
-        textContent: "SCAN ME",
-        cardTemplate: "instagram_post",
-        cardStyle: "scan_me_default",
-        textPosition: "bottom",
-        textAlign: "center",
-        textSize: 32,
-        textColor: "#ffffff",
-        textOpacity: 100,
-        textFont: "Arial",
-        textShadow: false,
-        textBold: true,
-        textItalic: false,
+        includeText: false,
+        textContent: "",
+        cardTemplate: "none",
+        cardStyle: "modern_gradient",
         backgroundColor: "#ffffff",
         foregroundColor: "#5b21b6",
         style: "square",
         pattern: "standard",
-        margin: 80,
       }));
     }
   }, [activeTab, isProActive]);
