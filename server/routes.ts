@@ -457,7 +457,7 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
         
         <!-- QR Code background with subtle shadow -->
         <rect x="${qrX - 25}" y="${qrY - 25}" width="${qrSize + 50}" height="${qrSize + 50}" 
-              fill="white" rx="25" opacity="0.95" 
+              fill="${options.backgroundColor || 'white'}" rx="25" opacity="0.95" 
               style="filter: drop-shadow(0 8px 16px rgba(0,0,0,0.3))"/>
         
         <!-- Custom text if enabled -->
@@ -648,15 +648,21 @@ async function generateAdvancedQRCode(options: any): Promise<string> {
   const size = getQRSize(options.size);
   const errorCorrectionLevel = getErrorCorrectionLevel(options.errorCorrection);
   
-  // Get brand colors if logo is specified
+  // Use user-selected colors directly, don't override with brand colors
   let qrForegroundColor = options.foregroundColor;
   let qrBackgroundColor = options.backgroundColor;
   
-  if (options.logo && options.logo !== "none") {
+  // Log the colors being used for debugging
+  console.log('QR Colors - Foreground:', qrForegroundColor, 'Background:', qrBackgroundColor);
+  
+  // Only apply brand colors if user hasn't customized colors AND has a logo
+  if (options.logo && options.logo !== "none" && 
+      options.foregroundColor === "#000000" && options.backgroundColor === "#ffffff") {
     const brandColors = getBrandColors(options.logo);
     if (brandColors) {
       qrForegroundColor = brandColors.primary;
       qrBackgroundColor = brandColors.background || options.backgroundColor;
+      console.log('Applied brand colors - Foreground:', qrForegroundColor, 'Background:', qrBackgroundColor);
     }
   }
   
