@@ -69,6 +69,7 @@ const qrGenerationSchema = z.object({
     "instagram", "facebook", "twitter", "linkedin", "youtube", "tiktok",
     "spotify", "netflix", "twitch", "discord", "whatsapp", "telegram"
   ]).default("none"),
+  creativeStyle: z.enum(["classic", "colorful", "rainbow", "sunset", "ocean"]).default("classic"),
   includeText: z.boolean().default(false),
   errorCorrection: z.enum(["L", "M", "Q", "H"]).default("M"),
   backgroundImage: z.string().optional(), // Data URL for background image
@@ -1243,10 +1244,13 @@ async function generateAdvancedQRCode(options: any): Promise<string> {
   let qrDataUrl = await QRCode.toDataURL(dataToEncode, qrOptions);
   
   // Apply creative styling if specified
+  console.log('Checking creative style:', options.creativeStyle);
   if (options.creativeStyle && options.creativeStyle !== "classic") {
     console.log('Applying creative styling:', options.creativeStyle);
     qrDataUrl = await applyCreativeStyle(qrDataUrl, options.creativeStyle, options);
     console.log('Creative styling applied successfully');
+  } else {
+    console.log('Creative styling skipped - style is classic or undefined');
   }
   
   // Apply custom cell shapes first if specified
