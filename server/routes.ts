@@ -470,6 +470,299 @@ function generateCardBackground(style: string, width: number, height: number): s
       </defs>
       <rect width="${width}" height="${height}" fill="url(#scanMeGrad)"/>
     `,
+    
+    // Todos los estilos del CardStyleCatalog
+    "neon_glow": `
+      <defs>
+        <linearGradient id="neonGlowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#00f5ff;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#0099ff;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#neonGlowGrad)"/>
+      <circle cx="${width*0.8}" cy="${height*0.2}" r="${width*0.1}" fill="rgba(255,255,255,0.3)"/>
+    `,
+    
+    "sunset_card": `
+      <defs>
+        <linearGradient id="sunsetGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#ff6b6b;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#ffa500;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#sunsetGrad)"/>
+    `,
+    
+    "forest_green": `
+      <defs>
+        <linearGradient id="forestGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#134e5e;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#71b280;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#forestGrad)"/>
+    `,
+    
+    "ocean_blue": `
+      <defs>
+        <linearGradient id="oceanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#667db6;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#0082c8;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#oceanGrad)"/>
+    `,
+    
+    "purple_haze": `
+      <defs>
+        <linearGradient id="purpleHazeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#8360c3;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#2ebf91;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#purpleHazeGrad)"/>
+    `,
+    
+    "golden_hour": `
+      <defs>
+        <linearGradient id="goldenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#ffd89b;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#19547b;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#goldenGrad)"/>
+    `,
+    
+    "coral_reef": `
+      <defs>
+        <linearGradient id="coralGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#ff8a80;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#ff5722;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#coralGrad)"/>
+    `,
+    
+    "mint_chocolate": `
+      <defs>
+        <linearGradient id="mintGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#4ecdc4;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#44a08d;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#mintGrad)"/>
+    `,
+    
+    "volcanic_red": `
+      <defs>
+        <linearGradient id="volcanicGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#c31432;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#240b36;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#volcanicGrad)"/>
+    `,
+    
+    "arctic_ice": `
+      <defs>
+        <linearGradient id="arcticGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#76b852;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#8dc26f;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#arcticGrad)"/>
+    `,
+    
+    "cyber_punk": `
+      <defs>
+        <linearGradient id="cyberGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#ff00ff;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#00ffff;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#cyberGrad)"/>
+    `,
+    
+    "royal_purple": `
+      <defs>
+        <linearGradient id="royalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#7b4397;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#dc2430;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#royalGrad)"/>
+    `,
+    
+    "emerald_city": `
+      <defs>
+        <linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#11998e;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#38ef7d;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#emeraldGrad)"/>
+    `,
+    
+    "fire_storm": `
+      <defs>
+        <linearGradient id="fireGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#f12711;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#f5af19;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#fireGrad)"/>
+    `,
+    
+    "midnight_blue": `
+      <defs>
+        <linearGradient id="midnightGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#2c3e50;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#4a6741;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#midnightGrad)"/>
+    `,
+    
+    "rose_gold": `
+      <defs>
+        <linearGradient id="roseGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#ed4264;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#ffedbc;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#roseGoldGrad)"/>
+    `,
+    
+    "electric_lime": `
+      <defs>
+        <linearGradient id="limeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#a8e6cf;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#dcedc1;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#limeGrad)"/>
+    `,
+    
+    "cosmic_purple": `
+      <defs>
+        <linearGradient id="cosmicGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#cosmicGrad)"/>
+    `,
+    
+    "tropical_sunset": `
+      <defs>
+        <linearGradient id="tropicalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#ff9a9e;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#fecfef;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#tropicalGrad)"/>
+    `,
+    
+    "deep_space": `
+      <defs>
+        <linearGradient id="deepSpaceGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#434343;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#000000;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#deepSpaceGrad)"/>
+    `,
+    
+    "rainbow_burst": `
+      <defs>
+        <linearGradient id="rainbowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#ff6b6b;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#4ecdc4;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#rainbowGrad)"/>
+    `,
+    
+    "silver_chrome": `
+      <defs>
+        <linearGradient id="silverGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#bdc3c7;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#2c3e50;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#silverGrad)"/>
+    `,
+    
+    "aqua_marine": `
+      <defs>
+        <linearGradient id="aquaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#1de9b6;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#00bcd4;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#aquaGrad)"/>
+    `,
+    
+    "magenta_dream": `
+      <defs>
+        <linearGradient id="magentaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#ff0084;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#33001b;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#magentaGrad)"/>
+    `,
+    
+    "jade_forest": `
+      <defs>
+        <linearGradient id="jadeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#00c9ff;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#92fe9d;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#jadeGrad)"/>
+    `,
+    
+    "copper_bronze": `
+      <defs>
+        <linearGradient id="copperGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#b79891;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#94716b;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#copperGrad)"/>
+    `,
+    
+    "neon_night": `
+      <defs>
+        <linearGradient id="neonNightGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#0f0f23;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#ff006e;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#neonNightGrad)"/>
+    `,
+    
+    "pearl_white": `
+      <defs>
+        <linearGradient id="pearlGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#f7f7f7;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#e3e3e3;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#pearlGrad)"/>
+    `,
+    
+    "galaxy_swirl": `
+      <defs>
+        <linearGradient id="galaxyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#galaxyGrad)"/>
+      <ellipse cx="${width*0.7}" cy="${height*0.3}" rx="${width*0.15}" ry="${height*0.1}" fill="rgba(255,255,255,0.2)"/>
+    `,
   };
   
   return backgrounds[style] || backgrounds["modern_gradient"];
