@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2, Download, QrCode, Link, CheckCircle, AlertCircle, RefreshCw, Settings, User, LogOut, Moon, Sun, History, Palette, Sparkles, Shield, Crown, Clock } from "lucide-react";
 import { QRCustomizer } from "@/components/QRCustomizer";
 import { QRHistory } from "@/components/QRHistory";
+import { DownloadButton } from "@/components/DownloadButton";
 import { useTheme } from "@/components/ThemeProvider";
 
 export default function Home() {
@@ -141,14 +142,7 @@ export default function Home() {
     }
   };
 
-  const handleDownload = () => {
-    if (!qrCode) return;
 
-    const link = document.createElement("a");
-    link.download = `qr-${Date.now()}.png`;
-    link.href = qrCode;
-    link.click();
-  };
 
   const handleReset = () => {
     setUrl("");
@@ -447,13 +441,11 @@ export default function Home() {
 
                           <div className="space-y-3">
                             <div className="flex gap-2">
-                              <Button 
-                                onClick={handleDownload}
+                              <DownloadButton 
+                                qrDataUrl={qrCode}
+                                filename="qr-code"
                                 className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
-                              >
-                                <Download className="w-4 h-4 mr-2" />
-                                Descargar
-                              </Button>
+                              />
                               <Button 
                                 onClick={handleReset}
                                 variant="outline"

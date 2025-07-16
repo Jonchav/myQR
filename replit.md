@@ -11,6 +11,7 @@ Preferred communication style: Simple, everyday language.
 ## Recent Changes
 
 ### January 2025
+- **Opciones de Descarga Múltiples**: Implementado sistema completo de descarga en 6 formatos: PNG, JPG, SVG, PDF (Standard), PDF (Print), y DOCX con botón dropdown profesional
 - **Mejora de Calidad QR**: Aumentado tamaño del QR un 57% total (de 35% a 55% del canvas) con resolución ultra-alta (6x) y kernel lanczos3 para eliminación completa del efecto borroso
 - **Dimensiones Adaptativas**: QR se redimensiona automáticamente al tamaño exacto del canvas con centrado matemático perfecto
 - **Resolución Profesional**: Aumentada resolución base del QR (medium: 1600px, large: 2000px) con compresión cero para máxima nitidez

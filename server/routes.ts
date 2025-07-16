@@ -1319,6 +1319,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Download QR code in different formats
+  app.get("/api/qr/download/:format", async (req, res) => {
+    try {
+      const format = req.params.format;
+      const qrDataUrl = req.query.qrDataUrl as string;
+      const filename = req.query.filename as string || "qr-code";
+      
+      if (!qrDataUrl) {
+        return res.status(400).json({
+          success: false,
+          error: "QR data URL is required"
+        });
+      }
+
+      // Convert data URL to buffer
+      const base64Data = qrDataUrl.replace(/^data:image\/[a-z]+;base64,/, '');
+      const buffer = Buffer.from(base64Data, 'base64');
+      
+      switch (format) {
+        case 'png':
+          res.setHeader('Content-Type', 'image/png');
+          res.setHeader('Content-Disposition', `attachment; filename="${filename}.png"`);
+          res.send(buffer);
+          break;
+          
+        case 'jpg':
+        case 'jpeg':
+          // Convert PNG to JPG
+          const jpgBuffer = await sharp(buffer)
+            .jpeg({ quality: 95 })
+            .toBuffer();
+          res.setHeader('Content-Type', 'image/jpeg');
+          res.setHeader('Content-Disposition', `attachment; filename="${filename}.jpg"`);
+          res.send(jpgBuffer);
+          break;
+          
+        case 'svg':
+          // Convert to SVG (embedded PNG)
+          const { width, height } = await sharp(buffer).metadata();
+          const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+            <rect width="${width}" height="${height}" fill="white"/>
+            <image href="${qrDataUrl}" x="0" y="0" width="${width}" height="${height}"/>
+          </svg>`;
+          res.setHeader('Content-Type', 'image/svg+xml');
+          res.setHeader('Content-Disposition', `attachment; filename="${filename}.svg"`);
+          res.send(svgContent);
+          break;
+          
+        default:
+          return res.status(400).json({
+            success: false,
+            error: "Formato no soportado"
+          });
+      }
+    } catch (error) {
+      console.error("Error downloading QR:", error);
+      res.status(500).json({
+        success: false,
+        error: "Error al descargar el código QR"
+      });
+    }
+  });
+
   // User preferences routes
   app.get("/api/user/preferences", isAuthenticated, async (req, res) => {
     try {

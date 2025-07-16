@@ -11,7 +11,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { History, Download, Trash2, RefreshCw, Eye, Edit, BarChart3, Save, X, Copy, RotateCcw, TrendingUp, PieChart, BarChart, FileSpreadsheet, Search } from "lucide-react";
+import { History, Trash2, RefreshCw, Eye, Edit, BarChart3, Save, X, Copy, RotateCcw, TrendingUp, PieChart, BarChart, FileSpreadsheet, Search } from "lucide-react";
+import { DownloadButton } from "./DownloadButton";
 import { format, subDays, startOfWeek, startOfMonth, startOfYear, endOfWeek, endOfMonth, endOfYear } from "date-fns";
 import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart as RechartsPieChart, Pie, Cell } from "recharts";
 
@@ -263,12 +264,7 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
     });
   };
 
-  const handleDownload = (qrCode: any) => {
-    const link = document.createElement("a");
-    link.download = `qr-${qrCode.id}.png`;
-    link.href = qrCode.qrDataUrl;
-    link.click();
-  };
+
 
   const startEditingTitle = (qr: any) => {
     setEditingQR(qr);
@@ -1066,14 +1062,11 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                     </Button>
                   )}
                   
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleDownload(qrCode)}
+                  <DownloadButton 
+                    qrDataUrl={qrCode.qrDataUrl}
+                    filename={`qr-${qrCode.id}`}
                     className="text-green-300 hover:text-green-200 hover:bg-green-800/30 border border-green-600/50"
-                  >
-                    <Download className="w-4 h-4" />
-                  </Button>
+                  />
                   
                   <Button
                     variant="ghost"
