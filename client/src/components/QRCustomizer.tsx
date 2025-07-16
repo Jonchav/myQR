@@ -692,6 +692,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                           value={settings.textContent || ""}
                           onChange={(e) => applyRealTimeChange("textContent", e.target.value)}
                           placeholder="Ej: SCAN ME, Escaneáme, ¡Prueba esto!"
+                          maxLength={50}
                         />
                       </div>
 
@@ -817,25 +818,32 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                         </div>
                       </div>
 
-                      <div className="p-3 bg-gray-900/50 border border-gray-700 rounded-lg">
-                        <p className="text-sm text-gray-400 mb-2">Vista previa del texto:</p>
-                        <div className="text-center">
-                          <span 
-                            style={{
-                              color: settings.textColor || "#ffffff",
-                              fontSize: `${Math.max((settings.textSize || 40) * 0.4, 16)}px`,
-                              fontFamily: settings.textFont || "Arial",
-                              fontWeight: settings.textBold ? "bold" : "600",
-                              textShadow: settings.textShadow ? "3px 3px 6px rgba(0,0,0,0.8)" : "none",
-                              display: "inline-block",
-                              padding: "8px 16px",
-                              backgroundColor: "rgba(0,0,0,0.7)",
-                              borderRadius: "8px",
-                              letterSpacing: "0.5px"
-                            }}
-                          >
-                            {settings.textContent || "SCAN ME"}
-                          </span>
+                      {/* Vista previa en tiempo real estilo Canva */}
+                      <div className="p-4 bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-600 rounded-lg">
+                        <p className="text-xs text-gray-300 mb-3 font-medium">Vista previa en tiempo real</p>
+                        <div className="relative min-h-[80px] bg-gray-700/50 rounded-lg border border-gray-600 flex items-center justify-center overflow-hidden">
+                          {/* Fondo simulado de tarjeta */}
+                          <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 to-blue-600/20 opacity-30"></div>
+                          
+                          {/* Texto como aparecerá en el QR */}
+                          <div className="relative z-10 text-center px-4">
+                            <span 
+                              style={{
+                                color: settings.textColor || "#ffffff",
+                                fontSize: `${Math.max((settings.textSize || 40) * 0.4, 16)}px`,
+                                fontFamily: settings.textFont || "Arial",
+                                fontWeight: settings.textBold ? "bold" : "600",
+                                textShadow: settings.textShadow ? "3px 3px 6px rgba(0,0,0,0.8)" : "none",
+                                display: "inline-block",
+                                padding: "8px 16px",
+                                backgroundColor: "rgba(0,0,0,0.7)",
+                                borderRadius: "8px",
+                                letterSpacing: "0.5px"
+                              }}
+                            >
+                              {settings.textContent || "SCAN ME"}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
