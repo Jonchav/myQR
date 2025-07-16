@@ -36,6 +36,8 @@ Preferred communication style: Simple, everyday language.
 - **Función de Carga de Imágenes**: Implementada capacidad de subir imágenes personalizadas como fondo de tarjeta (hasta 100MB) con validación de formato y tamaño
 - **Opción "Ninguna"**: Agregada opción para volver al estilo QR cuadrado básico desde cualquier tarjeta creativa
 - **Esquema BD Expandido**: Agregado campo `customBackgroundImage` para almacenar imágenes de fondo personalizadas en base64
+- **Validación Robusta**: Corregida validación de esquema para manejar campos null y opcionales correctamente
+- **Limpieza de Datos**: Implementada limpieza automática de valores null antes de validación para evitar errores
 - **Control de Margen**: Implementado control deslizante para ajustar margen del QR (50-300px) con actualización en tiempo real
 - **Dimensiones Redes Sociales**: Agregadas opciones específicas para Instagram, Facebook, Twitter, LinkedIn, YouTube y TikTok con píxeles exactos
 - **Plantillas Rápidas**: Sección compacta con temas predefinidos (Moderno, Vibrante, Elegante, Natural, Tecnológico, Minimalista) de aplicación instantánea

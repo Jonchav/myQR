@@ -57,7 +57,21 @@ const qrGenerationSchema = z.object({
     "abstract_art", "corporate", "creative_burst", "elegant_lines", "vibrant_blocks",
     "scan_me_default"
   ]).default("modern_gradient"),
-  customBackgroundImage: z.string().optional(), // Base64 encoded image data
+  customBackgroundImage: z.union([z.string(), z.null()]).optional(), // Base64 encoded image data
+  textContent: z.string().optional(),
+  textPosition: z.enum(["top", "center", "bottom"]).default("bottom"),
+  textAlign: z.enum(["left", "center", "right"]).default("center"),
+  textSize: z.number().min(12).max(48).default(24),
+  textColor: z.string().default("#ffffff"),
+  textOpacity: z.number().min(25).max(100).default(100),
+  textFont: z.enum([
+    "Arial", "Georgia", "Times", "Verdana", "Helvetica", "Comic Sans", 
+    "Impact", "Courier", "Trebuchet", "Palatino"
+  ]).default("Arial"),
+  textShadow: z.boolean().default(false),
+  textBold: z.boolean().default(true),
+  textItalic: z.boolean().default(false),
+  margin: z.number().min(50).max(300).default(150),
 });
 
 // Function to get QR code size in pixels - Professional quality
@@ -828,7 +842,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/qr/generate", async (req, res) => {
     try {
       console.log('Received QR generation request:', JSON.stringify(req.body, null, 2));
-      const validatedData = qrGenerationSchema.parse(req.body);
+      // Remove null values before validation
+      const cleanedBody = Object.fromEntries(
+        Object.entries(req.body).filter(([_, value]) => value !== null)
+      );
+      const validatedData = qrGenerationSchema.parse(cleanedBody);
       console.log('Validated data:', JSON.stringify(validatedData, null, 2));
       const userId = req.user ? (req.user as any).claims?.sub : undefined;
       
