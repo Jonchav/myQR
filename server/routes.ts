@@ -1051,10 +1051,10 @@ function getCreativeStyleColors(style: string): { foreground: string; background
     'rose_gold': { foreground: '#D81B60', background: '#ffffff' },
     'steel_blue': { foreground: '#37474F', background: '#ffffff' },
     'neon_turquoise': { foreground: '#00838F', background: '#ffffff' },
-    'plasma_red': { foreground: '#D32F2F', background: '#ffffff' },
-    'galaxy_green': { foreground: '#388E3C', background: '#ffffff' },
-    'cyber_magenta': { foreground: '#8E24AA', background: '#ffffff' },
-    'electric_teal': { foreground: '#00695C', background: '#ffffff' },
+    'plasma_red': { foreground: '#D32F2F', background: 'linear-gradient(135deg, #FF073A 0%, #DC143C 50%, #8B0000 100%)' },
+    'galaxy_green': { foreground: '#388E3C', background: 'linear-gradient(135deg, #00FF41 0%, #32CD32 50%, #228B22 100%)' },
+    'cyber_magenta': { foreground: '#8E24AA', background: 'linear-gradient(135deg, #FF00FF 0%, #FF1493 50%, #8B008B 100%)' },
+    'electric_teal': { foreground: '#00695C', background: 'linear-gradient(135deg, #008080 0%, #20B2AA 50%, #00CED1 100%)' },
     'laser_blue': { foreground: '#1976D2', background: '#ffffff' },
     'neon_lime': { foreground: '#8BC34A', background: '#ffffff' },
     'digital_purple': { foreground: '#7B1FA2', background: '#ffffff' },
@@ -1156,6 +1156,18 @@ async function applyCreativeStyle(qrDataUrl: string, style: string, options: any
         break;
       case 'volcano_red':
         coloredBuffer = await applyVolcanoRedEffect(qrBuffer);
+        break;
+      case 'plasma_red':
+        coloredBuffer = await applyPlasmaRedGradientEffect(qrBuffer);
+        break;
+      case 'galaxy_green':
+        coloredBuffer = await applyGalaxyGreenGradientEffect(qrBuffer);
+        break;
+      case 'cyber_magenta':
+        coloredBuffer = await applyCyberMagentaGradientEffect(qrBuffer);
+        break;
+      case 'electric_teal':
+        coloredBuffer = await applyElectricTealGradientEffect(qrBuffer);
         break;
       default:
         coloredBuffer = await applyBasicColorEffect(qrBuffer, style);
@@ -2045,6 +2057,171 @@ async function applyBasicColorEffect(qrBuffer: Buffer, style: string): Promise<B
     .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
     .modulate({ brightness: 1.2, saturation: 1.8, hue: 0 })
     .png({ quality: 100, compressionLevel: 0, progressive: false, force: true })
+    .toBuffer();
+}
+
+// Nuevas funciones para estilos con gradientes
+async function applyPlasmaRedGradientEffect(qrBuffer: Buffer): Promise<Buffer> {
+  const { data, info } = await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  
+  const { width, height, channels } = info;
+  const pixelData = new Uint8Array(data);
+  
+  // Aplicar gradiente plasma rojo #FF073A -> #DC143C -> #8B0000
+  for (let i = 0; i < pixelData.length; i += channels) {
+    const r = pixelData[i];
+    const g = pixelData[i + 1];
+    const b = pixelData[i + 2];
+    
+    if (r < 128 && g < 128 && b < 128) {
+      const x = Math.floor((i / channels) % width);
+      const y = Math.floor((i / channels) / width);
+      
+      // Gradiente diagonal plasma
+      const gradientPos = (x + y) / (width + height);
+      
+      if (gradientPos < 0.33) {
+        // Plasma rojo brillante
+        pixelData[i] = 255; pixelData[i + 1] = 7; pixelData[i + 2] = 58;
+      } else if (gradientPos < 0.66) {
+        // Carmesí crimson
+        pixelData[i] = 220; pixelData[i + 1] = 20; pixelData[i + 2] = 60;
+      } else {
+        // Rojo oscuro
+        pixelData[i] = 139; pixelData[i + 1] = 0; pixelData[i + 2] = 0;
+      }
+    }
+  }
+  
+  return await sharp(pixelData, { raw: { width, height, channels } })
+    .png({ quality: 85, compressionLevel: 4 })
+    .toBuffer();
+}
+
+async function applyGalaxyGreenGradientEffect(qrBuffer: Buffer): Promise<Buffer> {
+  const { data, info } = await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  
+  const { width, height, channels } = info;
+  const pixelData = new Uint8Array(data);
+  
+  // Aplicar gradiente galaxia verde #00FF41 -> #32CD32 -> #228B22
+  for (let i = 0; i < pixelData.length; i += channels) {
+    const r = pixelData[i];
+    const g = pixelData[i + 1];
+    const b = pixelData[i + 2];
+    
+    if (r < 128 && g < 128 && b < 128) {
+      const x = Math.floor((i / channels) % width);
+      const y = Math.floor((i / channels) / width);
+      
+      // Gradiente radial desde el centro
+      const centerX = width / 2;
+      const centerY = height / 2;
+      const distance = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
+      const maxDistance = Math.sqrt(centerX ** 2 + centerY ** 2);
+      const gradientPos = Math.min(distance / maxDistance, 1);
+      
+      if (gradientPos < 0.33) {
+        // Verde galaxia brillante
+        pixelData[i] = 0; pixelData[i + 1] = 255; pixelData[i + 2] = 65;
+      } else if (gradientPos < 0.66) {
+        // Verde lima
+        pixelData[i] = 50; pixelData[i + 1] = 205; pixelData[i + 2] = 50;
+      } else {
+        // Verde bosque
+        pixelData[i] = 34; pixelData[i + 1] = 139; pixelData[i + 2] = 34;
+      }
+    }
+  }
+  
+  return await sharp(pixelData, { raw: { width, height, channels } })
+    .png({ quality: 85, compressionLevel: 4 })
+    .toBuffer();
+}
+
+async function applyCyberMagentaGradientEffect(qrBuffer: Buffer): Promise<Buffer> {
+  const { data, info } = await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  
+  const { width, height, channels } = info;
+  const pixelData = new Uint8Array(data);
+  
+  // Aplicar gradiente cyber magenta #FF00FF -> #FF1493 -> #8B008B
+  for (let i = 0; i < pixelData.length; i += channels) {
+    const r = pixelData[i];
+    const g = pixelData[i + 1];
+    const b = pixelData[i + 2];
+    
+    if (r < 128 && g < 128 && b < 128) {
+      const x = Math.floor((i / channels) % width);
+      const y = Math.floor((i / channels) / width);
+      
+      // Gradiente diagonal alternativo
+      const gradientPos = (x - y + width) / (width + height);
+      
+      if (gradientPos < 0.33) {
+        // Magenta brillante
+        pixelData[i] = 255; pixelData[i + 1] = 0; pixelData[i + 2] = 255;
+      } else if (gradientPos < 0.66) {
+        // Rosa profundo
+        pixelData[i] = 255; pixelData[i + 1] = 20; pixelData[i + 2] = 147;
+      } else {
+        // Magenta oscuro
+        pixelData[i] = 139; pixelData[i + 1] = 0; pixelData[i + 2] = 139;
+      }
+    }
+  }
+  
+  return await sharp(pixelData, { raw: { width, height, channels } })
+    .png({ quality: 85, compressionLevel: 4 })
+    .toBuffer();
+}
+
+async function applyElectricTealGradientEffect(qrBuffer: Buffer): Promise<Buffer> {
+  const { data, info } = await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  
+  const { width, height, channels } = info;
+  const pixelData = new Uint8Array(data);
+  
+  // Aplicar gradiente eléctrico teal #008080 -> #20B2AA -> #00CED1
+  for (let i = 0; i < pixelData.length; i += channels) {
+    const r = pixelData[i];
+    const g = pixelData[i + 1];
+    const b = pixelData[i + 2];
+    
+    if (r < 128 && g < 128 && b < 128) {
+      const x = Math.floor((i / channels) % width);
+      const y = Math.floor((i / channels) / width);
+      
+      // Gradiente vertical eléctrico
+      const gradientPos = y / height;
+      
+      if (gradientPos < 0.33) {
+        // Teal oscuro
+        pixelData[i] = 0; pixelData[i + 1] = 128; pixelData[i + 2] = 128;
+      } else if (gradientPos < 0.66) {
+        // Teal medio
+        pixelData[i] = 32; pixelData[i + 1] = 178; pixelData[i + 2] = 170;
+      } else {
+        // Teal claro eléctrico
+        pixelData[i] = 0; pixelData[i + 1] = 206; pixelData[i + 2] = 209;
+      }
+    }
+  }
+  
+  return await sharp(pixelData, { raw: { width, height, channels } })
+    .png({ quality: 85, compressionLevel: 4 })
     .toBuffer();
 }
 
