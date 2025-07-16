@@ -59,6 +59,7 @@ export default function Home() {
     textBold: true,
     textItalic: false,
     margin: 150,
+    customBackgroundImage: null,
   });
 
   // Update URL in settings when input changes
@@ -205,6 +206,9 @@ export default function Home() {
       includeText: qrData.includeText || false,
       textContent: qrData.textContent || "",
       errorCorrection: qrData.errorCorrection || "M",
+      cardTemplate: qrData.cardTemplate || "none",
+      cardStyle: qrData.cardStyle || "modern_gradient",
+      customBackgroundImage: qrData.customBackgroundImage || null,
     });
     setActiveTab("generate");
   };

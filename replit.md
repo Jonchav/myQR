@@ -33,6 +33,9 @@ Preferred communication style: Simple, everyday language.
 - **Interfaz Enfocada**: Reducida interfaz a colores, patrones, estilos de QR, tamaños y estilos de tarjeta para mayor simplicidad
 - **Código Optimizado**: Eliminadas funciones de texto innecesarias y simplificado esquema de validación backend
 - **Optimización de Tamaño de Imagen**: Reducido tamaño de vista previa de imagen QR a 280px manteniendo calidad 4K/2K de descarga
+- **Función de Carga de Imágenes**: Implementada capacidad de subir imágenes personalizadas como fondo de tarjeta (hasta 100MB) con validación de formato y tamaño
+- **Opción "Ninguna"**: Agregada opción para volver al estilo QR cuadrado básico desde cualquier tarjeta creativa
+- **Esquema BD Expandido**: Agregado campo `customBackgroundImage` para almacenar imágenes de fondo personalizadas en base64
 - **Control de Margen**: Implementado control deslizante para ajustar margen del QR (50-300px) con actualización en tiempo real
 - **Dimensiones Redes Sociales**: Agregadas opciones específicas para Instagram, Facebook, Twitter, LinkedIn, YouTube y TikTok con píxeles exactos
 - **Plantillas Rápidas**: Sección compacta con temas predefinidos (Moderno, Vibrante, Elegante, Natural, Tecnológico, Minimalista) de aplicación instantánea

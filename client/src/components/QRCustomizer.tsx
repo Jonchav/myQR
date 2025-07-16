@@ -4,7 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { Palette, Frame, Sparkles, Loader2, Home, ArrowLeft, Download, X, Maximize2 } from "lucide-react";
+import { Palette, Frame, Sparkles, Loader2, Home, ArrowLeft, Download, X, Maximize2, Upload } from "lucide-react";
 
 interface QRCustomizerProps {
   settings: any;
@@ -18,6 +18,52 @@ interface QRCustomizerProps {
 
 export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onBackToHome, qrCode, onDownload }: QRCustomizerProps) {
   const { toast } = useToast();
+  
+  // Función para manejar la carga de imágenes
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    
+    // Verificar tamaño del archivo (100MB máximo)
+    if (file.size > 100 * 1024 * 1024) {
+      toast({
+        title: "Archivo muy grande",
+        description: "El archivo debe ser menor a 100MB",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Verificar tipo de archivo
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Tipo de archivo no válido",
+        description: "Solo se permiten archivos de imagen",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = e.target?.result as string;
+      applyRealTimeChange("customBackgroundImage", result);
+      toast({
+        title: "Imagen cargada",
+        description: "La imagen de fondo se ha cargado correctamente",
+      });
+    };
+    reader.readAsDataURL(file);
+  };
+  
+  // Función para eliminar imagen personalizada
+  const removeCustomImage = () => {
+    applyRealTimeChange("customBackgroundImage", null);
+    toast({
+      title: "Imagen eliminada",
+      description: "Se ha eliminado la imagen de fondo personalizada",
+    });
+  };
 
   const updateSetting = (key: string, value: any) => {
     const newSettings = { ...settings, [key]: value };
@@ -261,25 +307,79 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
               </p>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2">
-                <Label>Estilo de tarjeta</Label>
-                <Select value={settings.cardStyle} onValueChange={(value) => applyRealTimeChange("cardStyle", value)}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="minimalist">🎨 Minimalista</SelectItem>
-                    <SelectItem value="modern_gradient">🌈 Degradado</SelectItem>
-                    <SelectItem value="neon_waves">💫 Neón</SelectItem>
-                    <SelectItem value="organic_flow">🌊 Ondas</SelectItem>
-                    <SelectItem value="geometric">🔷 Geométrico</SelectItem>
-                    <SelectItem value="corporate">💼 Corporativo</SelectItem>
-                    <SelectItem value="creative_burst">🕹️ Retro</SelectItem>
-                    <SelectItem value="abstract_art">🌿 Natural</SelectItem>
-                    <SelectItem value="elegant_lines">⚡ Tecnológico</SelectItem>
-                    <SelectItem value="vibrant_blocks">✨ Lujo</SelectItem>
-                  </SelectContent>
-                </Select>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Estilo de tarjeta</Label>
+                  <Select value={settings.cardStyle} onValueChange={(value) => applyRealTimeChange("cardStyle", value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">🔳 Ninguna (QR cuadrado)</SelectItem>
+                      <SelectItem value="minimalist">🎨 Minimalista</SelectItem>
+                      <SelectItem value="modern_gradient">🌈 Degradado</SelectItem>
+                      <SelectItem value="neon_waves">💫 Neón</SelectItem>
+                      <SelectItem value="organic_flow">🌊 Ondas</SelectItem>
+                      <SelectItem value="geometric">🔷 Geométrico</SelectItem>
+                      <SelectItem value="corporate">💼 Corporativo</SelectItem>
+                      <SelectItem value="creative_burst">🕹️ Retro</SelectItem>
+                      <SelectItem value="abstract_art">🌿 Natural</SelectItem>
+                      <SelectItem value="elegant_lines">⚡ Tecnológico</SelectItem>
+                      <SelectItem value="vibrant_blocks">✨ Lujo</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                {/* Imagen de fondo personalizada */}
+                <div className="space-y-2">
+                  <Label>Imagen de fondo personalizada</Label>
+                  <p className="text-xs text-muted-foreground">
+                    Sube una imagen como fondo de la tarjeta (máximo 100MB)
+                  </p>
+                  
+                  {settings.customBackgroundImage ? (
+                    <div className="space-y-2">
+                      <div className="relative">
+                        <img 
+                          src={settings.customBackgroundImage} 
+                          alt="Imagen de fondo personalizada" 
+                          className="w-full h-24 object-cover rounded border border-purple-200 dark:border-purple-700"
+                        />
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={removeCustomImage}
+                          className="absolute top-1 right-1 h-6 w-6 p-0"
+                        >
+                          <X className="w-3 h-3" />
+                        </Button>
+                      </div>
+                      <p className="text-xs text-green-600 dark:text-green-400">
+                        ✓ Imagen cargada correctamente
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <label className="cursor-pointer">
+                        <div className="border-2 border-dashed border-purple-300 dark:border-purple-600 rounded-lg p-4 text-center hover:border-purple-400 dark:hover:border-purple-500 transition-colors">
+                          <Upload className="w-6 h-6 mx-auto mb-2 text-purple-500" />
+                          <p className="text-sm text-purple-600 dark:text-purple-400">
+                            Haz clic para subir imagen
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            PNG, JPG, GIF hasta 100MB
+                          </p>
+                        </div>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          className="hidden"
+                        />
+                      </label>
+                    </div>
+                  )}
+                </div>
               </div>
             </CardContent>
           </Card>

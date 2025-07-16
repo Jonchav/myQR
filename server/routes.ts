@@ -53,10 +53,11 @@ const qrGenerationSchema = z.object({
     "twitter_post", "linkedin_post", "youtube_thumbnail", "tiktok_video"
   ]).default("none"),
   cardStyle: z.enum([
-    "modern_gradient", "neon_waves", "geometric", "organic_flow", "minimalist",
+    "none", "modern_gradient", "neon_waves", "geometric", "organic_flow", "minimalist",
     "abstract_art", "corporate", "creative_burst", "elegant_lines", "vibrant_blocks",
     "scan_me_default"
   ]).default("modern_gradient"),
+  customBackgroundImage: z.string().optional(), // Base64 encoded image data
 });
 
 // Function to get QR code size in pixels - Professional quality
@@ -420,14 +421,23 @@ function generateCardBackground(style: string, width: number, height: number): s
 // Function to generate creative card with QR code
 async function generateCreativeCard(qrDataUrl: string, options: any): Promise<string> {
   try {
-    const { cardTemplate, cardStyle } = options;
+    const { cardTemplate, cardStyle, customBackgroundImage } = options;
     
-    if (cardTemplate === "none") {
+    if (cardTemplate === "none" && cardStyle === "none") {
       return qrDataUrl;
     }
     
     const { width, height } = getCardDimensions(cardTemplate);
-    const background = generateCardBackground(cardStyle, width, height);
+    
+    // Generate background based on custom image or style
+    let background;
+    if (customBackgroundImage) {
+      // Use custom image as background
+      background = `<image href="${customBackgroundImage}" width="${width}" height="${height}" preserveAspectRatio="xMidYMid slice"/>`;
+    } else {
+      // Use predefined style background
+      background = generateCardBackground(cardStyle, width, height);
+    }
     
     // Calculate QR code size and position - centered and larger
     const qrSize = Math.min(width, height) * 0.45; // Increased to 45% for better visibility
