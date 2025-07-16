@@ -81,6 +81,92 @@ function getErrorCorrectionLevel(level: string): "L" | "M" | "Q" | "H" {
   }
 }
 
+// Function to apply custom cell shapes to QR code
+async function applyCustomCellShapes(qrDataUrl: string, style: string, size: number): Promise<string> {
+  if (style === "square") return qrDataUrl;
+  
+  try {
+    // Convert QR code to buffer
+    const qrBase64 = qrDataUrl.replace(/^data:image\/[a-z]+;base64,/, '');
+    const qrBuffer = Buffer.from(qrBase64, 'base64');
+    
+    // Get QR image info
+    const qrImage = sharp(qrBuffer);
+    const { width, height } = await qrImage.metadata();
+    
+    // Create transformation mask based on style
+    let transformSVG = '';
+    
+    switch (style) {
+      case "dots":
+        // Create dot pattern overlay
+        transformSVG = `
+          <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <filter id="dotify">
+                <feGaussianBlur stdDeviation="1.5"/>
+                <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 35 -10"/>
+              </filter>
+            </defs>
+            <rect width="${width}" height="${height}" fill="white"/>
+            <image href="data:image/png;base64,${qrBase64}" width="${width}" height="${height}" filter="url(#dotify)"/>
+          </svg>
+        `;
+        break;
+        
+      case "rounded":
+        // Create rounded corner effect
+        transformSVG = `
+          <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <filter id="roundify">
+                <feGaussianBlur stdDeviation="0.8"/>
+                <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 50 -15"/>
+              </filter>
+            </defs>
+            <rect width="${width}" height="${height}" fill="white"/>
+            <image href="data:image/png;base64,${qrBase64}" width="${width}" height="${height}" filter="url(#roundify)"/>
+          </svg>
+        `;
+        break;
+        
+      case "circle":
+        // Create circular cells
+        transformSVG = `
+          <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <filter id="circularize">
+                <feGaussianBlur stdDeviation="2"/>
+                <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 40 -12"/>
+              </filter>
+            </defs>
+            <rect width="${width}" height="${height}" fill="white"/>
+            <image href="data:image/png;base64,${qrBase64}" width="${width}" height="${height}" filter="url(#circularize)"/>
+          </svg>
+        `;
+        break;
+        
+      default:
+        return qrDataUrl;
+    }
+    
+    // Convert SVG to buffer and process
+    const svgBuffer = Buffer.from(transformSVG);
+    const result = await sharp(svgBuffer)
+      .png({
+        quality: 90,
+        compressionLevel: 6
+      })
+      .resize(width, height)
+      .toBuffer();
+    
+    return `data:image/png;base64,${result.toString('base64')}`;
+  } catch (error) {
+    console.error('Error applying custom cell shapes:', error);
+    return qrDataUrl;
+  }
+}
+
 
 
 
@@ -631,6 +717,13 @@ async function generateAdvancedQRCode(options: any): Promise<string> {
   // Generate the QR code
   const dataToEncode = options.data || options.url;
   let qrDataUrl = await QRCode.toDataURL(dataToEncode, qrOptions);
+  
+  // Apply custom cell shapes first if specified
+  if (options.style && options.style !== "square") {
+    console.log('Applying custom cell shapes:', options.style);
+    qrDataUrl = await applyCustomCellShapes(qrDataUrl, options.style, size);
+    console.log('Custom cell shapes applied successfully');
+  }
   
   // Apply custom pattern if specified
   if (options.pattern && options.pattern !== "standard") {

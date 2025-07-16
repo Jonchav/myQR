@@ -38,9 +38,9 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
         // Usar debounce para evitar múltiples llamadas
         clearTimeout(window.qrRegenerateTimeout);
         
-        // Para cambios de color, usar un delay más corto para mayor responsividad
-        const delay = ['backgroundColor', 'foregroundColor'].includes(key) ? 100 : 
-                     key === 'textContent' ? 300 : 150;
+        // Para cambios de color y patrones, usar un delay más corto para mayor responsividad
+        const delay = ['backgroundColor', 'foregroundColor', 'pattern', 'style'].includes(key) ? 50 : 
+                     key === 'textContent' ? 200 : 100;
         window.qrRegenerateTimeout = setTimeout(() => {
           onGenerate();
         }, delay);
@@ -273,9 +273,9 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="square">◼️ Cuadrado Clásico</SelectItem>
+                      <SelectItem value="dots">⚫ Puntos Suaves</SelectItem>
                       <SelectItem value="rounded">🔵 Redondeado Suave</SelectItem>
                       <SelectItem value="circle">⭕ Circular</SelectItem>
-                      <SelectItem value="dots">⚫ Puntos</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

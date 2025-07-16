@@ -18,6 +18,9 @@ Preferred communication style: Simple, everyday language.
 - **Patrones QR Corregidos**: Solucionado problema de escaneabilidad removiendo overlays que interferían con lectura QR
 - **Patrones Seguros**: Implementados patrones basados en modulación de brillo/saturación que mantienen funcionalidad de escaneo: puntos (mejora brillo), redondeado (mejora saturación), corazón (tono cálido), estrella (tono dorado), diamante (tono frío), hexágono (tono púrpura), flor (tono suave)
 - **Prioridad de Funcionalidad**: Priorizando escaneabilidad del QR sobre decoración visual para garantizar funcionalidad
+- **Formas de Celdas Divertidas**: Implementadas formas personalizadas de celdas QR usando filtros SVG: puntos suaves, redondeado suave, y circular
+- **Velocidad de Respuesta Mejorada**: Reducidos delays de regeneración a 50ms para cambios de color/patrón/estilo para mayor responsividad
+- **Transformaciones SVG**: Implementado sistema de post-procesamiento con filtros SVG para crear efectos visuales sin comprometer escaneabilidad
 - **Control de Margen**: Implementado control deslizante para ajustar margen del QR (50-300px) con actualización en tiempo real
 - **Dimensiones Redes Sociales**: Agregadas opciones específicas para Instagram, Facebook, Twitter, LinkedIn, YouTube y TikTok con píxeles exactos
 - **Plantillas Rápidas**: Sección compacta con temas predefinidos (Moderno, Vibrante, Elegante, Natural, Tecnológico, Minimalista) de aplicación instantánea
