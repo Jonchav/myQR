@@ -75,10 +75,12 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
     const newSettings = { ...settings, [key]: value };
     onChange(newSettings);
     
-    // Regenerar QR automáticamente con delay para cambios visuales
-    setTimeout(() => {
-      onGenerate();
-    }, 50);
+    // Solo regenerar automáticamente si no es custom_image
+    if (key !== 'cardStyle' || value !== 'custom_image') {
+      setTimeout(() => {
+        onGenerate();
+      }, 50);
+    }
   };
 
   return (
@@ -338,6 +340,13 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                         <p className="text-xs text-green-600 dark:text-green-400">
                           ✓ Imagen cargada correctamente
                         </p>
+                        <Button
+                          onClick={onGenerate}
+                          disabled={isGenerating}
+                          className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+                        >
+                          {isGenerating ? "Generando..." : "Aplicar imagen de fondo"}
+                        </Button>
                       </div>
                     ) : (
                       <div className="space-y-2">
