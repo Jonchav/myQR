@@ -940,7 +940,7 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
 
     // Optimización específica para imágenes personalizadas con centrado perfecto
     let result;
-    if (cardStyle === "custom_image") {
+    if (cardStyle === "custom_image" && customBackgroundImage) {
       // Para imágenes personalizadas: composición directa sobre la imagen optimizada
       const customImageBase64 = customBackgroundImage.replace(/^data:image\/[a-z]+;base64,/, '');
       const customImageBuffer = Buffer.from(customImageBase64, 'base64');
@@ -964,6 +964,30 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
           force: true
         })
         .toBuffer();
+    } else if (cardStyle === "custom_image" && !customBackgroundImage) {
+      // Si no hay imagen personalizada, usar un fondo gris por defecto
+      result = await sharp({
+        create: {
+          width: width,
+          height: height,
+          channels: 3,
+          background: { r: 240, g: 240, b: 240 }
+        }
+      })
+      .composite([
+        {
+          input: qrResized,
+          top: perfectCenterY,
+          left: perfectCenterX
+        }
+      ])
+      .png({
+        quality: 85,
+        compressionLevel: 4,
+        progressive: false,
+        force: true
+      })
+      .toBuffer();
     } else {
       // Para estilos predefinidos: usar el sistema de cache con centrado perfecto
       result = await sharp(backgroundImage)

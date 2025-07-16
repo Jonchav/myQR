@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Upload } from 'lucide-react';
 
 interface CardStyleCatalogProps {
   onStyleSelect: (style: string) => void;
@@ -13,6 +13,7 @@ export function CardStyleCatalog({ onStyleSelect, selectedStyle, isGenerating }:
   const [isLoading, setIsLoading] = useState(false);
 
   const cardStyles = [
+    { id: 'none', name: 'Ninguna', colors: ['#ffffff', '#f0f0f0'] },
     { id: 'modern_gradient', name: 'Gradiente Moderno', colors: ['#667eea', '#764ba2'] },
     { id: 'neon_glow', name: 'Resplandor Neón', colors: ['#00f5ff', '#0099ff'] },
     { id: 'sunset_card', name: 'Tarjeta Atardecer', colors: ['#ff6b6b', '#ffa500'] },
@@ -42,7 +43,8 @@ export function CardStyleCatalog({ onStyleSelect, selectedStyle, isGenerating }:
     { id: 'copper_bronze', name: 'Bronce Cobre', colors: ['#b79891', '#94716b'] },
     { id: 'neon_night', name: 'Noche Neón', colors: ['#0f0f23', '#ff006e'] },
     { id: 'pearl_white', name: 'Blanco Perla', colors: ['#f7f7f7', '#e3e3e3'] },
-    { id: 'galaxy_swirl', name: 'Remolino Galaxia', colors: ['#667eea', '#764ba2'] }
+    { id: 'galaxy_swirl', name: 'Remolino Galaxia', colors: ['#667eea', '#764ba2'] },
+    { id: 'custom_image', name: 'Imagen Personalizada', colors: ['#e0e0e0', '#d0d0d0'] }
   ];
 
   const generateCardPreview = async (cardStyleId: string) => {
@@ -79,7 +81,13 @@ export function CardStyleCatalog({ onStyleSelect, selectedStyle, isGenerating }:
     // Generate previews in batches of 5 to avoid overwhelming the server
     for (let i = 0; i < cardStyles.length; i += 5) {
       const batch = cardStyles.slice(i, i + 5);
-      const batchPromises = batch.map(style => generateCardPreview(style.id));
+      const batchPromises = batch.map(style => {
+        // No generar vista previa para custom_image ya que depende de la imagen del usuario
+        if (style.id === 'custom_image') {
+          return Promise.resolve(null);
+        }
+        return generateCardPreview(style.id);
+      });
       const batchResults = await Promise.all(batchPromises);
       
       batch.forEach((style, index) => {
@@ -94,6 +102,10 @@ export function CardStyleCatalog({ onStyleSelect, selectedStyle, isGenerating }:
   };
 
   const regeneratePreview = async (styleId: string) => {
+    // No regenerar vista previa para custom_image
+    if (styleId === 'custom_image') {
+      return;
+    }
     const preview = await generateCardPreview(styleId);
     if (preview) {
       setPreviews(prev => ({
@@ -163,7 +175,19 @@ export function CardStyleCatalog({ onStyleSelect, selectedStyle, isGenerating }:
               }`}
               onClick={() => onStyleSelect(style.id)}
             >
-              {previews[style.id] ? (
+              {/* Tratamiento especial para "Imagen Personalizada" */}
+              {style.id === 'custom_image' ? (
+                <div className="w-full h-full flex flex-col items-center justify-center p-3">
+                  <div className="w-16 h-16 rounded-lg mb-2 bg-gradient-to-br from-purple-300 to-purple-500 flex items-center justify-center">
+                    <Upload className="w-8 h-8 text-white" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs font-medium text-gray-700 dark:text-gray-300 leading-tight">
+                      {style.name}
+                    </p>
+                  </div>
+                </div>
+              ) : previews[style.id] ? (
                 <div className="relative w-full h-full">
                   <img
                     src={previews[style.id]}

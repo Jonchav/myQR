@@ -185,9 +185,68 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
               <div className="col-span-full space-y-3">
                 <CardStyleCatalog 
                   selectedStyle={settings.cardStyle || "minimalist"}
-                  onStyleSelect={(style) => applyRealTimeChange("cardStyle", style)}
+                  onStyleSelect={(style) => {
+                    // Si cambiamos de custom_image a otra opción, resetear la imagen
+                    if (settings.cardStyle === "custom_image" && style !== "custom_image") {
+                      applyRealTimeChange("customBackgroundImage", null);
+                    }
+                    applyRealTimeChange("cardStyle", style);
+                  }}
                   isGenerating={isGenerating}
                 />
+                
+                {/* Imagen de fondo personalizada - solo se muestra cuando se selecciona "custom_image" */}
+                {settings.cardStyle === "custom_image" && (
+                  <div className="space-y-2 mt-4">
+                    <Label>Imagen de fondo personalizada</Label>
+                    <p className="text-xs text-muted-foreground">
+                      Sube una imagen como fondo de la tarjeta (máximo 15MB)
+                    </p>
+                    
+                    {settings.customBackgroundImage ? (
+                      <div className="space-y-2">
+                        <div className="relative">
+                          <img 
+                            src={settings.customBackgroundImage} 
+                            alt="Imagen de fondo personalizada" 
+                            className="w-full h-24 object-cover rounded border border-purple-200 dark:border-purple-700"
+                          />
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={removeCustomImage}
+                            className="absolute top-1 right-1 h-6 w-6 p-0"
+                          >
+                            <X className="w-3 h-3" />
+                          </Button>
+                        </div>
+                        <p className="text-xs text-green-600 dark:text-green-400">
+                          ✓ Imagen cargada correctamente
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <label className="cursor-pointer">
+                          <div className="border-2 border-dashed border-purple-300 dark:border-purple-600 rounded-lg p-4 text-center hover:border-purple-400 dark:hover:border-purple-500 transition-colors">
+                            <Upload className="w-6 h-6 mx-auto mb-2 text-purple-500" />
+                            <p className="text-sm text-purple-600 dark:text-purple-400">
+                              Haz clic para subir imagen
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              PNG, JPG, GIF hasta 15MB
+                            </p>
+                          </div>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            className="hidden"
+                          />
+                        </label>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -287,104 +346,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
             </CardContent>
           </Card>
 
-          {/* Card Style Selection */}
-          <Card className="border-purple-200 dark:border-purple-700">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Frame className="w-5 h-5 text-purple-500" />
-                Estilo de Tarjeta
-              </CardTitle>
-              <p className="text-sm text-muted-foreground">
-                Selecciona el estilo visual para tu QR
-              </p>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label>Estilo de tarjeta</Label>
-                  <Select value={settings.cardStyle} onValueChange={(value) => {
-                    // Si cambiamos de custom_image a otra opción, resetear la imagen
-                    if (settings.cardStyle === "custom_image" && value !== "custom_image") {
-                      applyRealTimeChange("customBackgroundImage", null);
-                    }
-                    applyRealTimeChange("cardStyle", value);
-                  }}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">🔳 Ninguna (QR cuadrado)</SelectItem>
-                      <SelectItem value="minimalist">🎨 Minimalista</SelectItem>
-                      <SelectItem value="modern_gradient">🌈 Degradado</SelectItem>
-                      <SelectItem value="neon_waves">💫 Neón</SelectItem>
-                      <SelectItem value="organic_flow">🌊 Ondas</SelectItem>
-                      <SelectItem value="geometric">🔷 Geométrico</SelectItem>
-                      <SelectItem value="corporate">💼 Corporativo</SelectItem>
-                      <SelectItem value="creative_burst">🕹️ Retro</SelectItem>
-                      <SelectItem value="abstract_art">🌿 Natural</SelectItem>
-                      <SelectItem value="elegant_lines">⚡ Tecnológico</SelectItem>
-                      <SelectItem value="vibrant_blocks">✨ Lujo</SelectItem>
-                      <SelectItem value="custom_image">📁 Cargar imagen personalizada</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                {/* Imagen de fondo personalizada - solo se muestra cuando se selecciona "custom_image" */}
-                {settings.cardStyle === "custom_image" && (
-                  <div className="space-y-2">
-                    <Label>Imagen de fondo personalizada</Label>
-                    <p className="text-xs text-muted-foreground">
-                      Sube una imagen como fondo de la tarjeta (máximo 100MB)
-                    </p>
-                    
-                    {settings.customBackgroundImage ? (
-                      <div className="space-y-2">
-                        <div className="relative">
-                          <img 
-                            src={settings.customBackgroundImage} 
-                            alt="Imagen de fondo personalizada" 
-                            className="w-full h-24 object-cover rounded border border-purple-200 dark:border-purple-700"
-                          />
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={removeCustomImage}
-                            className="absolute top-1 right-1 h-6 w-6 p-0"
-                          >
-                            <X className="w-3 h-3" />
-                          </Button>
-                        </div>
-                        <p className="text-xs text-green-600 dark:text-green-400">
-                          ✓ Imagen cargada correctamente
-                        </p>
 
-                      </div>
-                    ) : (
-                      <div className="space-y-2">
-                        <label className="cursor-pointer">
-                          <div className="border-2 border-dashed border-purple-300 dark:border-purple-600 rounded-lg p-4 text-center hover:border-purple-400 dark:hover:border-purple-500 transition-colors">
-                            <Upload className="w-6 h-6 mx-auto mb-2 text-purple-500" />
-                            <p className="text-sm text-purple-600 dark:text-purple-400">
-                              Haz clic para subir imagen
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              PNG, JPG, GIF hasta 15MB
-                            </p>
-                          </div>
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleImageUpload}
-                            className="hidden"
-                          />
-                        </label>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
         </div>
         
         {/* Botón universal para aplicar cambios */}
