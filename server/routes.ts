@@ -316,6 +316,28 @@ function generateCardBackground(style: string, width: number, height: number): s
   return backgrounds[style] || backgrounds["modern_gradient"];
 }
 
+// Function to get more accurate text width estimation
+function getTextWidth(text: string, fontSize: number, fontWeight: string, fontFamily: string): number {
+  // Character width multipliers for different fonts
+  const fontMultipliers: { [key: string]: number } = {
+    "Arial": 0.55,
+    "Helvetica": 0.55,
+    "Georgia": 0.6,
+    "Impact": 0.45,
+    "Verdana": 0.65,
+    "Trebuchet MS": 0.58,
+    "Times New Roman": 0.5,
+    "Courier New": 0.6,
+    "Comic Sans MS": 0.6,
+    "Palatino": 0.55
+  };
+  
+  const multiplier = fontMultipliers[fontFamily] || 0.55;
+  const weightMultiplier = fontWeight === "bold" ? 1.1 : 1.0;
+  
+  return text.length * fontSize * multiplier * weightMultiplier;
+}
+
 // Function to generate text SVG with professional formatting and high contrast
 function generateTextSVG(options: any, cardWidth: number, cardHeight: number, qrX: number, qrY: number, qrSize: number): string {
   const {
@@ -330,6 +352,10 @@ function generateTextSVG(options: any, cardWidth: number, cardHeight: number, qr
     textBold = true,
     textItalic = false
   } = options;
+  
+  if (!textContent || textContent.trim().length === 0) {
+    return "";
+  }
   
   // Calculate text position with better spacing
   let textX = cardWidth / 2;
@@ -359,15 +385,24 @@ function generateTextSVG(options: any, cardWidth: number, cardHeight: number, qr
   // Enhanced shadow for better contrast
   const shadowStyle = textShadow ? `filter: drop-shadow(3px 3px 6px rgba(0,0,0,0.8))` : "";
   
+  // Calculate text metrics for proper background sizing using accurate width
+  const textWidth = getTextWidth(textContent.trim(), textSize, fontWeight, textFont);
+  const textMetrics = {
+    width: textWidth + 32, // Add padding
+    height: textSize * 1.6,
+    x: textX - (textWidth + 32) / 2,
+    y: textY - textSize * 0.9
+  };
+  
   // Create text with background for better readability
   const backgroundRect = `
-    <rect x="${textX - (textContent.length * textSize * 0.3)}" 
-          y="${textY - textSize * 0.7}" 
-          width="${textContent.length * textSize * 0.6}" 
-          height="${textSize * 1.2}"
-          fill="rgba(0,0,0,0.7)" 
-          rx="8" 
-          opacity="0.8"/>
+    <rect x="${textMetrics.x}" 
+          y="${textMetrics.y}" 
+          width="${textMetrics.width}" 
+          height="${textMetrics.height}"
+          fill="rgba(0,0,0,0.8)" 
+          rx="12" 
+          opacity="0.9"/>
   `;
   
   return `
@@ -378,10 +413,12 @@ function generateTextSVG(options: any, cardWidth: number, cardHeight: number, qr
           font-size="${textSize}" 
           font-weight="${fontWeight}"
           font-style="${fontStyle}"
-          font-family="${textFont}, sans-serif" 
+          font-family="${textFont}, Arial, sans-serif" 
           opacity="${opacity}"
+          dominant-baseline="central"
+          letter-spacing="1px"
           style="${shadowStyle}">
-      ${textContent}
+      ${textContent.trim()}
     </text>
   `;
 }
