@@ -682,10 +682,13 @@ async function generateCreativeQR(options: any): Promise<string> {
 // Function to apply creative styling with qr-svg
 async function applyCreativeStyle(qrDataUrl: string, style: string, options: any): Promise<string> {
   try {
-    console.log('Applying creative style with qr-svg:', style);
+    console.log('=== STARTING CREATIVE STYLE APPLICATION ===');
+    console.log('Style:', style);
+    console.log('URL:', options.url);
     
     // Skip creative styling for classic style
     if (style === 'classic') {
+      console.log('Skipping - classic style');
       return qrDataUrl;
     }
     
@@ -705,71 +708,76 @@ async function applyCreativeStyle(qrDataUrl: string, style: string, options: any
       container: 'svg'
     });
 
+    console.log('QR SVG Generated. Length:', qrSvg.length);
+    console.log('Contains black fills:', qrSvg.includes('fill="#000000"'));
+
     // Apply colors directly to the SVG
     const coloredSvg = applyColorsToSVG(qrSvg, style);
+    
+    console.log('Colors applied. New length:', coloredSvg.length);
+    console.log('First 400 chars:', coloredSvg.substring(0, 400));
     
     // Convert SVG to PNG using Sharp with error handling
     const pngBuffer = await sharp(Buffer.from(coloredSvg))
       .png({ quality: 85, compressionLevel: 6 })
       .toBuffer();
     
+    console.log('=== CREATIVE STYLE APPLICATION COMPLETED ===');
     return `data:image/png;base64,${pngBuffer.toString('base64')}`;
   } catch (error) {
-    console.error('Error applying creative style:', error);
+    console.error('=== ERROR IN CREATIVE STYLE APPLICATION ===', error);
     return qrDataUrl; // Return original if fails
   }
 }
 
-// Simple function to apply colors to SVG
+// Enhanced function to apply colors to SVG with better pattern recognition
 function applyColorsToSVG(svgContent: string, style: string): string {
   const colorSchemes = {
     classic: ['#000000'],
-    multicolor_blocks: ['#FF4757', '#5352ED', '#2ED573', '#FFA726'],
-    rainbow_gradient: ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF'],
-    neon_cyber: ['#00FFFF', '#FF00FF', '#00FF00', '#FFFF00'],
-    forest_nature: ['#228B22', '#32CD32', '#90EE90', '#006400'],
-    ocean_waves: ['#0077BE', '#0099CC', '#00BFFF', '#1E90FF'],
-    sunset_fire: ['#FF4500', '#FF6347', '#FFA500', '#FFD700'],
-    purple_galaxy: ['#8A2BE2', '#9370DB', '#9400D3', '#8B008B'],
-    mint_fresh: ['#00FA9A', '#40E0D0', '#48D1CC', '#20B2AA'],
-    golden_luxury: ['#FFD700', '#FFA500', '#FF8C00', '#DAA520'],
-    cherry_blossom: ['#FFB6C1', '#FFC0CB', '#FFCCCB', '#FFE4E1'],
-    electric_blue: ['#0000FF', '#0080FF', '#00BFFF', '#1E90FF'],
-    autumn_leaves: ['#8B4513', '#A0522D', '#CD853F', '#D2691E'],
-    monochrome_red: ['#DC143C', '#B22222', '#FF0000', '#FF6347'],
-    pastel_dream: ['#FFB3BA', '#BAFFC9', '#BAE1FF', '#FFFFBA']
+    multicolor_blocks: ['#FF4757', '#5352ED', '#2ED573', '#FFA726', '#26C6DA', '#E74C3C', '#8E44AD', '#3498DB'],
+    rainbow_gradient: ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF', '#4B0082', '#9400D3'],
+    neon_cyber: ['#00FFFF', '#FF00FF', '#00FF00', '#FFFF00', '#FF0080', '#8000FF', '#0080FF'],
+    forest_nature: ['#228B22', '#32CD32', '#90EE90', '#006400', '#8FBC8F', '#9ACD32', '#ADFF2F'],
+    ocean_waves: ['#0077BE', '#0099CC', '#00BFFF', '#1E90FF', '#4169E1', '#6495ED', '#87CEEB'],
+    sunset_fire: ['#FF4500', '#FF6347', '#FFA500', '#FFD700', '#FF8C00', '#FF1493', '#DC143C'],
+    purple_galaxy: ['#8A2BE2', '#9370DB', '#9400D3', '#8B008B', '#800080', '#DA70D6', '#DDA0DD'],
+    mint_fresh: ['#00FA9A', '#40E0D0', '#48D1CC', '#20B2AA', '#5F9EA0', '#66CDAA', '#7FFFD4'],
+    golden_luxury: ['#FFD700', '#FFA500', '#FF8C00', '#DAA520', '#B8860B', '#F0E68C', '#EEE8AA'],
+    cherry_blossom: ['#FFB6C1', '#FFC0CB', '#FFCCCB', '#FFE4E1', '#FFEFD5', '#FFF0F5', '#FFFAFA'],
+    electric_blue: ['#0000FF', '#0080FF', '#00BFFF', '#1E90FF', '#4169E1', '#6495ED', '#4682B4'],
+    autumn_leaves: ['#8B4513', '#A0522D', '#CD853F', '#D2691E', '#DEB887', '#F4A460', '#BC8F8F'],
+    monochrome_red: ['#DC143C', '#B22222', '#FF0000', '#FF6347', '#FF4500', '#FF1493', '#C71585'],
+    pastel_dream: ['#FFB3BA', '#BAFFC9', '#BAE1FF', '#FFFFBA', '#FFDFBA', '#E0BBE4', '#957DAD']
   };
 
   const colors = colorSchemes[style as keyof typeof colorSchemes] || colorSchemes.classic;
   let coloredSvg = svgContent;
   let colorIndex = 0;
 
-  // Fix any malformed tags first
-  coloredSvg = coloredSvg.replace(/<rect([^>]*?)(?<!\/)\s*>/g, '<rect$1/>');
-  coloredSvg = coloredSvg.replace(/<circle([^>]*?)(?<!\/)\s*>/g, '<circle$1/>');
-  coloredSvg = coloredSvg.replace(/<path([^>]*?)(?<!\/)\s*>/g, '<path$1/>');
+  // Clean up the SVG content first
+  coloredSvg = coloredSvg.replace(/\s+/g, ' ').trim();
   
-  // Replace all fill="#000000" with rotating colors
-  coloredSvg = coloredSvg.replace(/fill="#000000"/g, () => {
+  // Function to get next color
+  const getNextColor = () => {
     const color = colors[colorIndex % colors.length];
     colorIndex++;
-    return `fill="${color}"`;
+    return color;
+  };
+
+  // Log original SVG structure for debugging
+  console.log('Original SVG sample:', svgContent.substring(0, 400));
+  
+  // Simple approach: add fill attribute to all rect elements
+  coloredSvg = coloredSvg.replace(/<rect/g, (match) => {
+    const color = getNextColor();
+    return `<rect fill="${color}"`;
   });
 
-  // Replace all fill="#000" with rotating colors
-  coloredSvg = coloredSvg.replace(/fill="#000"/g, () => {
-    const color = colors[colorIndex % colors.length];
-    colorIndex++;
-    return `fill="${color}"`;
-  });
-
-  // Replace all fill="black" with rotating colors
-  coloredSvg = coloredSvg.replace(/fill="black"/g, () => {
-    const color = colors[colorIndex % colors.length];
-    colorIndex++;
-    return `fill="${color}"`;
-  });
-
+  // Log transformation details
+  console.log(`Applied ${colorIndex} color transformations for style: ${style}`);
+  console.log(`First color in palette: ${colors[0]}`);
+  console.log('Transformed SVG sample:', coloredSvg.substring(0, 400));
+  
   return coloredSvg;
 }
 
