@@ -732,11 +732,10 @@ async function enhanceQRWithAPI(qrDataUrl: string, style: string, options: any):
       size: options.size || 'medium'
     };
 
-    // Crear QR mejorado con colores más vibrantes
-    const enhancedColors = await getEnhancedColors(style);
-    const enhancedQRBuffer = await applyEnhancedStyling(base64Data, enhancedColors, style);
+    // Crear QR mejorado con efectos multicolor
+    const enhancedQRBuffer = await applyMultiColorEffect(Buffer.from(base64Data, 'base64'), style);
     
-    console.log('QR enhanced successfully with API');
+    console.log('QR enhanced successfully with multicolor effects');
     return `data:image/png;base64,${enhancedQRBuffer.toString('base64')}`;
     
   } catch (error) {
@@ -1244,6 +1243,362 @@ function getSaturation(style: string): number {
   };
   
   return saturation[style] || 1.0;
+}
+
+// Función principal para aplicar efectos multicolor vibrantes
+async function applyMultiColorEffect(qrBuffer: Buffer, style: string): Promise<Buffer> {
+  try {
+    // Aplicar efectos específicos según el estilo
+    switch (style) {
+      case 'vibrant_rainbow':
+        return await applyRainbowGradientEffect(qrBuffer);
+      case 'neon_cyber':
+        return await applyNeonGradientEffect(qrBuffer);
+      case 'electric_blue':
+        return await applyElectricGradientEffect(qrBuffer);
+      case 'sunset_fire':
+        return await applyFireGradientEffect(qrBuffer);
+      case 'forest_nature':
+        return await applyNatureGradientEffect(qrBuffer);
+      case 'ocean_waves':
+        return await applyOceanGradientEffect(qrBuffer);
+      case 'multicolor_blocks':
+        return await applyMulticolorBlocksEffect(qrBuffer);
+      case 'purple_galaxy':
+        return await applyGalaxyGradientEffect(qrBuffer);
+      case 'golden_sunset':
+        return await applyGoldenGradientEffect(qrBuffer);
+      case 'mint_fresh':
+        return await applyMintGradientEffect(qrBuffer);
+      case 'coral_reef':
+        return await applyCoralGradientEffect(qrBuffer);
+      case 'volcano_red':
+        return await applyVolcanoGradientEffect(qrBuffer);
+      case 'autumn_leaves':
+        return await applyAutumnGradientEffect(qrBuffer);
+      case 'monochrome_red':
+        return await applyMonochromeRedEffect(qrBuffer);
+      case 'pastel_dream':
+        return await applyPastelGradientEffect(qrBuffer);
+      default:
+        return qrBuffer;
+    }
+  } catch (error) {
+    console.error('Error applying multicolor effect:', error);
+    return qrBuffer;
+  }
+}
+
+// Efectos con gradientes y mezclas de colores vibrantes
+async function applyRainbowGradientEffect(qrBuffer: Buffer): Promise<Buffer> {
+  // Crear un canvas SVG con gradiente arcoíris
+  const svgOverlay = `
+    <svg width="1200" height="1200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="rainbow" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#FF0080;stop-opacity:1" />
+          <stop offset="25%" style="stop-color:#FF4080;stop-opacity:1" />
+          <stop offset="50%" style="stop-color:#FF8080;stop-opacity:1" />
+          <stop offset="75%" style="stop-color:#FF40FF;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#8040FF;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#rainbow)" opacity="0.8"/>
+    </svg>
+  `;
+  
+  return await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .composite([{ input: Buffer.from(svgOverlay), blend: 'multiply' }])
+    .png({ quality: 85, compressionLevel: 4 })
+    .toBuffer();
+}
+
+async function applyNeonGradientEffect(qrBuffer: Buffer): Promise<Buffer> {
+  // Gradiente neón cyan-verde-azul
+  const svgOverlay = `
+    <svg width="1200" height="1200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="neon" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" style="stop-color:#00FFFF;stop-opacity:1" />
+          <stop offset="33%" style="stop-color:#00FFAA;stop-opacity:1" />
+          <stop offset="66%" style="stop-color:#00FF80;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#40E0D0;stop-opacity:1" />
+        </radialGradient>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#neon)" opacity="0.8"/>
+    </svg>
+  `;
+  
+  return await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .composite([{ input: Buffer.from(svgOverlay), blend: 'multiply' }])
+    .png({ quality: 85, compressionLevel: 4 })
+    .toBuffer();
+}
+
+async function applyElectricGradientEffect(qrBuffer: Buffer): Promise<Buffer> {
+  // Gradiente eléctrico azul-cian-púrpura
+  const svgOverlay = `
+    <svg width="1200" height="1200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="electric" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#007BFF;stop-opacity:1" />
+          <stop offset="25%" style="stop-color:#0099FF;stop-opacity:1" />
+          <stop offset="50%" style="stop-color:#00BFFF;stop-opacity:1" />
+          <stop offset="75%" style="stop-color:#1E90FF;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#4169E1;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#electric)" opacity="0.8"/>
+    </svg>
+  `;
+  
+  return await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .composite([{ input: Buffer.from(svgOverlay), blend: 'multiply' }])
+    .png({ quality: 85, compressionLevel: 4 })
+    .toBuffer();
+}
+
+async function applyFireGradientEffect(qrBuffer: Buffer): Promise<Buffer> {
+  // Gradiente de fuego naranja-amarillo-rojo
+  const svgOverlay = `
+    <svg width="1200" height="1200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="fire" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" style="stop-color:#FFA500;stop-opacity:1" />
+          <stop offset="25%" style="stop-color:#FF8C00;stop-opacity:1" />
+          <stop offset="50%" style="stop-color:#FF7F50;stop-opacity:1" />
+          <stop offset="75%" style="stop-color:#FFD700;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#FF4500;stop-opacity:1" />
+        </radialGradient>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#fire)" opacity="0.8"/>
+    </svg>
+  `;
+  
+  return await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .composite([{ input: Buffer.from(svgOverlay), blend: 'multiply' }])
+    .png({ quality: 85, compressionLevel: 4 })
+    .toBuffer();
+}
+
+async function applyNatureGradientEffect(qrBuffer: Buffer): Promise<Buffer> {
+  // Gradiente de naturaleza verde-lima-esmeralda
+  const svgOverlay = `
+    <svg width="1200" height="1200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="nature" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#00FF00;stop-opacity:1" />
+          <stop offset="25%" style="stop-color:#32CD32;stop-opacity:1" />
+          <stop offset="50%" style="stop-color:#90EE90;stop-opacity:1" />
+          <stop offset="75%" style="stop-color:#00FF80;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#00FF40;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#nature)" opacity="0.8"/>
+    </svg>
+  `;
+  
+  return await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .composite([{ input: Buffer.from(svgOverlay), blend: 'multiply' }])
+    .png({ quality: 85, compressionLevel: 4 })
+    .toBuffer();
+}
+
+async function applyOceanGradientEffect(qrBuffer: Buffer): Promise<Buffer> {
+  // Gradiente océano azul-turquesa-añil
+  const svgOverlay = `
+    <svg width="1200" height="1200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="ocean" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" style="stop-color:#0064FF;stop-opacity:1" />
+          <stop offset="25%" style="stop-color:#0077BE;stop-opacity:1" />
+          <stop offset="50%" style="stop-color:#00BFFF;stop-opacity:1" />
+          <stop offset="75%" style="stop-color:#1E90FF;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#4169E1;stop-opacity:1" />
+        </radialGradient>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#ocean)" opacity="0.8"/>
+    </svg>
+  `;
+  
+  return await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .composite([{ input: Buffer.from(svgOverlay), blend: 'multiply' }])
+    .png({ quality: 85, compressionLevel: 4 })
+    .toBuffer();
+}
+
+async function applyGalaxyGradientEffect(qrBuffer: Buffer): Promise<Buffer> {
+  // Gradiente galaxia púrpura-violeta-magenta
+  const svgOverlay = `
+    <svg width="1200" height="1200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="galaxy" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" style="stop-color:#8A2BE2;stop-opacity:1" />
+          <stop offset="25%" style="stop-color:#9932CC;stop-opacity:1" />
+          <stop offset="50%" style="stop-color:#BA55D3;stop-opacity:1" />
+          <stop offset="75%" style="stop-color:#DA70D6;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#FF69B4;stop-opacity:1" />
+        </radialGradient>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#galaxy)" opacity="0.8"/>
+    </svg>
+  `;
+  
+  return await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .composite([{ input: Buffer.from(svgOverlay), blend: 'multiply' }])
+    .png({ quality: 85, compressionLevel: 4 })
+    .toBuffer();
+}
+
+async function applyGoldenGradientEffect(qrBuffer: Buffer): Promise<Buffer> {
+  // Gradiente dorado-amarillo-naranja
+  const svgOverlay = `
+    <svg width="1200" height="1200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="golden" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+          <stop offset="25%" style="stop-color:#FFA500;stop-opacity:1" />
+          <stop offset="50%" style="stop-color:#FF8C00;stop-opacity:1" />
+          <stop offset="75%" style="stop-color:#DAA520;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#B8860B;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#golden)" opacity="0.8"/>
+    </svg>
+  `;
+  
+  return await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .composite([{ input: Buffer.from(svgOverlay), blend: 'multiply' }])
+    .png({ quality: 85, compressionLevel: 4 })
+    .toBuffer();
+}
+
+async function applyMintGradientEffect(qrBuffer: Buffer): Promise<Buffer> {
+  // Gradiente menta verde-aqua-turquesa
+  const svgOverlay = `
+    <svg width="1200" height="1200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="mint" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" style="stop-color:#00FA9A;stop-opacity:1" />
+          <stop offset="25%" style="stop-color:#00FF7F;stop-opacity:1" />
+          <stop offset="50%" style="stop-color:#00FFAA;stop-opacity:1" />
+          <stop offset="75%" style="stop-color:#40E0D0;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#48D1CC;stop-opacity:1" />
+        </radialGradient>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#mint)" opacity="0.8"/>
+    </svg>
+  `;
+  
+  return await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .composite([{ input: Buffer.from(svgOverlay), blend: 'multiply' }])
+    .png({ quality: 85, compressionLevel: 4 })
+    .toBuffer();
+}
+
+async function applyCoralGradientEffect(qrBuffer: Buffer): Promise<Buffer> {
+  // Gradiente coral rosa-naranja-melocotón
+  const svgOverlay = `
+    <svg width="1200" height="1200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="coral" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#FF7F50;stop-opacity:1" />
+          <stop offset="25%" style="stop-color:#FF6347;stop-opacity:1" />
+          <stop offset="50%" style="stop-color:#FF69B4;stop-opacity:1" />
+          <stop offset="75%" style="stop-color:#FFA07A;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#FFB6C1;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#coral)" opacity="0.8"/>
+    </svg>
+  `;
+  
+  return await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .composite([{ input: Buffer.from(svgOverlay), blend: 'multiply' }])
+    .png({ quality: 85, compressionLevel: 4 })
+    .toBuffer();
+}
+
+async function applyVolcanoGradientEffect(qrBuffer: Buffer): Promise<Buffer> {
+  // Gradiente volcán rojo-naranja-amarillo
+  const svgOverlay = `
+    <svg width="1200" height="1200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="volcano" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" style="stop-color:#DC143C;stop-opacity:1" />
+          <stop offset="25%" style="stop-color:#FF4500;stop-opacity:1" />
+          <stop offset="50%" style="stop-color:#FF6347;stop-opacity:1" />
+          <stop offset="75%" style="stop-color:#FF8C00;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#FFA500;stop-opacity:1" />
+        </radialGradient>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#volcano)" opacity="0.8"/>
+    </svg>
+  `;
+  
+  return await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .composite([{ input: Buffer.from(svgOverlay), blend: 'multiply' }])
+    .png({ quality: 85, compressionLevel: 4 })
+    .toBuffer();
+}
+
+async function applyAutumnGradientEffect(qrBuffer: Buffer): Promise<Buffer> {
+  // Gradiente otoño marrón-naranja-dorado
+  const svgOverlay = `
+    <svg width="1200" height="1200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="autumn" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#8B4513;stop-opacity:1" />
+          <stop offset="25%" style="stop-color:#D2691E;stop-opacity:1" />
+          <stop offset="50%" style="stop-color:#CD853F;stop-opacity:1" />
+          <stop offset="75%" style="stop-color:#DEB887;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#F4A460;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#autumn)" opacity="0.8"/>
+    </svg>
+  `;
+  
+  return await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .composite([{ input: Buffer.from(svgOverlay), blend: 'multiply' }])
+    .png({ quality: 85, compressionLevel: 4 })
+    .toBuffer();
+}
+
+async function applyPastelGradientEffect(qrBuffer: Buffer): Promise<Buffer> {
+  // Gradiente pastel suave multicolor
+  const svgOverlay = `
+    <svg width="1200" height="1200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="pastel" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#FFB3BA;stop-opacity:1" />
+          <stop offset="25%" style="stop-color:#FFDFBA;stop-opacity:1" />
+          <stop offset="50%" style="stop-color:#FFFFBA;stop-opacity:1" />
+          <stop offset="75%" style="stop-color:#BAFFC9;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#BAE1FF;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#pastel)" opacity="0.8"/>
+    </svg>
+  `;
+  
+  return await sharp(qrBuffer)
+    .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+    .composite([{ input: Buffer.from(svgOverlay), blend: 'multiply' }])
+    .png({ quality: 85, compressionLevel: 4 })
+    .toBuffer();
 }
 
 // Individual effect functions for intense creative styling
