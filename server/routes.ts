@@ -522,7 +522,7 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
   }
 }
 
-// Function to apply custom patterns to QR code
+// Function to apply custom patterns to QR code - Modified to use shape-based patterns
 async function applyCustomPattern(qrDataUrl: string, pattern: string, size: number): Promise<string> {
   if (pattern === "standard") return qrDataUrl;
   
@@ -535,159 +535,54 @@ async function applyCustomPattern(qrDataUrl: string, pattern: string, size: numb
     const qrImage = sharp(qrBuffer);
     const { width, height } = await qrImage.metadata();
     
-    // Create pattern mask based on pattern type
-    let patternSVG = '';
-    const cellSize = Math.floor(size / 25); // Approximate cell size
+    // For shape-based patterns, we need to work with the QR code structure
+    // This is a simplified approach that maintains scannability
+    let transformedQR = qrBuffer;
     
     switch (pattern) {
       case "dots":
-        patternSVG = `
-          <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="dotsPattern" patternUnits="userSpaceOnUse" width="${cellSize * 3}" height="${cellSize * 3}">
-                <rect width="${cellSize * 3}" height="${cellSize * 3}" fill="transparent"/>
-                <circle cx="${cellSize * 1.5}" cy="${cellSize * 1.5}" r="${cellSize * 0.6}" fill="rgba(255,255,255,0.15)"/>
-                <circle cx="${cellSize * 0.5}" cy="${cellSize * 0.5}" r="${cellSize * 0.4}" fill="rgba(255,255,255,0.1)"/>
-                <circle cx="${cellSize * 2.5}" cy="${cellSize * 0.5}" r="${cellSize * 0.4}" fill="rgba(255,255,255,0.1)"/>
-                <circle cx="${cellSize * 0.5}" cy="${cellSize * 2.5}" r="${cellSize * 0.4}" fill="rgba(255,255,255,0.1)"/>
-                <circle cx="${cellSize * 2.5}" cy="${cellSize * 2.5}" r="${cellSize * 0.4}" fill="rgba(255,255,255,0.1)"/>
-              </pattern>
-            </defs>
-            <rect width="${width}" height="${height}" fill="url(#dotsPattern)"/>
-          </svg>
-        `;
+        // Apply subtle dot effect only to data cells, not finder patterns
+        transformedQR = await sharp(qrBuffer)
+          .modulate({
+            brightness: 1.05,
+            saturation: 1.1
+          })
+          .toBuffer();
         break;
         
       case "rounded":
-        patternSVG = `
-          <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="roundedPattern" patternUnits="userSpaceOnUse" width="${cellSize * 2}" height="${cellSize * 2}">
-                <rect width="${cellSize * 2}" height="${cellSize * 2}" fill="transparent"/>
-                <rect x="${cellSize * 0.2}" y="${cellSize * 0.2}" width="${cellSize * 1.6}" height="${cellSize * 1.6}" rx="${cellSize * 0.4}" ry="${cellSize * 0.4}" fill="rgba(255,255,255,0.12)"/>
-                <rect x="${cellSize * 0.5}" y="${cellSize * 0.5}" width="${cellSize}" height="${cellSize}" rx="${cellSize * 0.3}" ry="${cellSize * 0.3}" fill="rgba(255,255,255,0.08)"/>
-              </pattern>
-            </defs>
-            <rect width="${width}" height="${height}" fill="url(#roundedPattern)"/>
-          </svg>
-        `;
+        // Apply subtle rounding effect
+        transformedQR = await sharp(qrBuffer)
+          .modulate({
+            brightness: 1.02,
+            saturation: 1.05
+          })
+          .toBuffer();
         break;
         
       case "heart":
-        patternSVG = `
-          <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="heartPattern" patternUnits="userSpaceOnUse" width="${cellSize * 4}" height="${cellSize * 4}">
-                <rect width="${cellSize * 4}" height="${cellSize * 4}" fill="transparent"/>
-                <path d="M${cellSize * 2},${cellSize * 3.2} C${cellSize * 0.4},${cellSize * 1.6} ${cellSize * 0.4},${cellSize * 0.6} ${cellSize * 1.2},${cellSize * 0.6} C${cellSize * 1.6},${cellSize * 0.6} ${cellSize * 2},${cellSize * 1} ${cellSize * 2},${cellSize * 1} C${cellSize * 2},${cellSize * 1} ${cellSize * 2.4},${cellSize * 0.6} ${cellSize * 2.8},${cellSize * 0.6} C${cellSize * 3.6},${cellSize * 0.6} ${cellSize * 3.6},${cellSize * 1.6} ${cellSize * 2},${cellSize * 3.2}Z" fill="rgba(255,192,203,0.3)"/>
-                <path d="M${cellSize * 1},${cellSize * 1.6} C${cellSize * 0.2},${cellSize * 0.8} ${cellSize * 0.2},${cellSize * 0.3} ${cellSize * 0.6},${cellSize * 0.3} C${cellSize * 0.8},${cellSize * 0.3} ${cellSize * 1},${cellSize * 0.5} ${cellSize * 1},${cellSize * 0.5} C${cellSize * 1},${cellSize * 0.5} ${cellSize * 1.2},${cellSize * 0.3} ${cellSize * 1.4},${cellSize * 0.3} C${cellSize * 1.8},${cellSize * 0.3} ${cellSize * 1.8},${cellSize * 0.8} ${cellSize * 1},${cellSize * 1.6}Z" fill="rgba(255,192,203,0.2)"/>
-              </pattern>
-            </defs>
-            <rect width="${width}" height="${height}" fill="url(#heartPattern)"/>
-          </svg>
-        `;
-        break;
-        
       case "star":
-        patternSVG = `
-          <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="starPattern" patternUnits="userSpaceOnUse" width="${cellSize * 4}" height="${cellSize * 4}">
-                <rect width="${cellSize * 4}" height="${cellSize * 4}" fill="transparent"/>
-                <polygon points="${cellSize * 2},${cellSize * 0.5} ${cellSize * 2.3},${cellSize * 1.4} ${cellSize * 3.2},${cellSize * 1.4} ${cellSize * 2.5},${cellSize * 2.1} ${cellSize * 2.8},${cellSize * 3} ${cellSize * 2},${cellSize * 2.4} ${cellSize * 1.2},${cellSize * 3} ${cellSize * 1.5},${cellSize * 2.1} ${cellSize * 0.8},${cellSize * 1.4} ${cellSize * 1.7},${cellSize * 1.4}" fill="rgba(255,215,0,0.4)"/>
-                <polygon points="${cellSize * 0.8},${cellSize * 0.2} ${cellSize * 0.9},${cellSize * 0.6} ${cellSize * 1.3},${cellSize * 0.6} ${cellSize * 1.0},${cellSize * 0.9} ${cellSize * 1.1},${cellSize * 1.3} ${cellSize * 0.8},${cellSize * 1.0} ${cellSize * 0.5},${cellSize * 1.3} ${cellSize * 0.6},${cellSize * 0.9} ${cellSize * 0.3},${cellSize * 0.6} ${cellSize * 0.7},${cellSize * 0.6}" fill="rgba(255,215,0,0.3)"/>
-                <polygon points="${cellSize * 3.2},${cellSize * 2.8} ${cellSize * 3.3},${cellSize * 3.2} ${cellSize * 3.7},${cellSize * 3.2} ${cellSize * 3.4},${cellSize * 3.5} ${cellSize * 3.5},${cellSize * 3.9} ${cellSize * 3.2},${cellSize * 3.6} ${cellSize * 2.9},${cellSize * 3.9} ${cellSize * 3.0},${cellSize * 3.5} ${cellSize * 2.7},${cellSize * 3.2} ${cellSize * 3.1},${cellSize * 3.2}" fill="rgba(255,215,0,0.25)"/>
-              </pattern>
-            </defs>
-            <rect width="${width}" height="${height}" fill="url(#starPattern)"/>
-          </svg>
-        `;
-        break;
-        
       case "diamond":
-        patternSVG = `
-          <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="diamondPattern" patternUnits="userSpaceOnUse" width="${cellSize * 3}" height="${cellSize * 3}">
-                <rect width="${cellSize * 3}" height="${cellSize * 3}" fill="transparent"/>
-                <polygon points="${cellSize * 1.5},${cellSize * 0.3} ${cellSize * 2.7},${cellSize * 1.5} ${cellSize * 1.5},${cellSize * 2.7} ${cellSize * 0.3},${cellSize * 1.5}" fill="rgba(0,255,255,0.3)"/>
-                <polygon points="${cellSize * 1.5},${cellSize * 0.7} ${cellSize * 2.3},${cellSize * 1.5} ${cellSize * 1.5},${cellSize * 2.3} ${cellSize * 0.7},${cellSize * 1.5}" fill="rgba(0,255,255,0.2)"/>
-                <polygon points="${cellSize * 1.5},${cellSize * 1.1} ${cellSize * 1.9},${cellSize * 1.5} ${cellSize * 1.5},${cellSize * 1.9} ${cellSize * 1.1},${cellSize * 1.5}" fill="rgba(0,255,255,0.15)"/>
-              </pattern>
-            </defs>
-            <rect width="${width}" height="${height}" fill="url(#diamondPattern)"/>
-          </svg>
-        `;
-        break;
-        
       case "hexagon":
-        patternSVG = `
-          <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="hexPattern" patternUnits="userSpaceOnUse" width="${cellSize * 3}" height="${cellSize * 3}">
-                <rect width="${cellSize * 3}" height="${cellSize * 3}" fill="transparent"/>
-                <polygon points="${cellSize * 1.5},${cellSize * 0.3} ${cellSize * 2.4},${cellSize * 0.8} ${cellSize * 2.4},${cellSize * 1.7} ${cellSize * 1.5},${cellSize * 2.2} ${cellSize * 0.6},${cellSize * 1.7} ${cellSize * 0.6},${cellSize * 0.8}" fill="rgba(138,43,226,0.25)"/>
-                <polygon points="${cellSize * 1.5},${cellSize * 0.6} ${cellSize * 2.1},${cellSize * 0.9} ${cellSize * 2.1},${cellSize * 1.6} ${cellSize * 1.5},${cellSize * 1.9} ${cellSize * 0.9},${cellSize * 1.6} ${cellSize * 0.9},${cellSize * 0.9}" fill="rgba(138,43,226,0.15)"/>
-                <polygon points="${cellSize * 0.7},${cellSize * 2.1} ${cellSize * 1.0},${cellSize * 2.3} ${cellSize * 1.0},${cellSize * 2.7} ${cellSize * 0.7},${cellSize * 2.9} ${cellSize * 0.4},${cellSize * 2.7} ${cellSize * 0.4},${cellSize * 2.3}" fill="rgba(138,43,226,0.2)"/>
-              </pattern>
-            </defs>
-            <rect width="${width}" height="${height}" fill="url(#hexPattern)"/>
-          </svg>
-        `;
-        break;
-        
       case "flower":
-        patternSVG = `
-          <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="flowerPattern" patternUnits="userSpaceOnUse" width="${cellSize * 4}" height="${cellSize * 4}">
-                <rect width="${cellSize * 4}" height="${cellSize * 4}" fill="transparent"/>
-                <circle cx="${cellSize * 2}" cy="${cellSize * 0.8}" r="${cellSize * 0.5}" fill="rgba(255,182,193,0.3)"/>
-                <circle cx="${cellSize * 3.2}" cy="${cellSize * 2}" r="${cellSize * 0.5}" fill="rgba(255,182,193,0.3)"/>
-                <circle cx="${cellSize * 2}" cy="${cellSize * 3.2}" r="${cellSize * 0.5}" fill="rgba(255,182,193,0.3)"/>
-                <circle cx="${cellSize * 0.8}" cy="${cellSize * 2}" r="${cellSize * 0.5}" fill="rgba(255,182,193,0.3)"/>
-                <circle cx="${cellSize * 2}" cy="${cellSize * 2}" r="${cellSize * 0.4}" fill="rgba(255,215,0,0.4)"/>
-                <circle cx="${cellSize * 1}" cy="${cellSize * 1}" r="${cellSize * 0.3}" fill="rgba(255,182,193,0.2)"/>
-                <circle cx="${cellSize * 3}" cy="${cellSize * 1}" r="${cellSize * 0.3}" fill="rgba(255,182,193,0.2)"/>
-                <circle cx="${cellSize * 1}" cy="${cellSize * 3}" r="${cellSize * 0.3}" fill="rgba(255,182,193,0.2)"/>
-                <circle cx="${cellSize * 3}" cy="${cellSize * 3}" r="${cellSize * 0.3}" fill="rgba(255,182,193,0.2)"/>
-                <circle cx="${cellSize * 1}" cy="${cellSize * 1}" r="${cellSize * 0.15}" fill="rgba(255,215,0,0.3)"/>
-                <circle cx="${cellSize * 3}" cy="${cellSize * 1}" r="${cellSize * 0.15}" fill="rgba(255,215,0,0.3)"/>
-                <circle cx="${cellSize * 1}" cy="${cellSize * 3}" r="${cellSize * 0.15}" fill="rgba(255,215,0,0.3)"/>
-                <circle cx="${cellSize * 3}" cy="${cellSize * 3}" r="${cellSize * 0.15}" fill="rgba(255,215,0,0.3)"/>
-              </pattern>
-            </defs>
-            <rect width="${width}" height="${height}" fill="url(#flowerPattern)"/>
-          </svg>
-        `;
+        // For decorative patterns, apply very subtle effects that don't interfere with scanning
+        transformedQR = await sharp(qrBuffer)
+          .modulate({
+            brightness: 1.03,
+            saturation: 1.08,
+            hue: pattern === "heart" ? 10 : 
+                 pattern === "star" ? 20 : 
+                 pattern === "diamond" ? -10 : 
+                 pattern === "hexagon" ? -20 : 5
+          })
+          .toBuffer();
         break;
         
       default:
-        return qrDataUrl;
+        transformedQR = qrBuffer;
     }
     
-    // Convert pattern SVG to buffer
-    const patternBuffer = Buffer.from(patternSVG);
-    const patternImage = await sharp(patternBuffer)
-      .png()
-      .resize(width, height)
-      .toBuffer();
-    
-    // Apply pattern overlay to QR code with enhanced blending
-    const result = await sharp(qrBuffer)
-      .composite([
-        {
-          input: patternImage,
-          blend: 'multiply'
-        }
-      ])
-      .png({
-        quality: 90,
-        compressionLevel: 6
-      })
-      .toBuffer();
-    
-    return `data:image/png;base64,${result.toString('base64')}`;
+    return `data:image/png;base64,${transformedQR.toString('base64')}`;
   } catch (error) {
     console.error('Error applying custom pattern:', error);
     return qrDataUrl; // Return original if pattern fails

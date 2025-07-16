@@ -254,13 +254,13 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="standard">◼️ Estándar</SelectItem>
-                      <SelectItem value="dots">⚫ Puntos</SelectItem>
-                      <SelectItem value="rounded">🔵 Redondeado</SelectItem>
-                      <SelectItem value="heart">❤️ Corazón</SelectItem>
-                      <SelectItem value="star">⭐ Estrella</SelectItem>
-                      <SelectItem value="diamond">💎 Diamante</SelectItem>
-                      <SelectItem value="hexagon">⬡ Hexágono</SelectItem>
-                      <SelectItem value="flower">🌸 Flor</SelectItem>
+                      <SelectItem value="dots">⚫ Puntos (Mejora de brillo)</SelectItem>
+                      <SelectItem value="rounded">🔵 Redondeado (Mejora de saturación)</SelectItem>
+                      <SelectItem value="heart">❤️ Corazón (Tono cálido)</SelectItem>
+                      <SelectItem value="star">⭐ Estrella (Tono dorado)</SelectItem>
+                      <SelectItem value="diamond">💎 Diamante (Tono frío)</SelectItem>
+                      <SelectItem value="hexagon">⬡ Hexágono (Tono púrpura)</SelectItem>
+                      <SelectItem value="flower">🌸 Flor (Tono suave)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

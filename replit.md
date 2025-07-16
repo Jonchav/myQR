@@ -15,8 +15,9 @@ Preferred communication style: Simple, everyday language.
 - **Priorización de Colores**: Movida sección de colores y patrones como primer parámetro de personalización, justo después de la vista previa del QR
 - **Corrección de Colores**: Solucionado problema donde colores personalizados no se aplicaban correctamente debido a sobrescritura automática de colores de marca
 - **Experiencia de Usuario Mejorada**: Reorganizado orden de secciones para flujo más intuitivo: Colores → Plantillas → Tamaños → Texto
-- **Patrones QR Mejorados**: Rediseñados patrones con colores específicos y mejor definición: puntos blancos suaves, redondeado con transparencia, corazones rosa, estrellas doradas, diamantes cian, hexágonos púrpura, y flores multicolor
-- **Optimización de Patrones**: Implementado blend multiply para mejor integración visual y tamaños de celda más precisos para cada patrón
+- **Patrones QR Corregidos**: Solucionado problema de escaneabilidad removiendo overlays que interferían con lectura QR
+- **Patrones Seguros**: Implementados patrones basados en modulación de brillo/saturación que mantienen funcionalidad de escaneo: puntos (mejora brillo), redondeado (mejora saturación), corazón (tono cálido), estrella (tono dorado), diamante (tono frío), hexágono (tono púrpura), flor (tono suave)
+- **Prioridad de Funcionalidad**: Priorizando escaneabilidad del QR sobre decoración visual para garantizar funcionalidad
 - **Control de Margen**: Implementado control deslizante para ajustar margen del QR (50-300px) con actualización en tiempo real
 - **Dimensiones Redes Sociales**: Agregadas opciones específicas para Instagram, Facebook, Twitter, LinkedIn, YouTube y TikTok con píxeles exactos
 - **Plantillas Rápidas**: Sección compacta con temas predefinidos (Moderno, Vibrante, Elegante, Natural, Tecnológico, Minimalista) de aplicación instantánea
