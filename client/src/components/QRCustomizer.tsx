@@ -468,16 +468,17 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="minimal">🎨 Minimalista</SelectItem>
-                    <SelectItem value="gradient">🌈 Degradado</SelectItem>
-                    <SelectItem value="neon">💫 Neón</SelectItem>
-                    <SelectItem value="waves">🌊 Ondas</SelectItem>
+                    <SelectItem value="minimalist">🎨 Minimalista</SelectItem>
+                    <SelectItem value="modern_gradient">🌈 Degradado</SelectItem>
+                    <SelectItem value="neon_waves">💫 Neón</SelectItem>
+                    <SelectItem value="organic_flow">🌊 Ondas</SelectItem>
                     <SelectItem value="geometric">🔷 Geométrico</SelectItem>
                     <SelectItem value="corporate">💼 Corporativo</SelectItem>
-                    <SelectItem value="retro">🕹️ Retro</SelectItem>
-                    <SelectItem value="nature">🌿 Natural</SelectItem>
-                    <SelectItem value="tech">⚡ Tecnológico</SelectItem>
-                    <SelectItem value="luxury">✨ Lujo</SelectItem>
+                    <SelectItem value="creative_burst">🕹️ Retro</SelectItem>
+                    <SelectItem value="abstract_art">🌿 Natural</SelectItem>
+                    <SelectItem value="elegant_lines">⚡ Tecnológico</SelectItem>
+                    <SelectItem value="vibrant_blocks">✨ Lujo</SelectItem>
+                    <SelectItem value="scan_me_default">🎯 SCAN ME</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

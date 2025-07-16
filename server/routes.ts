@@ -943,7 +943,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Generate QR code with advanced options
   app.post("/api/qr/generate", async (req, res) => {
     try {
+      console.log('Received QR generation request:', JSON.stringify(req.body, null, 2));
       const validatedData = qrGenerationSchema.parse(req.body);
+      console.log('Validated data:', JSON.stringify(validatedData, null, 2));
       const userId = req.user ? (req.user as any).claims?.sub : undefined;
       
       // Store QR code record first to get the ID
@@ -977,9 +979,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       if (error instanceof z.ZodError) {
+        console.error("Validation error:", error.errors);
         res.status(400).json({
           success: false,
-          error: error.errors[0].message
+          error: `Invalid enum value: ${error.errors[0].message}`
         });
       } else {
         console.error("QR generation error:", error);
