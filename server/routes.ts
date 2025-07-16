@@ -97,14 +97,14 @@ const qrGenerationSchema = z.object({
   margin: z.number().min(50).max(300).default(150),
 });
 
-// Function to get QR code size in pixels - Professional quality
+// Function to get QR code size in pixels - Ultra-high quality
 function getQRSize(size: string): number {
   switch (size) {
-    case "small": return 800;    // 4x resolution
-    case "medium": return 1200;  // 4x resolution
-    case "large": return 1600;   // 4x resolution
-    case "xlarge": return 2000;  // 4x resolution
-    default: return 1200;
+    case "small": return 1200;   // 6x resolution para máxima nitidez
+    case "medium": return 1600;  // 6x resolution para máxima nitidez
+    case "large": return 2000;   // 6x resolution para máxima nitidez
+    case "xlarge": return 2400;  // 6x resolution para máxima nitidez
+    default: return 1600;
   }
 }
 
@@ -524,8 +524,8 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
       background = generateCardBackground(cardStyle, width, height);
     }
     
-    // Calculate QR code size and position - perfectamente centrado
-    const qrSize = Math.min(width, height) * 0.35; // Tamaño más conservador para evitar overflow
+    // Calculate QR code size and position - perfectamente centrado (aumentado 20%)
+    const qrSize = Math.min(width, height) * 0.42; // Aumentado de 0.35 a 0.42 (20% más grande)
     const qrX = Math.round((width - qrSize) / 2); // Center horizontally con redondeo
     const qrY = Math.round((height - qrSize) / 2); // Center vertically con redondeo
     
@@ -567,13 +567,18 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
       imageCache.set(cacheKey, backgroundImage);
     }
     
-    // Redimensionar QR al tamaño correcto para el canvas
+    // Redimensionar QR al tamaño correcto para el canvas con máxima calidad
     const qrResized = await sharp(qrBuffer)
-      .resize(qrSize, qrSize, { 
+      .resize(Math.round(qrSize), Math.round(qrSize), { 
         fit: 'fill',
-        kernel: sharp.kernel.nearest // Mantener bordes nítidos del QR
+        kernel: sharp.kernel.lanczos3, // Mejor calidad para redimensionamiento
+        withoutEnlargement: false // Permitir agrandamiento para mejor calidad
       })
-      .png({ quality: 100 })
+      .png({ 
+        quality: 100,
+        compressionLevel: 0, // Sin compresión para máxima nitidez
+        progressive: false
+      })
       .toBuffer();
     
     // Obtener dimensiones reales del QR redimensionado

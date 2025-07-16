@@ -11,6 +11,9 @@ Preferred communication style: Simple, everyday language.
 ## Recent Changes
 
 ### January 2025
+- **Mejora de Calidad QR**: Aumentado tamaño del QR un 20% (de 35% a 42% del canvas) con resolución ultra-alta (6x) y kernel lanczos3 para eliminación completa del efecto borroso
+- **Dimensiones Adaptativas**: QR se redimensiona automáticamente al tamaño exacto del canvas con centrado matemático perfecto
+- **Resolución Profesional**: Aumentada resolución base del QR (medium: 1600px, large: 2000px) con compresión cero para máxima nitidez
 - **Botón Universal Aplicar Cambios**: Implementado sistema de control manual para personalización con botón "Aplicar cambios" que reemplaza regeneración automática
 - **Optimización de Imágenes Personalizadas**: Aumentado límite a 15MB con procesamiento JPEG optimizado, cache inteligente y mejoras de velocidad del 70%
 - **Separación de Capas**: Imágenes de fondo completamente independientes de colores QR, eliminando interferencias visuales
