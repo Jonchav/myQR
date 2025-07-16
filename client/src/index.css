@@ -205,6 +205,20 @@
   .bg-accent-lime {
     background-color: hsl(90, 100%, 60%);
   }
+  
+  /* Style catalog horizontal scroll */
+  .style-catalog-scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .style-catalog-scroll::-webkit-scrollbar {
+    display: none;
+  }
 
   .gradient-card {
     background: linear-gradient(135deg, hsl(158, 25%, 10%) 0%, hsl(158, 25%, 18%) 100%);

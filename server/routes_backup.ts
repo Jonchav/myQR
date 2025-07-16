@@ -773,6 +773,81 @@ function applyColorsToSVG(svgContent: string, style: string): string {
   return coloredSvg;
 }
 
+// Function to generate creative SVG with styled elements
+async function generateCreativeSVG(baseSvg: string, style: string, options: any): Promise<string> {
+  try {
+  // Define color schemes for each style based on the examples
+  const colorSchemes = {
+    classic: {
+      colors: ['#000000'],
+      cornerColors: ['#000000']
+    },
+    multicolor_blocks: {
+      colors: ['#FF4757', '#5352ED', '#2ED573', '#FFA726', '#26C6DA', '#E74C3C', '#8E44AD', '#3498DB', '#F39C12', '#E67E22'],
+      cornerColors: ['#FF4757', '#5352ED', '#2ED573']
+    },
+    rainbow_gradient: {
+      colors: ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF', '#4B0082', '#9400D3', '#FF1493', '#00CED1', '#32CD32'],
+      cornerColors: ['#FF0000', '#00FF00', '#0000FF']
+    },
+    neon_cyber: {
+      colors: ['#00FFFF', '#FF00FF', '#00FF00', '#FFFF00', '#FF0080', '#8000FF', '#0080FF', '#80FF00', '#FF8000', '#FF0040'],
+      cornerColors: ['#00FFFF', '#FF00FF', '#00FF00']
+    },
+    forest_nature: {
+      colors: ['#228B22', '#32CD32', '#90EE90', '#006400', '#8FBC8F', '#9ACD32', '#ADFF2F', '#7CFC00', '#00FF7F', '#66CDAA'],
+      cornerColors: ['#228B22', '#32CD32', '#006400']
+    },
+    ocean_waves: {
+      colors: ['#0077BE', '#0099CC', '#00BFFF', '#1E90FF', '#4169E1', '#6495ED', '#87CEEB', '#87CEFA', '#ADD8E6', '#B0E0E6'],
+      cornerColors: ['#0077BE', '#0099CC', '#00BFFF']
+    },
+    sunset_fire: {
+      colors: ['#FF4500', '#FF6347', '#FF7F50', '#FFA500', '#FFB347', '#FFCCCB', '#FFD700', '#FFA07A', '#FF8C00', '#FF1493'],
+      cornerColors: ['#FF4500', '#FF6347', '#FFA500']
+    },
+    purple_galaxy: {
+      colors: ['#8A2BE2', '#9370DB', '#9400D3', '#8B008B', '#800080', '#DA70D6', '#DDA0DD', '#EE82EE', '#BA55D3', '#C71585'],
+      cornerColors: ['#8A2BE2', '#9370DB', '#9400D3']
+    },
+    mint_fresh: {
+      colors: ['#00FA9A', '#40E0D0', '#48D1CC', '#20B2AA', '#5F9EA0', '#66CDAA', '#7FFFD4', '#AFEEEE', '#E0FFFF', '#F0FFFF'],
+      cornerColors: ['#00FA9A', '#40E0D0', '#48D1CC']
+    },
+    golden_luxury: {
+      colors: ['#FFD700', '#FFA500', '#FF8C00', '#DAA520', '#B8860B', '#F0E68C', '#EEE8AA', '#F5DEB3', '#DEB887', '#CD853F'],
+      cornerColors: ['#FFD700', '#FFA500', '#FF8C00']
+    },
+    cherry_blossom: {
+      colors: ['#FFB6C1', '#FFC0CB', '#FFCCCB', '#FFE4E1', '#FFEFD5', '#FFF0F5', '#FFFAFA', '#F8F8FF', '#E6E6FA', '#D8BFD8'],
+      cornerColors: ['#FFB6C1', '#FFC0CB', '#FFCCCB']
+    },
+    electric_blue: {
+      colors: ['#0000FF', '#0080FF', '#00BFFF', '#1E90FF', '#4169E1', '#6495ED', '#4682B4', '#5F9EA0', '#87CEEB', '#87CEFA'],
+      cornerColors: ['#0000FF', '#0080FF', '#00BFFF']
+    },
+    autumn_leaves: {
+      colors: ['#8B4513', '#A0522D', '#CD853F', '#D2691E', '#DEB887', '#F4A460', '#BC8F8F', '#F5DEB3', '#FFE4B5', '#FFEFD5'],
+      cornerColors: ['#8B4513', '#A0522D', '#CD853F']
+    },
+    monochrome_red: {
+      colors: ['#DC143C', '#B22222', '#FF0000', '#FF6347', '#FF4500', '#FF1493', '#C71585', '#8B0000', '#A52A2A', '#800000'],
+      cornerColors: ['#DC143C', '#B22222', '#FF0000']
+    },
+    pastel_dream: {
+      colors: ['#FFB3BA', '#BAFFC9', '#BAE1FF', '#FFFFBA', '#FFDFBA', '#E0BBE4', '#957DAD', '#D291BC', '#FEC8D8', '#FFDFD3'],
+      cornerColors: ['#FFB3BA', '#BAFFC9', '#BAE1FF']
+    }
+  };
+
+  const scheme = colorSchemes[style as keyof typeof colorSchemes] || colorSchemes.classic;
+  
+  // Clean the SVG content and apply creative coloring
+  const coloredSvg = applyCreativeColorsToSVG(baseSvg, scheme.colors, scheme.cornerColors);
+  
+  return coloredSvg;
+}
+
 // Helper function to apply creative colors to SVG paths
 function applyCreativeColorsToSVG(svgContent: string, colors: string[], cornerColors: string[]): string {
   let colorIndex = 0;

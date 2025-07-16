@@ -185,7 +185,7 @@ export function StyleCatalog({ onStyleSelect, selectedStyle, isGenerating }: Sty
 
       {/* Carrete horizontal */}
       <div className="relative">
-        <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
+        <div className="flex gap-3 overflow-x-auto pb-4 style-catalog-scroll">
           {creativeStyles.map(style => (
             <div
               key={style.id}
