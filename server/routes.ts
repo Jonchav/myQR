@@ -690,9 +690,13 @@ async function applyCreativeStyle(qrDataUrl: string, style: string, options: any
       return qrDataUrl;
     }
     
+    // Use the original URL/data, not the internal scan URL
+    const originalContent = options.url || options.data;
+    console.log('QR Content:', originalContent);
+    
     // Generate QR code with creative styling using qr-svg at higher resolution
     const qrSvg = QR({
-      content: options.data || options.url,
+      content: originalContent,
       width: 800,
       height: 800,
       color: '#000000',
@@ -1359,11 +1363,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create tracking URL that will redirect to the actual URL
       const trackingUrl = `${req.protocol}://${req.get('host')}/api/scan/${qrRecord.id}`;
       
-      // Generate QR code with the tracking URL instead of the original URL
+      // Generate QR code with the ORIGINAL URL so it's functional
       const qrDataUrl = await generateAdvancedQRCode({
         ...validatedData,
-        url: trackingUrl,
-        data: trackingUrl
+        url: validatedData.url,
+        data: validatedData.url
       });
 
       // Update the QR record with the generated QR code

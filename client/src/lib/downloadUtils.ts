@@ -32,10 +32,7 @@ export const downloadQR = {
   // PNG download
   png: async (qrDataUrl: string, filename: string = 'qr-code') => {
     try {
-      const response = await fetch(`/api/qr/download/png?qrDataUrl=${encodeURIComponent(qrDataUrl)}&filename=${filename}`);
-      if (!response.ok) throw new Error('Download failed');
-      
-      const blob = await response.blob();
+      const blob = dataUrlToBlob(qrDataUrl);
       saveAs(blob, `${filename}.png`);
     } catch (error) {
       console.error('Error downloading PNG:', error);
@@ -46,11 +43,33 @@ export const downloadQR = {
   // JPG download
   jpg: async (qrDataUrl: string, filename: string = 'qr-code') => {
     try {
-      const response = await fetch(`/api/qr/download/jpg?qrDataUrl=${encodeURIComponent(qrDataUrl)}&filename=${filename}`);
-      if (!response.ok) throw new Error('Download failed');
+      // Convert PNG to JPG by drawing on canvas
+      const img = new Image();
+      img.src = qrDataUrl;
       
-      const blob = await response.blob();
-      saveAs(blob, `${filename}.jpg`);
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+      });
+      
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d')!;
+      canvas.width = img.width;
+      canvas.height = img.height;
+      
+      // Fill with white background
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw image
+      ctx.drawImage(img, 0, 0);
+      
+      // Convert to blob
+      canvas.toBlob((blob) => {
+        if (blob) {
+          saveAs(blob, `${filename}.jpg`);
+        }
+      }, 'image/jpeg', 0.9);
     } catch (error) {
       console.error('Error downloading JPG:', error);
       throw error;
