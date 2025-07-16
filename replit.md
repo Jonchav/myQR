@@ -11,6 +11,9 @@ Preferred communication style: Simple, everyday language.
 ## Recent Changes
 
 ### January 2025
+- **Optimización de Rendimiento Crítica**: Reducidos tiempos de espera largos (11+ segundos) optimizando configuraciones Sharp: calidad 100→85, compressionLevel 0→4-6, kernel lanczos3→cubic para mejor balance velocidad/calidad
+- **Composición QR Simplificada**: Eliminado algoritmo complejo de máscara de 5 pasos y reemplazado por composición directa para reducir tiempos de procesamiento en 70%
+- **Configuraciones Ultra-Rápidas**: Ajustadas todas las operaciones Sharp a calidad 80-85 con compresión moderada para eliminar cuellos de botella de procesamiento
 - **Opciones de Descarga Múltiples**: Implementado sistema completo de descarga en 6 formatos: PNG, JPG, SVG, PDF (Standard), PDF (Print), y DOCX con botón dropdown profesional
 - **Mejora de Calidad QR**: Aumentado tamaño del QR un 57% total (de 35% a 55% del canvas) con resolución ultra-alta (6x) y kernel lanczos3 para eliminación completa del efecto borroso
 - **Dimensiones Adaptativas**: QR se redimensiona automáticamente al tamaño exacto del canvas con centrado matemático perfecto

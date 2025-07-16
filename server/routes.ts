@@ -495,9 +495,9 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
               kernel: sharp.kernel.cubic // Mejor balance velocidad/calidad
             })
             .png({ 
-              quality: 95, // PNG para mantener colores exactos
+              quality: 80, // Calidad optimizada para velocidad
               progressive: false,
-              compressionLevel: 6 // Balance entre calidad y tamaño
+              compressionLevel: 4 // Menor compresión para mayor velocidad
             })
             .toBuffer();
           
@@ -555,8 +555,8 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
       const backgroundBuffer = Buffer.from(cardBackgroundSVG);
       backgroundImage = await sharp(backgroundBuffer)
         .png({
-          quality: 50, // Más bajo para mayor velocidad
-          compressionLevel: 0, // Sin compresión para máxima velocidad
+          quality: 70, // Balance entre velocidad y calidad
+          compressionLevel: 4, // Compresión moderada
           progressive: false,
           force: true
         })
@@ -567,16 +567,16 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
       imageCache.set(cacheKey, backgroundImage);
     }
     
-    // Redimensionar QR al tamaño correcto para el canvas con máxima calidad
+    // Redimensionar QR al tamaño correcto para el canvas con velocidad optimizada
     const qrResized = await sharp(qrBuffer)
       .resize(Math.round(qrSize), Math.round(qrSize), { 
         fit: 'fill',
-        kernel: sharp.kernel.lanczos3, // Mejor calidad para redimensionamiento
+        kernel: sharp.kernel.cubic, // Balance entre velocidad y calidad
         withoutEnlargement: false // Permitir agrandamiento para mejor calidad
       })
       .png({ 
-        quality: 100,
-        compressionLevel: 0, // Sin compresión para máxima nitidez
+        quality: 90,
+        compressionLevel: 4, // Compresión moderada
         progressive: false
       })
       .toBuffer();
@@ -612,8 +612,8 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
           }
         ])
         .png({
-          quality: 95, // Máxima calidad para imágenes personalizadas
-          compressionLevel: 6,
+          quality: 85, // Calidad optimizada para velocidad
+          compressionLevel: 4,
           progressive: false,
           force: true
         })
@@ -629,8 +629,8 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
           }
         ])
         .png({
-          quality: 85,
-          compressionLevel: 1,
+          quality: 80,
+          compressionLevel: 4,
           progressive: false,
           force: true
         })
@@ -820,8 +820,8 @@ async function addLogoToQR(qrDataUrl: string, logoType: string, qrSize: number, 
         }
       ])
       .png({
-        quality: 100,
-        compressionLevel: 0,
+        quality: 85,
+        compressionLevel: 6,
         progressive: false,
         force: true
       })
@@ -848,84 +848,53 @@ async function compositeQRWithBackground(qrDataUrl: string, backgroundImageDataU
     const bgBuffer = Buffer.from(bgBase64, 'base64');
     
     console.log('Processing background image...');
-    // Process the background image to fit QR size with high quality
+    // Process the background image to fit QR size with optimized speed
     const processedBackground = await sharp(bgBuffer)
       .resize(size, size, { 
         fit: 'cover',
-        kernel: sharp.kernel.lanczos3
+        kernel: sharp.kernel.cubic
       })
       .png({
-        quality: 100,
-        compressionLevel: 0,
+        quality: 85,
+        compressionLevel: 6,
         progressive: false,
         force: true
       })
       .toBuffer();
     
     console.log('Processing QR code...');
-    // Get the QR code resized to match - ensure proper padding with high quality
+    // Get the QR code resized to match - ensure proper padding with optimized speed
     const qrImage = await sharp(qrBuffer)
       .resize(size, size, { 
         fit: 'contain',
         background: { r: 255, g: 255, b: 255, alpha: 1 },
-        kernel: sharp.kernel.lanczos3
+        kernel: sharp.kernel.cubic
       })
       .png({
-        quality: 100,
-        compressionLevel: 0,
+        quality: 85,
+        compressionLevel: 6,
         progressive: false,
         force: true
       })
       .toBuffer();
     
-    console.log('Creating improved composition...');
-    // NEW APPROACH: Use the QR as a stencil to cut out areas from background
+    console.log('Creating optimized composition...');
+    // OPTIMIZED APPROACH: Direct composition for better performance
     
-    // Step 1: Create a grayscale version of QR for thresholding
-    const qrGrayscale = await sharp(qrImage)
-      .grayscale()
-      .png()
-      .toBuffer();
-    
-    // Step 2: Create mask where black QR areas are transparent, white areas are opaque
-    const alphaMask = await sharp(qrGrayscale)
-      .threshold(128)  // Binary threshold: <128 = black (QR data), >=128 = white (QR background)
-      .png()
-      .toBuffer();
-    
-    // Step 3: Apply the mask to the background image
-    // This will make the background transparent where QR should be white
-    const maskedBackground = await sharp(processedBackground)
+    // Simple composition - background + QR directly
+    const compositeBuffer = await sharp(processedBackground)
       .composite([
         {
-          input: alphaMask,
-          blend: 'dest-out' // Remove background where mask is white
-        }
-      ])
-      .png()
-      .toBuffer();
-    
-    // Step 4: Create white areas for QR background
-    const whiteBase = await sharp({
-      create: {
-        width: size,
-        height: size,
-        channels: 4,
-        background: { r: 255, g: 255, b: 255, alpha: 1 }
-      }
-    })
-    .png()
-    .toBuffer();
-    
-    // Step 5: Final composition - white base + masked background
-    const compositeBuffer = await sharp(whiteBase)
-      .composite([
-        {
-          input: maskedBackground,
+          input: qrImage,
           blend: 'over'
         }
       ])
-      .png()
+      .png({
+        quality: 85,
+        compressionLevel: 4,
+        progressive: false,
+        force: true
+      })
       .toBuffer();
     
     // Convert to data URL
