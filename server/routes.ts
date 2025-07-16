@@ -1289,98 +1289,194 @@ async function applyMultiColorEffect(qrBuffer: Buffer, style: string): Promise<B
   }
 }
 
-// Efectos con gradientes y mezclas de colores vibrantes
+// Efectos con gradientes aplicados directamente a las celdas del QR
 async function applyRainbowGradientEffect(qrBuffer: Buffer): Promise<Buffer> {
-  // Crear un canvas SVG con gradiente arcoíris
-  const svgOverlay = `
-    <svg width="1200" height="1200" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="rainbow" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:#FF0080;stop-opacity:1" />
-          <stop offset="25%" style="stop-color:#FF4080;stop-opacity:1" />
-          <stop offset="50%" style="stop-color:#FF8080;stop-opacity:1" />
-          <stop offset="75%" style="stop-color:#FF40FF;stop-opacity:1" />
-          <stop offset="100%" style="stop-color:#8040FF;stop-opacity:1" />
-        </linearGradient>
-      </defs>
-      <rect width="100%" height="100%" fill="url(#rainbow)" opacity="0.8"/>
-    </svg>
-  `;
-  
-  return await sharp(qrBuffer)
+  // Procesar imagen para aplicar gradientes a píxeles individuales
+  const { data, info } = await sharp(qrBuffer)
     .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
-    .composite([{ input: Buffer.from(svgOverlay), blend: 'multiply' }])
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  
+  const { width, height, channels } = info;
+  const pixelData = new Uint8Array(data);
+  
+  // Aplicar gradiente arcoíris a cada píxel negro
+  for (let i = 0; i < pixelData.length; i += channels) {
+    const r = pixelData[i];
+    const g = pixelData[i + 1];
+    const b = pixelData[i + 2];
+    
+    // Detectar píxeles negros/oscuros (QR cells)
+    if (r < 128 && g < 128 && b < 128) {
+      const x = Math.floor((i / channels) % width);
+      const y = Math.floor((i / channels) / width);
+      
+      // Calcular gradiente basado en posición
+      const gradientPos = (x + y) / (width + height);
+      
+      if (gradientPos < 0.2) {
+        // Rosa vibrante
+        pixelData[i] = 255; pixelData[i + 1] = 0; pixelData[i + 2] = 128;
+      } else if (gradientPos < 0.4) {
+        // Rosa-púrpura
+        pixelData[i] = 255; pixelData[i + 1] = 64; pixelData[i + 2] = 128;
+      } else if (gradientPos < 0.6) {
+        // Púrpura
+        pixelData[i] = 255; pixelData[i + 1] = 128; pixelData[i + 2] = 128;
+      } else if (gradientPos < 0.8) {
+        // Púrpura-violeta
+        pixelData[i] = 255; pixelData[i + 1] = 64; pixelData[i + 2] = 255;
+      } else {
+        // Violeta
+        pixelData[i] = 128; pixelData[i + 1] = 64; pixelData[i + 2] = 255;
+      }
+    }
+  }
+  
+  return await sharp(pixelData, { raw: { width, height, channels } })
     .png({ quality: 85, compressionLevel: 4 })
     .toBuffer();
 }
 
 async function applyNeonGradientEffect(qrBuffer: Buffer): Promise<Buffer> {
-  // Gradiente neón cyan-verde-azul
-  const svgOverlay = `
-    <svg width="1200" height="1200" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <radialGradient id="neon" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" style="stop-color:#00FFFF;stop-opacity:1" />
-          <stop offset="33%" style="stop-color:#00FFAA;stop-opacity:1" />
-          <stop offset="66%" style="stop-color:#00FF80;stop-opacity:1" />
-          <stop offset="100%" style="stop-color:#40E0D0;stop-opacity:1" />
-        </radialGradient>
-      </defs>
-      <rect width="100%" height="100%" fill="url(#neon)" opacity="0.8"/>
-    </svg>
-  `;
-  
-  return await sharp(qrBuffer)
+  const { data, info } = await sharp(qrBuffer)
     .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
-    .composite([{ input: Buffer.from(svgOverlay), blend: 'multiply' }])
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  
+  const { width, height, channels } = info;
+  const pixelData = new Uint8Array(data);
+  
+  // Aplicar gradiente neón cyan-verde-azul a cada píxel negro
+  for (let i = 0; i < pixelData.length; i += channels) {
+    const r = pixelData[i];
+    const g = pixelData[i + 1];
+    const b = pixelData[i + 2];
+    
+    if (r < 128 && g < 128 && b < 128) {
+      const x = Math.floor((i / channels) % width);
+      const y = Math.floor((i / channels) / width);
+      
+      // Gradiente radial desde el centro
+      const centerX = width / 2;
+      const centerY = height / 2;
+      const distance = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
+      const maxDistance = Math.sqrt(centerX ** 2 + centerY ** 2);
+      const gradientPos = distance / maxDistance;
+      
+      if (gradientPos < 0.25) {
+        // Cyan brillante
+        pixelData[i] = 0; pixelData[i + 1] = 255; pixelData[i + 2] = 255;
+      } else if (gradientPos < 0.5) {
+        // Cyan-verde
+        pixelData[i] = 0; pixelData[i + 1] = 255; pixelData[i + 2] = 170;
+      } else if (gradientPos < 0.75) {
+        // Verde neón
+        pixelData[i] = 0; pixelData[i + 1] = 255; pixelData[i + 2] = 128;
+      } else {
+        // Turquesa
+        pixelData[i] = 64; pixelData[i + 1] = 224; pixelData[i + 2] = 208;
+      }
+    }
+  }
+  
+  return await sharp(pixelData, { raw: { width, height, channels } })
     .png({ quality: 85, compressionLevel: 4 })
     .toBuffer();
 }
 
 async function applyElectricGradientEffect(qrBuffer: Buffer): Promise<Buffer> {
-  // Gradiente eléctrico azul-cian-púrpura
-  const svgOverlay = `
-    <svg width="1200" height="1200" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="electric" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:#007BFF;stop-opacity:1" />
-          <stop offset="25%" style="stop-color:#0099FF;stop-opacity:1" />
-          <stop offset="50%" style="stop-color:#00BFFF;stop-opacity:1" />
-          <stop offset="75%" style="stop-color:#1E90FF;stop-opacity:1" />
-          <stop offset="100%" style="stop-color:#4169E1;stop-opacity:1" />
-        </linearGradient>
-      </defs>
-      <rect width="100%" height="100%" fill="url(#electric)" opacity="0.8"/>
-    </svg>
-  `;
-  
-  return await sharp(qrBuffer)
+  const { data, info } = await sharp(qrBuffer)
     .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
-    .composite([{ input: Buffer.from(svgOverlay), blend: 'multiply' }])
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  
+  const { width, height, channels } = info;
+  const pixelData = new Uint8Array(data);
+  
+  // Aplicar gradiente eléctrico azul-cian-púrpura a cada píxel negro
+  for (let i = 0; i < pixelData.length; i += channels) {
+    const r = pixelData[i];
+    const g = pixelData[i + 1];
+    const b = pixelData[i + 2];
+    
+    if (r < 128 && g < 128 && b < 128) {
+      const x = Math.floor((i / channels) % width);
+      const y = Math.floor((i / channels) / width);
+      
+      // Gradiente diagonal eléctrico
+      const gradientPos = (x + y) / (width + height);
+      
+      if (gradientPos < 0.2) {
+        // Azul eléctrico
+        pixelData[i] = 0; pixelData[i + 1] = 123; pixelData[i + 2] = 255;
+      } else if (gradientPos < 0.4) {
+        // Azul cian
+        pixelData[i] = 0; pixelData[i + 1] = 153; pixelData[i + 2] = 255;
+      } else if (gradientPos < 0.6) {
+        // Cian brillante
+        pixelData[i] = 0; pixelData[i + 1] = 191; pixelData[i + 2] = 255;
+      } else if (gradientPos < 0.8) {
+        // Azul cielo
+        pixelData[i] = 30; pixelData[i + 1] = 144; pixelData[i + 2] = 255;
+      } else {
+        // Azul real
+        pixelData[i] = 65; pixelData[i + 1] = 105; pixelData[i + 2] = 225;
+      }
+    }
+  }
+  
+  return await sharp(pixelData, { raw: { width, height, channels } })
     .png({ quality: 85, compressionLevel: 4 })
     .toBuffer();
 }
 
 async function applyFireGradientEffect(qrBuffer: Buffer): Promise<Buffer> {
-  // Gradiente de fuego naranja-amarillo-rojo
-  const svgOverlay = `
-    <svg width="1200" height="1200" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <radialGradient id="fire" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" style="stop-color:#FFA500;stop-opacity:1" />
-          <stop offset="25%" style="stop-color:#FF8C00;stop-opacity:1" />
-          <stop offset="50%" style="stop-color:#FF7F50;stop-opacity:1" />
-          <stop offset="75%" style="stop-color:#FFD700;stop-opacity:1" />
-          <stop offset="100%" style="stop-color:#FF4500;stop-opacity:1" />
-        </radialGradient>
-      </defs>
-      <rect width="100%" height="100%" fill="url(#fire)" opacity="0.8"/>
-    </svg>
-  `;
-  
-  return await sharp(qrBuffer)
+  const { data, info } = await sharp(qrBuffer)
     .resize(1200, 1200, { kernel: 'lanczos3', fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
-    .composite([{ input: Buffer.from(svgOverlay), blend: 'multiply' }])
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  
+  const { width, height, channels } = info;
+  const pixelData = new Uint8Array(data);
+  
+  // Aplicar gradiente de fuego naranja-amarillo-rojo a cada píxel negro
+  for (let i = 0; i < pixelData.length; i += channels) {
+    const r = pixelData[i];
+    const g = pixelData[i + 1];
+    const b = pixelData[i + 2];
+    
+    if (r < 128 && g < 128 && b < 128) {
+      const x = Math.floor((i / channels) % width);
+      const y = Math.floor((i / channels) / width);
+      
+      // Gradiente radial desde abajo (efecto llama)
+      const centerX = width / 2;
+      const bottomY = height * 0.8; // Punto de origen en la parte inferior
+      const distance = Math.sqrt((x - centerX) ** 2 + (y - bottomY) ** 2);
+      const maxDistance = Math.sqrt(centerX ** 2 + bottomY ** 2);
+      const gradientPos = Math.min(distance / maxDistance, 1);
+      
+      if (gradientPos < 0.2) {
+        // Naranja brillante (base de la llama)
+        pixelData[i] = 255; pixelData[i + 1] = 165; pixelData[i + 2] = 0;
+      } else if (gradientPos < 0.4) {
+        // Naranja oscuro
+        pixelData[i] = 255; pixelData[i + 1] = 140; pixelData[i + 2] = 0;
+      } else if (gradientPos < 0.6) {
+        // Coral (mezcla naranja-rojo)
+        pixelData[i] = 255; pixelData[i + 1] = 127; pixelData[i + 2] = 80;
+      } else if (gradientPos < 0.8) {
+        // Dorado (punta de la llama)
+        pixelData[i] = 255; pixelData[i + 1] = 215; pixelData[i + 2] = 0;
+      } else {
+        // Rojo naranja (extremo)
+        pixelData[i] = 255; pixelData[i + 1] = 69; pixelData[i + 2] = 0;
+      }
+    }
+  }
+  
+  return await sharp(pixelData, { raw: { width, height, channels } })
     .png({ quality: 85, compressionLevel: 4 })
     .toBuffer();
 }

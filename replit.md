@@ -34,6 +34,9 @@ Preferred communication style: Simple, everyday language.
 - **Gradientes SVG Avanzados**: Creados 15 efectos únicos con gradientes lineales y radiales: arcoíris (rosa-púrpura-violeta), neón (cyan-verde-azul), eléctrico (azul-cian-púrpura), fuego (naranja-amarillo-rojo), etc.
 - **Técnica de Composición**: Los efectos multicolor se aplican usando overlays SVG con blend mode 'multiply' para preservar funcionalidad del QR
 - **Colores Base + Gradientes**: Cada estilo combina color base específico con gradiente personalizado para crear efectos visuales únicos y vibrantes
+- **Gradientes en Celdas QR**: Implementado procesamiento píxel por píxel que aplica gradientes directamente a las celdas negras del QR
+- **Algoritmos de Gradiente Avanzados**: Creados sistemas de gradientes lineales, radiales y diagonales que transforman cada píxel negro individualmente
+- **Efectos Visuales Únicos**: Cada estilo tiene patrones específicos: arcoíris (gradiente diagonal), neón (gradiente radial desde centro), eléctrico (gradiente diagonal), fuego (gradiente radial desde abajo)
 - **Carrete Horizontal de Estilos**: Rediseñado completamente el catálogo de estilos en formato carrete horizontal con 15 estilos únicos, vista previa automática con colores representativos, y scroll suave sin barra visible
 - **Vista Previa Automática**: Implementado sistema de generación automática de vistas previas para todos los estilos al cargar la página, con función de actualización manual e indicadores de carga
 - **Interfaz Intuitiva**: Creada selección visual con escala de hover, indicadores de selección con punto circular, y información contextual del estilo seleccionado
