@@ -95,7 +95,14 @@ const qrGenerationSchema = z.object({
   cardStyle: z.enum([
     "none", "modern_gradient", "neon_waves", "geometric", "organic_flow", "minimalist",
     "abstract_art", "corporate", "creative_burst", "elegant_lines", "vibrant_blocks",
-    "scan_me_default", "custom_image"
+    "scan_me_default", "custom_image",
+    // Todos los estilos del frontend CardStyleCatalog
+    "neon_glow", "sunset_card", "forest_green", "ocean_blue", "purple_haze",
+    "golden_hour", "coral_reef", "mint_chocolate", "volcanic_red", "arctic_ice",
+    "cyber_punk", "royal_purple", "emerald_city", "fire_storm", "midnight_blue",
+    "rose_gold", "electric_lime", "cosmic_purple", "tropical_sunset", "deep_space",
+    "rainbow_burst", "silver_chrome", "aqua_marine", "magenta_dream", "jade_forest",
+    "copper_bronze", "neon_night", "pearl_white", "galaxy_swirl"
   ]).default("modern_gradient"),
   customBackgroundImage: z.union([z.string(), z.null()]).optional(), // Base64 encoded image data
   textContent: z.string().optional(),
