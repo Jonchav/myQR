@@ -42,8 +42,8 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
         // Usar debounce para evitar múltiples llamadas
         clearTimeout(window.qrRegenerateTimeout);
         
-        // Para textContent, usar un delay más largo para evitar regenerar mientras se escribe
-        const delay = key === 'textContent' ? 800 : 150;
+        // Para textContent, usar un delay más corto para mayor responsividad
+        const delay = key === 'textContent' ? 300 : 150;
         
         window.qrRegenerateTimeout = setTimeout(() => {
           onGenerate();
@@ -417,7 +417,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
         )}
 
         <Tabs defaultValue="themes" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="themes" className="flex items-center gap-1">
               <Sparkles className="w-4 h-4" />
               <span className="hidden sm:inline">Temas</span>
@@ -433,10 +433,6 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
             <TabsTrigger value="design" className="flex items-center gap-1">
               <Layers className="w-4 h-4" />
               <span className="hidden sm:inline">Diseño</span>
-            </TabsTrigger>
-            <TabsTrigger value="advanced" className="flex items-center gap-1">
-              <Settings className="w-4 h-4" />
-              <span className="hidden sm:inline">Avanzado</span>
             </TabsTrigger>
           </TabsList>
 
@@ -967,52 +963,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
 
           </TabsContent>
 
-          <TabsContent value="advanced" className="space-y-6">
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label>Tipo de Datos</Label>
-                <Select value={settings.type} onValueChange={(value) => updateSetting("type", value)}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="url">URL</SelectItem>
-                    <SelectItem value="text">Texto</SelectItem>
-                    <SelectItem value="email">Email</SelectItem>
-                    <SelectItem value="phone">Teléfono</SelectItem>
-                    <SelectItem value="sms">SMS</SelectItem>
-                    <SelectItem value="wifi">WiFi</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
 
-              <div className="space-y-2">
-                <Label>Corrección de Errores</Label>
-                <Select value={settings.errorCorrection} onValueChange={(value) => applyRealTimeChange("errorCorrection", value)}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="L">Baja (L) - ~7%</SelectItem>
-                    <SelectItem value="M">Media (M) - ~15%</SelectItem>
-                    <SelectItem value="Q">Cuartil (Q) - ~25%</SelectItem>
-                    <SelectItem value="H">Alta (H) - ~30%</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="p-4 bg-blue-900/20 border border-blue-700 rounded-lg">
-                <div className="flex items-center gap-2 mb-2">
-                  <Type className="w-4 h-4 text-blue-400" />
-                  <h4 className="text-sm font-medium text-blue-400">Configuración de Texto</h4>
-                </div>
-                <p className="text-xs text-gray-400">
-                  ℹ️ Las opciones de texto están ahora en la pestaña "Tarjetas" para mejor organización. 
-                  Selecciona un formato de tarjeta para acceder a todas las opciones de texto personalizado.
-                </p>
-              </div>
-            </div>
-          </TabsContent>
         </Tabs>
 
         {/* Live Preview */}

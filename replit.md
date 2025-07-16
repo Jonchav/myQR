@@ -12,7 +12,7 @@ Preferred communication style: Simple, everyday language.
 
 ### January 2025
 - **Optimización de Tamaño de Imagen**: Reducido tamaño de vista previa de imagen QR a 280px manteniendo calidad 4K/2K de descarga
-- **Regeneración Automática Inteligente**: Implementada actualización automática con delays diferenciados (150ms para cambios visuales, 800ms para texto)
+- **Regeneración Automática Inteligente**: Implementada actualización automática con delays diferenciados (150ms para cambios visuales, 300ms para texto)
 - **Eliminación de Sección de Logos**: Removida completamente la sección de logos del apartado de diseño para interfaz más limpia
 - **Algoritmo de Texto Robusto**: Corregido completamente el problema de texto cortado con multiplicadores conservadores (0.8 base) y buffer del 60%
 - **Vista Previa Estilo Canva**: Implementada vista previa en tiempo real con simulación visual del texto final
@@ -33,6 +33,7 @@ Preferred communication style: Simple, everyday language.
 - **Mejoras de Contraste y UX**: Reorganizado panel de texto a tarjetas creativas con mejor contraste y sombras profesionales
 - **Estilos Predefinidos**: Agregados presets de texto profesionales (SCAN ME, Escaneáme, etc.) para uso rápido
 - **Fondo de Texto**: Implementado fondo semitransparente automático para mejor legibilidad en cualquier diseño de tarjeta
+- **Eliminación Módulo Avanzado**: Removido completamente el módulo "Avanzado" por inconsistencias en patrones/estilos QR, simplificando la interfaz a 4 pestañas principales
 
 ### December 2024
 - **Stripe Payment Integration**: Implemented complete payment system with subscription plans and 3-day free trial
