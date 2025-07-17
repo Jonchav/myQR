@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertQRCodeSchema, qrCodes, qrScans } from "@shared/schema";
-import { db } from "./db";
+import { db, pool } from "./db";
 import { sql, eq, and, gte, lte, desc } from "drizzle-orm";
 import { z } from "zod";
 import QRCode from "qrcode";
@@ -3478,9 +3478,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = (req.user as any).claims.sub;
       console.log('Clear history endpoint called for user:', userId);
-      
-      // Direct SQL approach using pool to bypass ORM issues
-      const { pool } = await import("./db");
       
       // Delete scans first
       const scansResult = await pool.query(`
