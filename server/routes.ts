@@ -106,7 +106,20 @@ const qrGenerationSchema = z.object({
     "toxic_green"
   ]).default("classic"),
   includeText: z.boolean().default(false),
+  textContent: z.string().optional(),
+  textPosition: z.enum(["top", "bottom", "left", "right", "center"]).default("bottom"),
+  textAlign: z.enum(["left", "center", "right"]).default("center"),
+  textSize: z.number().min(12).max(72).default(24),
+  textColor: z.string().default("#ffffff"),
+  textOpacity: z.number().min(0).max(100).default(100),
+  textFont: z.string().default("Arial"),
+  textShadow: z.boolean().default(false),
+  textBold: z.boolean().default(false),
+  textItalic: z.boolean().default(false),
   errorCorrection: z.enum(["L", "M", "Q", "H"]).default("M"),
+  margin: z.number().min(50).max(300).default(150),
+  qrPosition: z.enum(["center", "top", "bottom", "left", "right"]).default("center"),
+  customBackgroundImage: z.string().optional(), // Base64 encoded image data
   backgroundImage: z.string().optional(), // Data URL for background image
   cardTemplate: z.enum([
     "none", "instagram_post", "instagram_story", "facebook_post", "facebook_story",
