@@ -3087,16 +3087,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get QR code history (PRO-only)
+  // Get QR code history (PRO-only) with pagination
   app.get("/api/qr/history", isAuthenticated, async (req, res) => {
     try {
       const userId = (req.user as any).claims.sub;
-      const qrCodes = await storage.getQRCodes(userId);
+      const limit = parseInt(req.query.limit as string) || 50;
+      const offset = parseInt(req.query.offset as string) || 0;
+      
+      const qrCodes = await storage.getQRCodes(userId, limit, offset);
       res.json({
         success: true,
-        qrCodes
+        qrCodes,
+        pagination: {
+          limit,
+          offset,
+          hasMore: qrCodes.length === limit
+        }
       });
     } catch (error) {
+      console.error("Error getting QR history:", error);
       res.status(500).json({
         success: false,
         error: "Error al obtener el historial"

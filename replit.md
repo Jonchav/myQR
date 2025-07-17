@@ -137,6 +137,11 @@ Preferred communication style: Simple, everyday language.
 - **Botón Aplicar Cambios Reubicado**: Movido botón cerca de controles de posición con diseño centrado y estético
 - **Eliminación de Funciones Inútiles**: Removidas secciones "Patrón Decorativo" y "Estilo del QR" que no funcionaban correctamente y no aportaban valor
 - **Interfaz Simplificada**: Reducida interfaz a funciones esenciales manteniendo solo características que funcionan apropiadamente
+- **Funcionalidad Deshacer**: Implementado botón "Deshacer" junto al botón "Aplicar cambios" que permite revertir la última configuración aplicada
+- **Historial con Paginación**: Optimizado sistema de historial para manejar grandes volúmenes de datos (4332+ QR codes) con paginación de 20 elementos por página
+- **Navegación de Páginas**: Agregados controles de navegación "Anterior/Siguiente" con indicadores de progreso para explorar historial completo
+- **Optimización de Memoria**: Implementado sistema de consulta paginada para prevenir errores de memoria en historial extenso
+- **Mejoras de Rendimiento**: Reducidos tiempos de carga del historial eliminando carga masiva de datos innecesarios
 
 ### December 2024
 - **Stripe Payment Integration**: Implemented complete payment system with subscription plans and 3-day free trial

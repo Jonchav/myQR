@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { History, Trash2, RefreshCw, Eye, Edit, BarChart3, Save, X, Copy, RotateCcw, TrendingUp, PieChart, BarChart, FileSpreadsheet, Search } from "lucide-react";
+import { History, Trash2, RefreshCw, Eye, Edit, BarChart3, Save, X, Copy, RotateCcw, TrendingUp, PieChart, BarChart, FileSpreadsheet, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { DownloadButton } from "./DownloadButton";
 import { format, subDays, startOfWeek, startOfMonth, startOfYear, endOfWeek, endOfMonth, endOfYear } from "date-fns";
 import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart as RechartsPieChart, Pie, Cell } from "recharts";
@@ -28,12 +28,23 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
   const [statsRange, setStatsRange] = useState<"daily" | "weekly" | "monthly" | "yearly">("daily");
   const [chartType, setChartType] = useState<"bar" | "line" | "pie">("bar");
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(20);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["/api/qr/history"],
+    queryKey: ["/api/qr/history", { limit: itemsPerPage, offset: (currentPage - 1) * itemsPerPage }],
     retry: false,
+    staleTime: 5 * 60 * 1000, // 5 minutos
+    queryFn: async ({ queryKey }) => {
+      const params = queryKey[1] as { limit: number; offset: number };
+      const response = await fetch(`/api/qr/history?limit=${params.limit}&offset=${params.offset}`);
+      if (!response.ok) {
+        throw new Error('Error al cargar historial');
+      }
+      return response.json();
+    },
   });
 
   const deleteQRMutation = useMutation({
@@ -351,6 +362,7 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
   }
 
   const qrCodes = data?.qrCodes || [];
+  const pagination = data?.pagination;
   
   // Filter QR codes based on search query
   const filteredQRCodes = qrCodes.filter((qrCode: any) => {
@@ -1080,6 +1092,40 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+        
+        {/* Paginación */}
+        {pagination && (
+          <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-700">
+            <div className="text-sm text-gray-400">
+              Mostrando {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, ((currentPage - 1) * itemsPerPage) + qrCodes.length)} de {((currentPage - 1) * itemsPerPage) + qrCodes.length + (pagination.hasMore ? 1 : 0)}+ QR codes
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+                className="border-purple-500 text-purple-300 hover:text-purple-200 hover:bg-purple-800/30"
+              >
+                <ChevronLeft className="w-4 h-4 mr-1" />
+                Anterior
+              </Button>
+              <span className="text-sm text-gray-400 px-2">
+                Página {currentPage}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(prev => prev + 1)}
+                disabled={!pagination.hasMore}
+                className="border-purple-500 text-purple-300 hover:text-purple-200 hover:bg-purple-800/30"
+              >
+                Siguiente
+                <ChevronRight className="w-4 h-4 ml-1" />
+              </Button>
+            </div>
           </div>
         )}
       </CardContent>

@@ -4,7 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { Palette, Frame, Sparkles, Loader2, Home, ArrowLeft, X, Maximize2, Upload } from "lucide-react";
+import { Palette, Frame, Sparkles, Loader2, Home, ArrowLeft, X, Maximize2, Upload, Undo } from "lucide-react";
 import { StyleCatalog } from "./StyleCatalog";
 import { CardStyleCatalog } from "./CardStyleCatalog";
 
@@ -19,6 +19,9 @@ interface QRCustomizerProps {
 
 export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onBackToHome, qrCode }: QRCustomizerProps) {
   const { toast } = useToast();
+  
+  // Estado para almacenar configuraciones anteriores para deshacer
+  const [previousSettings, setPreviousSettings] = useState<any>(null);
   
   // Función para manejar la carga de imágenes
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -73,6 +76,9 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
 
   // Función para aplicar cambios en tiempo real
   const applyRealTimeChange = (key: string, value: any) => {
+    // Guardar configuración anterior para deshacer
+    setPreviousSettings({ ...settings });
+    
     const newSettings = { ...settings, [key]: value };
     console.log(`Aplicando cambio: ${key} = ${value}`);
     console.log("Configuración anterior:", settings);
@@ -80,6 +86,18 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
     onChange(newSettings);
     
     // No regenerar automáticamente - solo actualizar configuración
+  };
+
+  // Función para deshacer cambios
+  const handleUndo = () => {
+    if (previousSettings) {
+      onChange(previousSettings);
+      setPreviousSettings(null);
+      toast({
+        title: "Cambios deshechos",
+        description: "Se han restaurado los ajustes anteriores",
+      });
+    }
   };
 
   return (
@@ -164,26 +182,38 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                 <div></div>
               </div>
               
-              {/* Botón Aplicar cambios centrado */}
-              <Button
-                onClick={onGenerate}
-                disabled={isGenerating}
-                className="w-[180px] bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium py-2 px-4 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105 text-sm"
-              >
-                {isGenerating ? (
-                  <>
-                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white mr-2"></div>
-                    Aplicando...
-                  </>
-                ) : (
-                  <>
-                    <svg className="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                    Aplicar cambios
-                  </>
-                )}
-              </Button>
+              {/* Botones Aplicar cambios y Deshacer */}
+              <div className="flex flex-col gap-2 items-center">
+                <Button
+                  onClick={onGenerate}
+                  disabled={isGenerating}
+                  className="w-[180px] bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium py-2 px-4 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105 text-sm"
+                >
+                  {isGenerating ? (
+                    <>
+                      <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white mr-2"></div>
+                      Aplicando...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                      Aplicar cambios
+                    </>
+                  )}
+                </Button>
+                
+                <Button
+                  onClick={handleUndo}
+                  disabled={!previousSettings || isGenerating}
+                  variant="outline"
+                  className="w-[180px] border-gray-300 hover:border-gray-400 text-gray-700 hover:text-gray-900 font-medium py-2 px-4 rounded-lg transition-all duration-200 text-sm"
+                >
+                  <Undo className="w-3 h-3 mr-2" />
+                  Deshacer
+                </Button>
+              </div>
             </div>
           )}
           
@@ -206,7 +236,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
           
           {/* Botón Aplicar cambios cuando no hay cardStyle - centrado */}
           {settings.cardStyle === "none" && (
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center gap-2">
               <Button
                 onClick={onGenerate}
                 disabled={isGenerating}
@@ -225,6 +255,16 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                     Aplicar cambios
                   </>
                 )}
+              </Button>
+              
+              <Button
+                onClick={handleUndo}
+                disabled={!previousSettings || isGenerating}
+                variant="outline"
+                className="w-[180px] border-gray-300 hover:border-gray-400 text-gray-700 hover:text-gray-900 font-medium py-2 px-4 rounded-lg transition-all duration-200 text-sm"
+              >
+                <Undo className="w-3 h-3 mr-2" />
+                Deshacer
               </Button>
             </div>
           )}
@@ -416,7 +456,6 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                       <SelectItem value="small">📱 Pequeño (800px)</SelectItem>
                       <SelectItem value="medium">💻 Mediano (1200px)</SelectItem>
                       <SelectItem value="large">🖥️ Grande (1600px)</SelectItem>
-                      <SelectItem value="xlarge">📺 Extra Grande (2000px)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
