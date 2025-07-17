@@ -180,6 +180,7 @@ Dashboard preference: Dashboard should only display graphs and metrics, not deta
 - **Corrección de Marca**: Actualizadas referencias de "QR Pro" a "myQR" en toda la aplicación para consistencia de marca
 - **Mejora de Accesibilidad**: Reemplazado "funciones PRO" por "funciones gratuitas" para reflejar el modelo completamente gratuito de la aplicación
 - **Eliminación de Selección de Tamaño de QR**: Removida la opción de seleccionar tamaño del QR (pequeño, mediano, grande) de la interfaz de personalización, manteniendo solo el formato de redes sociales
+- **Eliminación de Propaganda de Personalización**: Removida completamente la tarjeta promocional de "Personalización Avanzada" que aparecía después de generar códigos QR en la pantalla principal
 
 ### December 2024
 - **Stripe Payment Integration**: Implemented complete payment system with subscription plans and 3-day free trial

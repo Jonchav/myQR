@@ -414,37 +414,7 @@ export default function Home() {
                               </Button>
                             </div>
                             
-                            {/* Customization CTA */}
-                            <Card className="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 border-emerald-200 dark:border-emerald-700">
-                              <CardContent className="p-4">
-                                <div className="flex items-center justify-between">
-                                  <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-full flex items-center justify-center">
-                                      <Sparkles className="w-5 h-5 text-white" />
-                                    </div>
-                                    <div>
-                                      <h3 className="font-semibold text-sm text-emerald-700 dark:text-emerald-300">
-                                        Personalización Avanzada
-                                      </h3>
-                                      <p className="text-xs text-gray-600 dark:text-gray-400">
-                                        Colores, estilos, logos y más
-                                      </p>
-                                    </div>
-                                  </div>
-                                  <Badge className="bg-amber-400 text-amber-900 border-0">
-                                    Personalizar
-                                  </Badge>
-                                </div>
-                                <Button 
-                                  onClick={() => setActiveTab("customize")}
-                                  className="w-full mt-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white"
-                                  size="sm"
-                                >
-                                  <Sparkles className="w-4 h-4 mr-2" />
-                                  Personalizar
-                                </Button>
-                              </CardContent>
-                            </Card>
+
                           </div>
                         </div>
                       ) : (
