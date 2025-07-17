@@ -152,6 +152,9 @@ Preferred communication style: Simple, everyday language.
 - **Gráficos Interactivos**: Implementados gráficos de barras usando Recharts para visualizar los top 10 QR codes más escaneados
 - **Tabla de Rankings**: Lista detallada de QR codes ordenada por popularidad con información de URL, fecha de creación y número de scans
 - **Pestaña PRO Exclusiva**: Estadísticas disponibles solo para usuarios con suscripción PRO activa, con UI de promoción para usuarios gratuitos
+- **Fusión de Historial y Estadísticas**: Unificadas las pestañas "Historial PRO" y "Estadísticas PRO" en una sola pestaña llamada "Estadísticas PRO" con sistema de pestañas internas (Dashboard y Historial) para mejor organización
+- **Interfaz Simplificada**: Reducido número de pestañas principales de 4 a 3 (Generar, Personalizar PRO, Estadísticas PRO) para navegación más intuitiva
+- **Componente Unificado**: Creado StatsAndHistory que combina funcionalidad de estadísticas y historial en una sola interfaz con pestañas internas
 
 ### December 2024
 - **Stripe Payment Integration**: Implemented complete payment system with subscription plans and 3-day free trial

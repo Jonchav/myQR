@@ -14,9 +14,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Download, QrCode, Link, CheckCircle, AlertCircle, RefreshCw, Settings, User, LogOut, Moon, Sun, History, Palette, Sparkles, Shield, Crown, Clock, TrendingUp, Calendar, Eye } from "lucide-react";
 import { QRCustomizer } from "@/components/QRCustomizer";
-import { QRHistory } from "@/components/QRHistory";
 import { DownloadButton } from "@/components/DownloadButton";
-import StatsDashboard from "@/components/StatsDashboard";
+import StatsAndHistory from "@/components/StatsAndHistory";
 import { useTheme } from "@/components/ThemeProvider";
 
 export default function Home() {
@@ -295,7 +294,7 @@ export default function Home() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
+          <TabsList className="grid w-full grid-cols-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
             <TabsTrigger value="generate" className="flex items-center gap-2 text-gray-600 dark:text-gray-400 data-[state=active]:text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-600">
               <QrCode className="w-4 h-4" />
               Generar
@@ -303,10 +302,6 @@ export default function Home() {
             <TabsTrigger value="customize" className="flex items-center gap-2 text-gray-600 dark:text-gray-400 data-[state=active]:text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-600">
               <Palette className="w-4 h-4" />
               Personalizar PRO
-            </TabsTrigger>
-            <TabsTrigger value="history" className="flex items-center gap-2 text-gray-600 dark:text-gray-400 data-[state=active]:text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-600">
-              <History className="w-4 h-4" />
-              Historial PRO
             </TabsTrigger>
             <TabsTrigger value="stats" className="flex items-center gap-2 text-gray-600 dark:text-gray-400 data-[state=active]:text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-600">
               <TrendingUp className="w-4 h-4" />
@@ -599,100 +594,7 @@ export default function Home() {
             )}
           </TabsContent>
 
-          <TabsContent value="history" className="mt-8">
-            {!isAuthenticated || !isProActive ? (
-              <Card className="max-w-2xl mx-auto bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border-purple-200 dark:border-purple-700">
-                <CardHeader className="text-center">
-                  <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <History className="w-8 h-8 text-white" />
-                  </div>
-                  <CardTitle className="text-2xl text-purple-700 dark:text-purple-300">
-                    Historial PRO
-                  </CardTitle>
-                  <p className="text-gray-600 dark:text-gray-400 mt-2">
-                    Accede a tu historial de códigos QR, estadísticas detalladas y exportación a Excel
-                  </p>
-                </CardHeader>
-                <CardContent className="text-center space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-purple-200 dark:border-purple-700">
-                      <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <History className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                      </div>
-                      <h3 className="font-semibold text-sm text-gray-900 dark:text-white mb-1">
-                        Historial Completo
-                      </h3>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
-                        Accede a todos tus códigos QR generados con fechas y detalles
-                      </p>
-                    </div>
-                    
-                    <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-purple-200 dark:border-purple-700">
-                      <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <Sparkles className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                      </div>
-                      <h3 className="font-semibold text-sm text-gray-900 dark:text-white mb-1">
-                        Estadísticas Avanzadas
-                      </h3>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
-                        Análisis detallado de escaneos con gráficos y métricas
-                      </p>
-                    </div>
-                    
-                    <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-purple-200 dark:border-purple-700">
-                      <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <Download className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                      </div>
-                      <h3 className="font-semibold text-sm text-gray-900 dark:text-white mb-1">
-                        Exportación Excel
-                      </h3>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
-                        Exporta datos y estadísticas a archivos Excel profesionales
-                      </p>
-                    </div>
-                </div>
-                
-                <div className="space-y-4">
-                  {!isAuthenticated ? (
-                    <>
-                      <Button 
-                        className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
-                        asChild
-                      >
-                        <a href="/api/login">
-                          <User className="w-4 h-4 mr-2" />
-                          Iniciar Sesión para PRO
-                        </a>
-                      </Button>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        Inicia sesión para acceder a las funciones PRO
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <Button 
-                        className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
-                        asChild
-                      >
-                        <a href="/subscription">
-                          <Crown className="w-4 h-4 mr-2" />
-                          {trialAvailable ? "Probar 3 días gratis" : "Upgrade a PRO"}
-                        </a>
-                      </Button>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {trialAvailable ? "Prueba gratuita por 3 días, cancela cuando quieras" : "Desbloquea todas las funciones PRO"}
-                      </p>
-                    </>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-            ) : (
-              <div className="max-w-4xl mx-auto">
-                <QRHistory onEditQR={handleEditQR} />
-              </div>
-            )}
-          </TabsContent>
+
 
           <TabsContent value="stats" className="mt-8">
             {!isAuthenticated || !isProActive ? (
@@ -702,7 +604,7 @@ export default function Home() {
                     Estadísticas PRO
                   </CardTitle>
                   <p className="text-center text-purple-600 dark:text-purple-300">
-                    Accede a análisis detallados de tus códigos QR
+                    Accede a análisis detallados e historial completo de tus códigos QR
                   </p>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -721,6 +623,18 @@ export default function Home() {
                     
                     <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-purple-200 dark:border-purple-700">
                       <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <History className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                      </div>
+                      <h3 className="font-semibold text-sm text-gray-900 dark:text-white mb-1">
+                        Historial Completo
+                      </h3>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                        Accede a todos tus códigos QR generados con fechas y detalles
+                      </p>
+                    </div>
+                    
+                    <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-purple-200 dark:border-purple-700">
+                      <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-3">
                         <Calendar className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                       </div>
                       <h3 className="font-semibold text-sm text-gray-900 dark:text-white mb-1">
@@ -733,25 +647,13 @@ export default function Home() {
                     
                     <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-purple-200 dark:border-purple-700">
                       <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <Sparkles className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                        <Download className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                       </div>
                       <h3 className="font-semibold text-sm text-gray-900 dark:text-white mb-1">
-                        Gráficos Interactivos
+                        Exportación Excel
                       </h3>
                       <p className="text-xs text-gray-600 dark:text-gray-400">
-                        Visualiza datos con gráficos de barras y estadísticas
-                      </p>
-                    </div>
-                    
-                    <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-purple-200 dark:border-purple-700">
-                      <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <Eye className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                      </div>
-                      <h3 className="font-semibold text-sm text-gray-900 dark:text-white mb-1">
-                        Métricas Detalladas
-                      </h3>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
-                        Obtén insights profundos sobre el rendimiento
+                        Exporta datos y estadísticas a archivos Excel profesionales
                       </p>
                     </div>
                   </div>
@@ -792,9 +694,7 @@ export default function Home() {
                 </CardContent>
               </Card>
             ) : (
-              <div className="max-w-7xl mx-auto">
-                <StatsDashboard />
-              </div>
+              <StatsAndHistory onEditQR={handleEditQR} />
             )}
           </TabsContent>
         </Tabs>
