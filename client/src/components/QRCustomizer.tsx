@@ -74,6 +74,9 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
   // Función para aplicar cambios en tiempo real
   const applyRealTimeChange = (key: string, value: any) => {
     const newSettings = { ...settings, [key]: value };
+    console.log(`Aplicando cambio: ${key} = ${value}`);
+    console.log("Configuración anterior:", settings);
+    console.log("Nueva configuración:", newSettings);
     onChange(newSettings);
     
     // No regenerar automáticamente - solo actualizar configuración
@@ -419,11 +422,13 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                         variant={settings.textContent === "SCAN ME!" ? "default" : "outline"}
                         size="sm"
                         onClick={() => {
+                          console.log("Seleccionando SCAN ME!");
                           applyRealTimeChange("textContent", "SCAN ME!");
                           applyRealTimeChange("textFont", "Arial");
                           applyRealTimeChange("textBold", true);
                           applyRealTimeChange("textSize", 28);
                           applyRealTimeChange("textColor", "#ffffff");
+                          console.log("Configuración aplicada:", settings);
                         }}
                         className="h-12 text-sm font-bold"
                       >
