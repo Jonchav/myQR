@@ -117,10 +117,10 @@ export function StyleCatalog({ onStyleSelect, selectedStyle, isGenerating }: Sty
     setIsLoading(false);
   };
 
-  // Disabled automatic preview generation to prevent interference with user's QR generation
-  // useEffect(() => {
-  //   generateAllPreviews();
-  // }, []);
+  // Generate previews on component mount
+  useEffect(() => {
+    generateAllPreviews();
+  }, []);
 
   const handleManualUpdate = () => {
     generateAllPreviews();
