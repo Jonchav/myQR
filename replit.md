@@ -174,6 +174,11 @@ Dashboard preference: Dashboard should only display graphs and metrics, not deta
 - **Función de Limpieza Completa**: Mejorada función `clearUserHistory` para eliminar tanto QR codes como todos los scans relacionados
 - **Endpoint de Eliminación**: Configurado endpoint `/api/qr/history` DELETE con autenticación para limpieza completa de datos
 - **Esquema BD Geolocalización**: Añadido campo `country` a tabla `qr_scans` para almacenar código de país ISO de cada scan
+- **Eliminación Completa de Terminología Técnica**: Removidas todas las referencias a "profesional", "avanzado", "avanzadas", "PRO" y otros términos técnicos en favor de lenguaje más accesible
+- **Simplificación de Lenguaje**: Actualizado "Personalización Avanzada" a "Personalización", "Generador Profesional" a "Generador de Códigos QR", "Características Avanzadas" a "Características"
+- **Eliminación de Estadísticas Geográficas**: Removida completamente la sección de estadísticas geográficas que no funcionaba correctamente, incluyendo componente GeographicStats.tsx y endpoints relacionados
+- **Corrección de Marca**: Actualizadas referencias de "QR Pro" a "myQR" en toda la aplicación para consistencia de marca
+- **Mejora de Accesibilidad**: Reemplazado "funciones PRO" por "funciones gratuitas" para reflejar el modelo completamente gratuito de la aplicación
 
 ### December 2024
 - **Stripe Payment Integration**: Implemented complete payment system with subscription plans and 3-day free trial

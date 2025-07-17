@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { TrendingUp, Eye, RotateCcw, FileSpreadsheet } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import GeographicStats from "./GeographicStats";
+
 
 interface QRCodeStats {
   id: number;
@@ -48,14 +48,7 @@ export default function StatsDashboard() {
     },
   });
 
-  const { data: countryData, isLoading: isCountryLoading } = useQuery<{ success: boolean; data: Array<{ country: string; scanCount: number }> }>({
-    queryKey: ['/api/stats/countries'],
-    queryFn: async () => {
-      const response = await fetch('/api/stats/countries');
-      if (!response.ok) throw new Error('Failed to fetch country stats');
-      return response.json();
-    },
-  });
+
 
   const handleApplyFilters = () => {
     setAppliedFilters({
@@ -285,8 +278,35 @@ export default function StatsDashboard() {
         </Card>
       )}
 
-      {/* Geographic Stats */}
-      <GeographicStats data={countryData?.data || []} />
+      {/* QR Codes Rankings */}
+      {topQRCodes.length > 0 && (
+        <Card className="gradient-card elegant-border">
+          <CardHeader>
+            <CardTitle className="text-white">Ranking de QR Codes</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {topQRCodes.slice(0, 10).map((qr, index) => (
+                <div key={qr.id} className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                      {index + 1}
+                    </div>
+                    <div>
+                      <p className="text-white font-medium">{qr.title || `QR ${qr.id}`}</p>
+                      <p className="text-gray-400 text-sm">{qr.url.length > 50 ? qr.url.substring(0, 50) + "..." : qr.url}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-white font-bold">{qr.totalScans}</p>
+                    <p className="text-gray-400 text-sm">scans</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
     </div>
   );

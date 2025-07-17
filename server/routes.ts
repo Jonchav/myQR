@@ -3296,69 +3296,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get scan statistics by country
-  app.get("/api/stats/countries", isAuthenticated, async (req, res) => {
-    try {
-      const userId = (req.user as any).claims.sub;
-      
-      // Get country statistics for user's QR codes
-      const countryStats = await db
-        .select({
-          country: qrScans.country,
-          scanCount: sql<number>`COUNT(*)`
-        })
-        .from(qrScans)
-        .innerJoin(qrCodes, eq(qrScans.qrCodeId, qrCodes.id))
-        .where(and(
-          eq(qrCodes.userId, userId),
-          sql`${qrScans.country} IS NOT NULL`
-        ))
-        .groupBy(qrScans.country)
-        .orderBy(desc(sql<number>`COUNT(*)`));
-      
-      res.json({
-        success: true,
-        data: countryStats
-      });
-    } catch (error) {
-      console.error("Error getting country stats:", error);
-      res.status(500).json({ 
-        success: false, 
-        error: "Error al obtener estadísticas por país" 
-      });
-    }
-  });
 
-  // Get IP address statistics (real data only)
-  app.get('/api/stats/ips', isAuthenticated, async (req, res) => {
-    try {
-      const userId = (req.user as any).claims.sub;
-      
-      // Get real IP address data from database
-      const ipStats = await db.select({
-        ipAddress: qrScans.ipAddress,
-        country: qrScans.country,
-        scanCount: sql<number>`COUNT(*)`
-      })
-      .from(qrScans)
-      .innerJoin(qrCodes, eq(qrScans.qrCodeId, qrCodes.id))
-      .where(and(
-        eq(qrCodes.userId, userId),
-        sql`${qrScans.ipAddress} IS NOT NULL`
-      ))
-      .groupBy(qrScans.ipAddress, qrScans.country)
-      .orderBy(desc(sql<number>`COUNT(*)`))
-      .limit(10);
-
-      res.json({
-        success: true,
-        data: ipStats
-      });
-    } catch (error) {
-      console.error('Error fetching IP statistics:', error);
-      res.status(500).json({ success: false, error: 'Error al obtener estadísticas de IP' });
-    }
-  });
 
   // Public scan redirect endpoint - this is what QR codes should point to
   app.get("/api/scan/:id", async (req, res) => {
