@@ -139,6 +139,7 @@ const qrGenerationSchema = z.object({
   textBold: z.boolean().default(true),
   textItalic: z.boolean().default(false),
   margin: z.number().min(50).max(300).default(150),
+  qrPosition: z.enum(["center", "top", "bottom", "left", "right"]).default("center"),
 });
 
 // Function to get QR code size in pixels - Ultra-high quality
@@ -884,10 +885,37 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
       background = generateCardBackground(cardStyle, width, height);
     }
     
-    // Calculate QR code size and position - perfectamente centrado (aumentado 50% total)
+    // Calculate QR code size and position based on user preference
     const qrSize = Math.min(width, height) * 0.55; // Aumentado de 0.42 a 0.55 (30% adicional)
-    const qrX = Math.round((width - qrSize) / 2); // Center horizontally con redondeo
-    const qrY = Math.round((height - qrSize) / 2); // Center vertically con redondeo
+    const qrPosition = options.qrPosition || "center";
+    
+    let qrX: number;
+    let qrY: number;
+    
+    // Calculate position based on user selection
+    switch (qrPosition) {
+      case "top":
+        qrX = Math.round((width - qrSize) / 2);
+        qrY = Math.round(height * 0.15); // 15% from top
+        break;
+      case "bottom":
+        qrX = Math.round((width - qrSize) / 2);
+        qrY = Math.round(height * 0.85 - qrSize); // 15% from bottom
+        break;
+      case "left":
+        qrX = Math.round(width * 0.15); // 15% from left
+        qrY = Math.round((height - qrSize) / 2);
+        break;
+      case "right":
+        qrX = Math.round(width * 0.85 - qrSize); // 15% from right
+        qrY = Math.round((height - qrSize) / 2);
+        break;
+      case "center":
+      default:
+        qrX = Math.round((width - qrSize) / 2);
+        qrY = Math.round((height - qrSize) / 2);
+        break;
+    }
     
     // Create the card background SVG (sin recuadro blanco para imagen personalizada)
     const cardBackgroundSVG = `
@@ -947,11 +975,8 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
     const qrActualWidth = qrMetadata.width || qrSize;
     const qrActualHeight = qrMetadata.height || qrSize;
     
-    // Calcular posición de centrado perfecta
-    const perfectCenterX = Math.round((width - qrActualWidth) / 2);
-    const perfectCenterY = Math.round((height - qrActualHeight) / 2);
-    
-    console.log(`Centrado perfecto: Canvas ${width}x${height}, QR ${qrActualWidth}x${qrActualHeight}, Posición (${perfectCenterX}, ${perfectCenterY})`);
+    // Usar las coordenadas calculadas según la posición del usuario
+    console.log(`Posición QR: Canvas ${width}x${height}, QR ${qrActualWidth}x${qrActualHeight}, Posición (${qrX}, ${qrY}), Tipo: ${qrPosition}`);
 
     // Optimización específica para imágenes personalizadas con centrado perfecto
     let result;
@@ -968,8 +993,8 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
         .composite([
           {
             input: qrResized,
-            top: perfectCenterY,
-            left: perfectCenterX
+            top: qrY,
+            left: qrX
           }
         ])
         .png({
@@ -992,8 +1017,8 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
       .composite([
         {
           input: qrResized,
-          top: perfectCenterY,
-          left: perfectCenterX
+          top: qrY,
+          left: qrX
         }
       ])
       .png({
@@ -1009,8 +1034,8 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
         .composite([
           {
             input: qrResized,
-            top: perfectCenterY,
-            left: perfectCenterX
+            top: qrY,
+            left: qrX
           }
         ])
         .png({

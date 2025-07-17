@@ -61,6 +61,7 @@ export default function Home() {
     textItalic: false,
     margin: 150,
     customBackgroundImage: null,
+    qrPosition: "center",
   });
 
   // Update URL in settings when input changes
@@ -430,6 +431,73 @@ export default function Home() {
                               className="mx-auto border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-w-[280px] w-full h-auto"
                             />
                           </div>
+                          
+                          {/* QR Position Controls */}
+                          {qrSettings.cardStyle !== "none" && (
+                            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+                              <div className="flex items-center justify-between mb-3">
+                                <h3 className="text-sm font-medium text-gray-900 dark:text-white">Posición del QR</h3>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">
+                                  Actual: {qrSettings.qrPosition === "center" ? "Centro" : 
+                                          qrSettings.qrPosition === "top" ? "Arriba" : 
+                                          qrSettings.qrPosition === "bottom" ? "Abajo" : 
+                                          qrSettings.qrPosition === "left" ? "Izquierda" : "Derecha"}
+                                </div>
+                              </div>
+                              
+                              <div className="grid grid-cols-3 gap-2 max-w-[200px] mx-auto">
+                                {/* Top row */}
+                                <div></div>
+                                <Button
+                                  size="sm"
+                                  variant={qrSettings.qrPosition === "top" ? "default" : "outline"}
+                                  onClick={() => handleSettingsChange({ qrPosition: "top" })}
+                                  className="h-8 text-xs"
+                                >
+                                  ↑
+                                </Button>
+                                <div></div>
+                                
+                                {/* Middle row */}
+                                <Button
+                                  size="sm"
+                                  variant={qrSettings.qrPosition === "left" ? "default" : "outline"}
+                                  onClick={() => handleSettingsChange({ qrPosition: "left" })}
+                                  className="h-8 text-xs"
+                                >
+                                  ←
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant={qrSettings.qrPosition === "center" ? "default" : "outline"}
+                                  onClick={() => handleSettingsChange({ qrPosition: "center" })}
+                                  className="h-8 text-xs"
+                                >
+                                  •
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant={qrSettings.qrPosition === "right" ? "default" : "outline"}
+                                  onClick={() => handleSettingsChange({ qrPosition: "right" })}
+                                  className="h-8 text-xs"
+                                >
+                                  →
+                                </Button>
+                                
+                                {/* Bottom row */}
+                                <div></div>
+                                <Button
+                                  size="sm"
+                                  variant={qrSettings.qrPosition === "bottom" ? "default" : "outline"}
+                                  onClick={() => handleSettingsChange({ qrPosition: "bottom" })}
+                                  className="h-8 text-xs"
+                                >
+                                  ↓
+                                </Button>
+                                <div></div>
+                              </div>
+                            </div>
+                          )}
                           
                           <Alert className="bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-700">
                             <Link className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />

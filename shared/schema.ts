@@ -73,6 +73,7 @@ export const qrCodes = pgTable("qr_codes", {
   // Creative card options
   cardTemplate: varchar("card_template").default("none"), // none, instagram-post, instagram-story, etc.
   cardStyle: varchar("card_style").default("gradient1"), // gradient1, gradient2, neon, etc.
+  qrPosition: varchar("qr_position").default("center"), // center, top, bottom, left, right
   customBackgroundImage: text("custom_background_image"), // Base64 encoded image data
   margin: integer("margin").default(150), // Margin in pixels for QR positioning
   
@@ -145,6 +146,7 @@ export const insertQRCodeSchema = createInsertSchema(qrCodes).pick({
   textItalic: true,
   cardTemplate: true,
   cardStyle: true,
+  qrPosition: true,
   customBackgroundImage: true,
   errorCorrection: true,
   qrDataUrl: true,
@@ -209,6 +211,13 @@ export const insertQRCodeSchema = createInsertSchema(qrCodes).pick({
     "ice_blue",
     "toxic_green"
   ]).default("classic"),
+  qrPosition: z.enum([
+    "center",
+    "top",
+    "bottom",
+    "left",
+    "right"
+  ]).default("center"),
   cardStyle: z.enum([
     "none",
     "modern_gradient",
