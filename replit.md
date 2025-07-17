@@ -159,6 +159,10 @@ Dashboard preference: Dashboard should only display graphs and metrics, not deta
 - **Sistema de Tracking de Scans Corregido**: Solucionado problema crítico donde los QR codes no registraban scans correctamente - ahora todos los códigos QR usan URLs de tracking que redirigen a la URL original mientras registran cada scan automáticamente
 - **Endpoint de Tracking Funcional**: Implementado sistema robusto con endpoint `/api/scan/:id` que registra scans en base de datos y redirige al destino final
 - **Migración Automática**: Creada funcionalidad para actualizar QR codes existentes al sistema de tracking con endpoint `/api/qr/migrate-tracking`
+- **Geolocalización por País**: Agregado tracking automático de país basado en IP usando geoip-lite - cada scan registra automáticamente el país de origen
+- **Estadísticas Geográficas**: Implementado endpoint `/api/stats/countries` que proporciona estadísticas de scans agrupadas por país
+- **Mapa Mundial Interactivo**: Creado componente WorldMap que visualiza scans por país con mapa SVG simplificado, marcadores dimensionados por cantidad de scans, y lista de top países
+- **Esquema BD Geolocalización**: Añadido campo `country` a tabla `qr_scans` para almacenar código de país ISO de cada scan
 
 ### December 2024
 - **Stripe Payment Integration**: Implemented complete payment system with subscription plans and 3-day free trial

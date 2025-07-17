@@ -39,7 +39,7 @@ export interface IStorage {
   maintainQRLimit(userId: string, limit?: number): Promise<void>;
   
   // QR Code statistics operations
-  recordQRScan(qrCodeId: number, userAgent?: string, ipAddress?: string): Promise<void>;
+  recordQRScan(qrCodeId: number, userAgent?: string, ipAddress?: string, country?: string): Promise<void>;
   getQRScanStats(qrCodeId: number): Promise<{
     total: number;
     today: number;
@@ -248,11 +248,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   // QR Code statistics operations
-  async recordQRScan(qrCodeId: number, userAgent?: string, ipAddress?: string): Promise<void> {
+  async recordQRScan(qrCodeId: number, userAgent?: string, ipAddress?: string, country?: string): Promise<void> {
     await db.insert(qrScans).values({
       qrCodeId,
       userAgent,
       ipAddress,
+      country,
       scannedAt: new Date(),
     });
     

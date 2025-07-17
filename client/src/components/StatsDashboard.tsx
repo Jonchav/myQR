@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { TrendingUp, Eye, RotateCcw, FileSpreadsheet } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import WorldMap from "./WorldMap";
 
 interface QRCodeStats {
   id: number;
@@ -43,6 +44,15 @@ export default function StatsDashboard() {
       
       const response = await fetch(`/api/stats/dashboard?${params}`);
       if (!response.ok) throw new Error('Failed to fetch dashboard stats');
+      return response.json();
+    },
+  });
+
+  const { data: countryData, isLoading: isCountryLoading } = useQuery<{ success: boolean; data: Array<{ country: string; scanCount: number }> }>({
+    queryKey: ['/api/stats/countries'],
+    queryFn: async () => {
+      const response = await fetch('/api/stats/countries');
+      if (!response.ok) throw new Error('Failed to fetch country stats');
       return response.json();
     },
   });
@@ -275,6 +285,8 @@ export default function StatsDashboard() {
         </Card>
       )}
 
+      {/* World Map */}
+      <WorldMap data={countryData?.data || []} />
 
     </div>
   );

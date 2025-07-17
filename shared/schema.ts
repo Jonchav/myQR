@@ -83,6 +83,7 @@ export const qrScans = pgTable("qr_scans", {
   scannedAt: timestamp("scanned_at").defaultNow(),
   userAgent: text("user_agent"),
   ipAddress: varchar("ip_address", { length: 45 }),
+  country: varchar("country", { length: 100 }), // Country name or code
 });
 
 // User preferences

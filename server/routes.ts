@@ -11,6 +11,7 @@ import sharp from "sharp";
 import * as XLSX from "xlsx";
 import Stripe from "stripe";
 import { QR } from "qr-svg";
+import * as geoip from "geoip-lite";
 // Removido: import fetch from "node-fetch";
 
 // Configurar Sharp para máximo rendimiento
@@ -3301,6 +3302,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get scan statistics by country
+  app.get("/api/stats/countries", isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req.user as any).claims.sub;
+      
+      // Get country statistics for user's QR codes
+      const countryStats = await db
+        .select({
+          country: qrScans.country,
+          scanCount: sql<number>`COUNT(*)`
+        })
+        .from(qrScans)
+        .innerJoin(qrCodes, eq(qrScans.qrCodeId, qrCodes.id))
+        .where(and(
+          eq(qrCodes.userId, userId),
+          sql`${qrScans.country} IS NOT NULL`
+        ))
+        .groupBy(qrScans.country)
+        .orderBy(desc(sql<number>`COUNT(*)`));
+      
+      res.json({
+        success: true,
+        data: countryStats
+      });
+    } catch (error) {
+      console.error("Error getting country stats:", error);
+      res.status(500).json({ 
+        success: false, 
+        error: "Error al obtener estadísticas por país" 
+      });
+    }
+  });
+
   // Public scan redirect endpoint - this is what QR codes should point to
   app.get("/api/scan/:id", async (req, res) => {
     try {
@@ -3311,10 +3345,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).send("Código QR no encontrado");
       }
       
-      // Record the scan
+      // Record the scan with geolocation
       const userAgent = req.headers['user-agent'];
       const ipAddress = req.ip;
-      await storage.recordQRScan(id, userAgent, ipAddress);
+      
+      // Get country from IP address
+      let country = null;
+      try {
+        const geo = geoip.lookup(ipAddress);
+        country = geo?.country || null;
+      } catch (error) {
+        console.error("Error getting geolocation:", error);
+      }
+      
+      await storage.recordQRScan(id, userAgent, ipAddress, country);
       
       // Redirect to the actual URL
       res.redirect(qrCode.url || qrCode.data);
