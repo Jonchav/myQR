@@ -137,6 +137,9 @@ export default function Home() {
       new URL(urlToUse);
       setError(null);
       const settingsToUse = { ...qrSettings, url: urlToUse };
+      console.log("🔄 Generando QR con configuración:", settingsToUse);
+      console.log("🔄 includeText:", settingsToUse.includeText);
+      console.log("🔄 textContent:", settingsToUse.textContent);
       generateQRMutation.mutate(settingsToUse);
     } catch {
       setError("Por favor, ingresa una URL válida (debe comenzar con http:// o https://)");
