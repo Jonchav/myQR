@@ -44,21 +44,12 @@ export default function Home() {
     border: "none",
     logo: "none",
     type: "url",
-    includeText: false,
-    textContent: "",
+    // Text fields removed
     errorCorrection: "M",
     // Configuración por defecto para tarjeta PRO
     cardTemplate: "none",
     cardStyle: "modern_gradient",
-    textPosition: "bottom",
-    textAlign: "center",
-    textSize: 24,
-    textColor: "#ffffff",
-    textOpacity: 100,
-    textFont: "Arial",
-    textShadow: false,
-    textBold: true,
-    textItalic: false,
+    // Text configuration removed
     margin: 150,
     customBackgroundImage: null,
     qrPosition: "center",
@@ -74,8 +65,7 @@ export default function Home() {
     if (activeTab === "customize" && isProActive) {
       setQrSettings(prev => ({
         ...prev,
-        includeText: false,
-        textContent: "",
+        // Text fields removed
         cardTemplate: "none",
         cardStyle: "modern_gradient",
         backgroundColor: "#ffffff",
@@ -138,8 +128,7 @@ export default function Home() {
       setError(null);
       const settingsToUse = { ...qrSettings, url: urlToUse };
       console.log("🔄 Generando QR con configuración:", settingsToUse);
-      console.log("🔄 includeText:", settingsToUse.includeText);
-      console.log("🔄 textContent:", settingsToUse.textContent);
+      // Text logging removed
       generateQRMutation.mutate(settingsToUse);
     } catch {
       setError("Por favor, ingresa una URL válida (debe comenzar con http:// o https://)");
@@ -166,20 +155,11 @@ export default function Home() {
       border: "none",
       logo: "none",
       type: "url",
-      includeText: false,
-      textContent: "",
+      // Text fields removed
       errorCorrection: "M",
       cardTemplate: "none",
       cardStyle: "modern_gradient",
-      textPosition: "bottom",
-      textAlign: "center",
-      textSize: 24,
-      textColor: "#ffffff",
-      textOpacity: 100,
-      textFont: "Arial",
-      textShadow: false,
-      textBold: true,
-      textItalic: false,
+      // Text configuration removed
       margin: 150,
       customBackgroundImage: null, // Reset imagen personalizada
     });
@@ -213,8 +193,7 @@ export default function Home() {
       border: qrData.border || "none",
       logo: qrData.logo || "none",
       type: qrData.type || "url",
-      includeText: qrData.includeText || false,
-      textContent: qrData.textContent || "",
+      // Text fields removed
       errorCorrection: qrData.errorCorrection || "M",
       cardTemplate: qrData.cardTemplate || "none",
       cardStyle: qrData.cardStyle || "modern_gradient",

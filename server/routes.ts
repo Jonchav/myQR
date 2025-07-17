@@ -105,17 +105,7 @@ const qrGenerationSchema = z.object({
     "digital_purple", "chrome_yellow", "matrix_green", "fire_orange", "ice_blue",
     "toxic_green"
   ]).default("classic"),
-  includeText: z.boolean().default(false),
-  textContent: z.string().optional(),
-  textPosition: z.enum(["top", "bottom", "left", "right", "center"]).default("bottom"),
-  textAlign: z.enum(["left", "center", "right"]).default("center"),
-  textSize: z.number().min(12).max(72).default(24),
-  textColor: z.string().default("#ffffff"),
-  textOpacity: z.number().min(0).max(100).default(100),
-  textFont: z.string().default("Arial"),
-  textShadow: z.boolean().default(false),
-  textBold: z.boolean().default(false),
-  textItalic: z.boolean().default(false),
+  // Text fields removed
   errorCorrection: z.enum(["L", "M", "Q", "H"]).default("M"),
   margin: z.number().min(50).max(300).default(150),
   qrPosition: z.enum(["center", "top", "bottom", "left", "right"]).default("center"),
@@ -138,19 +128,6 @@ const qrGenerationSchema = z.object({
     "copper_bronze", "neon_night", "pearl_white", "galaxy_swirl"
   ]).default("modern_gradient"),
   customBackgroundImage: z.union([z.string(), z.null()]).optional(), // Base64 encoded image data
-  textContent: z.string().optional(),
-  textPosition: z.enum(["top", "center", "bottom"]).default("bottom"),
-  textAlign: z.enum(["left", "center", "right"]).default("center"),
-  textSize: z.number().min(12).max(48).default(24),
-  textColor: z.string().default("#ffffff"),
-  textOpacity: z.number().min(25).max(100).default(100),
-  textFont: z.enum([
-    "Arial", "Georgia", "Times", "Verdana", "Helvetica", "Comic Sans", 
-    "Impact", "Courier", "Trebuchet", "Palatino"
-  ]).default("Arial"),
-  textShadow: z.boolean().default(false),
-  textBold: z.boolean().default(true),
-  textItalic: z.boolean().default(false),
   margin: z.number().min(50).max(300).default(150),
   qrPosition: z.enum(["center", "top", "bottom", "left", "right"]).default("center"),
 });
@@ -824,126 +801,6 @@ function generateCardBackground(style: string, width: number, height: number): s
 
 
 // Function to generate creative card with QR code
-// Function to generate text integration around QR code
-function generateTextIntegration(options: any, width: number, height: number, qrX: number, qrY: number, qrSize: number): string {
-  const {
-    textContent,
-    textPosition,
-    textAlign,
-    textSize,
-    textColor,
-    textFont,
-    textBold,
-    textShadow
-  } = options;
-  
-  if (!textContent) return '';
-  
-  const fontSize = (textSize || 28) * 2; // Make text larger for better visibility
-  const fontFamily = textFont || 'Arial';
-  const fontWeight = textBold ? 'bold' : 'normal';
-  // Use the user-specified color, default to white for better visibility on gradient backgrounds
-  const color = textColor || '#ffffff';
-  
-  let textX: number;
-  let textY: number;
-  let textAnchor = 'middle';
-  
-  // Calculate text position based on QR position and user selection
-  switch (textPosition) {
-    case 'top':
-      textX = qrX + qrSize / 2;
-      textY = Math.max(qrY - fontSize * 2, fontSize * 2); // Above QR, ensure within bounds
-      textAnchor = 'middle';
-      break;
-    case 'bottom':
-      textX = qrX + qrSize / 2;
-      textY = qrY + qrSize + fontSize * 1.5; // Below QR with reasonable spacing
-      textAnchor = 'middle';
-      break;
-    case 'left':
-      textX = Math.max(qrX - fontSize * 2, fontSize * 2); // Left of QR, ensure within bounds
-      textY = qrY + qrSize / 2 + fontSize * 0.3;
-      textAnchor = 'end';
-      break;
-    case 'right':
-      textX = Math.min(qrX + qrSize + fontSize * 2, width - fontSize * 2); // Right of QR, ensure within bounds
-      textY = qrY + qrSize / 2 + fontSize * 0.3;
-      textAnchor = 'start';
-      break;
-    default:
-      textX = qrX + qrSize / 2;
-      textY = Math.min(qrY + qrSize + fontSize * 2, height - fontSize); // Default to bottom
-      textAnchor = 'middle';
-  }
-  
-  // Apply text alignment
-  switch (textAlign) {
-    case 'left':
-      textAnchor = 'start';
-      break;
-    case 'right':
-      textAnchor = 'end';
-      break;
-    case 'center':
-    default:
-      textAnchor = 'middle';
-  }
-  
-  // Create shadow filter if enabled
-  const shadowFilter = textShadow ? `
-    <defs>
-      <filter id="textShadow" x="-50%" y="-50%" width="200%" height="200%">
-        <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="rgba(0,0,0,0.7)"/>
-      </filter>
-    </defs>
-  ` : '';
-  
-  const shadowAttribute = textShadow ? 'filter="url(#textShadow)"' : '';
-  
-  console.log('Text positioning details:', {
-    textX, textY, textAnchor, fontSize, color,
-    canvasSize: { width, height },
-    qrPosition: { qrX, qrY, qrSize },
-    textPosition
-  });
-  
-  // Create text background for better visibility
-  const textWidth = textContent.length * fontSize * 0.5;
-  const textHeight = fontSize * 1.2;
-  
-  const textBackground = `
-    <rect 
-      x="${textX - textWidth / 2}" 
-      y="${textY - textHeight / 2}" 
-      width="${textWidth}" 
-      height="${textHeight}"
-      fill="rgba(0,0,0,0.7)"
-      stroke="rgba(255,255,255,0.5)"
-      stroke-width="1"
-      rx="6"
-      ry="6"
-    />
-  `;
-  
-  return `
-    ${shadowFilter}
-    ${textBackground}
-    <text 
-      x="${textX}" 
-      y="${textY}" 
-      font-family="${fontFamily}" 
-      font-size="${fontSize}" 
-      font-weight="${fontWeight}" 
-      fill="${color}" 
-      text-anchor="${textAnchor}" 
-      dominant-baseline="middle"
-      ${shadowAttribute}
-    >
-      ${textContent}
-    </text>
-  `;
-}
 
 async function generateCreativeCard(qrDataUrl: string, options: any): Promise<string> {
   try {
@@ -1051,19 +908,7 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
         break;
     }
     
-    // Generate text integration if enabled
-    let textSVG = '';
-    console.log('Text integration check:', {
-      includeText: options.includeText,
-      textContent: options.textContent,
-      textContentType: typeof options.textContent,
-      textContentLength: options.textContent?.length
-    });
-    
-    if (options.includeText && options.textContent && options.textContent.trim()) {
-      console.log('Generating text integration with:', options.textContent);
-      textSVG = generateTextIntegration(options, width, height, qrX, qrY, qrSize);
-    }
+    // Text integration removed
     
     // Create the card background SVG (sin recuadro blanco para imagen personalizada)
     const cardBackgroundSVG = `
@@ -1071,9 +916,6 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
         ${background}
         
         <!-- Rectángulo blanco eliminado para evitar marco innecesario -->
-        
-        <!-- Integrated text -->
-        ${textSVG}
       </svg>
     `;
     
@@ -3180,7 +3022,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/qr/generate", async (req, res) => {
     try {
       console.log('Received QR generation request:', JSON.stringify(req.body, null, 2));
-      console.log('Raw includeText:', req.body.includeText, 'Raw textContent:', req.body.textContent);
+      // Text logging removed
       
       // Remove null values before validation, but keep empty strings for textContent
       const cleanedBody = Object.fromEntries(
@@ -3196,7 +3038,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const validatedData = qrGenerationSchema.parse(cleanedBody);
       console.log('Validated data:', JSON.stringify(validatedData, null, 2));
-      console.log('Final includeText:', validatedData.includeText, 'Final textContent:', validatedData.textContent);
+      // Text logging removed
       const userId = req.user ? (req.user as any).claims?.sub : undefined;
       
       // Store QR code record first to get the ID
@@ -3529,8 +3371,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         gradient: existingQR.gradient,
         border: existingQR.border,
         logo: existingQR.logo,
-        includeText: existingQR.includeText,
-        textContent: existingQR.textContent,
+        // Text field removed
         errorCorrection: existingQR.errorCorrection
       });
       

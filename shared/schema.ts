@@ -58,17 +58,7 @@ export const qrCodes = pgTable("qr_codes", {
   creativeStyle: varchar("creative_style").default("classic"), // classic, colorful, rainbow, sunset, ocean
   
   // Advanced text options
-  includeText: boolean("include_text").default(false),
-  textContent: text("text_content"),
-  textPosition: varchar("text_position").default("bottom"), // top, bottom, left, right
-  textAlign: varchar("text_align").default("center"), // left, center, right
-  textSize: integer("text_size").default(24), // Font size in pixels
-  textColor: varchar("text_color").default("#000000"),
-  textOpacity: integer("text_opacity").default(100), // 0-100
-  textFont: varchar("text_font").default("Arial"), // Arial, Helvetica, Times, Georgia, Verdana, etc.
-  textShadow: boolean("text_shadow").default(false),
-  textBold: boolean("text_bold").default(false),
-  textItalic: boolean("text_italic").default(false),
+  // Text fields removed from schema
   
   // Creative card options
   cardTemplate: varchar("card_template").default("none"), // none, instagram-post, instagram-story, etc.
@@ -133,17 +123,7 @@ export const insertQRCodeSchema = createInsertSchema(qrCodes).pick({
   border: true,
   logo: true,
   creativeStyle: true,
-  includeText: true,
-  textContent: true,
-  textPosition: true,
-  textAlign: true,
-  textSize: true,
-  textColor: true,
-  textOpacity: true,
-  textFont: true,
-  textShadow: true,
-  textBold: true,
-  textItalic: true,
+  // Text fields removed from partial schema
   cardTemplate: true,
   cardStyle: true,
   qrPosition: true,
