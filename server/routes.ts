@@ -2737,7 +2737,10 @@ async function generateAdvancedQRCode(options: any): Promise<string> {
     const fgG = parseInt(foregroundColor.slice(3, 5), 16);
     const fgB = parseInt(foregroundColor.slice(5, 7), 16);
     
-    console.log('Foreground color RGB:', fgR, fgG, fgB);
+    // Check if foreground is white or very light - this causes issues with transparency
+    const isLightForeground = fgR > 240 && fgG > 240 && fgB > 240;
+    
+    console.log('Foreground color RGB:', fgR, fgG, fgB, 'isLight:', isLightForeground);
     
     // Get image info and raw data
     const { data, info } = await sharp(transparentQRBuffer)
@@ -2762,23 +2765,35 @@ async function generateAdvancedQRCode(options: any): Promise<string> {
       transparentData[rgbaIndex + 1] = g;
       transparentData[rgbaIndex + 2] = b;
       
-      // Check if pixel is close to the foreground color (QR code parts)
-      const isForegroundColor = Math.abs(r - fgR) < 30 && Math.abs(g - fgG) < 30 && Math.abs(b - fgB) < 30;
+      // For transparent background, we need to distinguish between foreground and background colors
+      // Background should be transparent, foreground should be opaque
       
-      // Set alpha channel - keep QR parts opaque, make white/light pixels transparent
-      if (isForegroundColor) {
-        transparentData[rgbaIndex + 3] = 255; // Opaque for QR code parts
-      } else if (r > 240 && g > 240 && b > 240) {
-        transparentData[rgbaIndex + 3] = 0; // Transparent for white background
-      } else {
-        // For other colors, check if they're closer to white or foreground
-        const distanceToWhite = Math.abs(r - 255) + Math.abs(g - 255) + Math.abs(b - 255);
-        const distanceToForeground = Math.abs(r - fgR) + Math.abs(g - fgG) + Math.abs(b - fgB);
-        
-        if (distanceToWhite < distanceToForeground) {
-          transparentData[rgbaIndex + 3] = 0; // More similar to white - transparent
+      // Check if pixel is white or very light (background)
+      const isWhiteBackground = r > 240 && g > 240 && b > 240;
+      
+      // Check if pixel is close to the foreground color (QR code parts)
+      const distanceToForeground = Math.abs(r - fgR) + Math.abs(g - fgG) + Math.abs(b - fgB);
+      const distanceToWhite = Math.abs(r - 255) + Math.abs(g - 255) + Math.abs(b - 255);
+      
+      // Special handling for light foreground colors
+      if (isLightForeground) {
+        // When foreground is light, be more strict about what's considered background
+        if (r > 250 && g > 250 && b > 250) {
+          transparentData[rgbaIndex + 3] = 0; // Very white pixels are background
         } else {
-          transparentData[rgbaIndex + 3] = 255; // More similar to foreground - opaque
+          transparentData[rgbaIndex + 3] = 255; // Everything else is foreground
+        }
+      } else {
+        // Normal handling for dark foreground colors
+        if (isWhiteBackground) {
+          transparentData[rgbaIndex + 3] = 0; // Transparent for white background
+        } else if (distanceToForeground < distanceToWhite && distanceToForeground < 100) {
+          transparentData[rgbaIndex + 3] = 255; // Opaque for QR code parts
+        } else if (distanceToWhite < 30) {
+          transparentData[rgbaIndex + 3] = 0; // Transparent for light colors
+        } else {
+          // For ambiguous colors, use a more generous threshold
+          transparentData[rgbaIndex + 3] = distanceToForeground < 120 ? 255 : 0;
         }
       }
     }
