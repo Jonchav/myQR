@@ -3180,6 +3180,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/qr/generate", async (req, res) => {
     try {
       console.log('Received QR generation request:', JSON.stringify(req.body, null, 2));
+      console.log('Raw includeText:', req.body.includeText, 'Raw textContent:', req.body.textContent);
+      
       // Remove null values before validation, but keep empty strings for textContent
       const cleanedBody = Object.fromEntries(
         Object.entries(req.body).filter(([key, value]) => {
@@ -3189,8 +3191,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return value !== null;
         })
       );
+      
+      console.log('Cleaned body:', JSON.stringify(cleanedBody, null, 2));
+      
       const validatedData = qrGenerationSchema.parse(cleanedBody);
       console.log('Validated data:', JSON.stringify(validatedData, null, 2));
+      console.log('Final includeText:', validatedData.includeText, 'Final textContent:', validatedData.textContent);
       const userId = req.user ? (req.user as any).claims?.sub : undefined;
       
       // Store QR code record first to get the ID
