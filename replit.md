@@ -165,6 +165,10 @@ Dashboard preference: Dashboard should only display graphs and metrics, not deta
 - **Componente GeographicStats**: Reemplazado WorldMap con gráficos de barras horizontales que muestran países y direcciones IP ordenados por número de scans (de mayor a menor)
 - **Navegación por Pestañas**: Implementado sistema de pestañas para alternar entre vista de países y direcciones IP con gráficos de barras coloridos
 - **Visualización de Datos**: Gráficos de barras horizontales con gradientes (azul-púrpura para países, naranja-rojo para IPs) y estadísticas resumidas con datos únicamente reales
+- **Números de Scans Visibles**: Agregado cantidad de scans sobre cada barra con sombra para mejor legibilidad
+- **Botón Eliminar Historial**: Implementado botón sutil con confirmación que elimina todo el historial de QR codes y scans del usuario
+- **Función de Limpieza Completa**: Mejorada función `clearUserHistory` para eliminar tanto QR codes como todos los scans relacionados
+- **Endpoint de Eliminación**: Configurado endpoint `/api/qr/history` DELETE con autenticación para limpieza completa de datos
 - **Esquema BD Geolocalización**: Añadido campo `country` a tabla `qr_scans` para almacenar código de país ISO de cada scan
 
 ### December 2024

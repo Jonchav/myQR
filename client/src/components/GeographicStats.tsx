@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Globe, BarChart3, MapPin } from "lucide-react";
-import { useQuery } from '@tanstack/react-query';
+import { Button } from "@/components/ui/button";
+import { Globe, BarChart3, MapPin, Trash2 } from "lucide-react";
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 
 interface CountryData {
   country: string;
@@ -20,6 +23,8 @@ interface GeographicStatsProps {
 
 const GeographicStats: React.FC<GeographicStatsProps> = ({ data }) => {
   const [activeTab, setActiveTab] = useState<'countries' | 'ips'>('countries');
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   // Get IP data
   const { data: ipData, isLoading: isIPLoading } = useQuery<{ success: boolean; data: IPData[] }>({
@@ -30,6 +35,32 @@ const GeographicStats: React.FC<GeographicStatsProps> = ({ data }) => {
       return response.json();
     },
   });
+
+  // Delete history function
+  const handleDeleteHistory = async () => {
+    if (window.confirm('¿Estás seguro de que quieres eliminar todo el historial de scans? Esta acción no se puede deshacer.')) {
+      try {
+        await apiRequest('DELETE', '/api/qr/history');
+        
+        // Invalidate all related queries
+        queryClient.invalidateQueries({ queryKey: ['/api/stats/countries'] });
+        queryClient.invalidateQueries({ queryKey: ['/api/stats/ips'] });
+        queryClient.invalidateQueries({ queryKey: ['/api/stats/dashboard'] });
+        queryClient.invalidateQueries({ queryKey: ['/api/qr/history'] });
+        
+        toast({
+          title: "Historial eliminado",
+          description: "Se ha eliminado todo el historial de scans correctamente.",
+        });
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "No se pudo eliminar el historial. Inténtalo de nuevo.",
+          variant: "destructive",
+        });
+      }
+    }
+  };
 
   // Get country names
   const countryNames: { [key: string]: string } = {
@@ -66,10 +97,21 @@ const GeographicStats: React.FC<GeographicStatsProps> = ({ data }) => {
   return (
     <Card className="gradient-card elegant-border">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-white">
-          <Globe className="w-5 h-5 text-blue-400" />
-          Estadísticas Geográficas
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2 text-white">
+            <Globe className="w-5 h-5 text-blue-400" />
+            Estadísticas Geográficas
+          </CardTitle>
+          <Button
+            onClick={handleDeleteHistory}
+            variant="outline"
+            size="sm"
+            className="bg-red-900/20 border-red-500/30 text-red-400 hover:bg-red-900/40 hover:text-red-300 transition-colors"
+          >
+            <Trash2 className="w-4 h-4 mr-2" />
+            Eliminar Historial
+          </Button>
+        </div>
         
         {/* Tab Navigation */}
         <div className="flex gap-2 mt-4">
@@ -119,7 +161,7 @@ const GeographicStats: React.FC<GeographicStatsProps> = ({ data }) => {
                         style={{ width: `${(item.scanCount / maxCountryScans) * 100}%` }}
                       />
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-xs font-medium text-white">
+                        <span className="text-xs font-medium text-white drop-shadow-lg">
                           {item.scanCount}
                         </span>
                       </div>
@@ -177,7 +219,7 @@ const GeographicStats: React.FC<GeographicStatsProps> = ({ data }) => {
                           style={{ width: `${(item.scanCount / maxIPScans) * 100}%` }}
                         />
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <span className="text-xs font-medium text-white">
+                          <span className="text-xs font-medium text-white drop-shadow-lg">
                             {item.scanCount}
                           </span>
                         </div>
