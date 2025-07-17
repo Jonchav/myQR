@@ -68,27 +68,6 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
     },
   });
 
-  const clearHistoryMutation = useMutation({
-    mutationFn: async () => {
-      const response = await apiRequest("DELETE", "/api/qr/history");
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/qr/history"] });
-      toast({
-        title: "Historial eliminado",
-        description: "Todo el historial ha sido eliminado exitosamente",
-      });
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "Error al eliminar el historial",
-        variant: "destructive",
-      });
-    },
-  });
-
   const regenerateQRMutation = useMutation({
     mutationFn: async (id: number) => {
       const response = await apiRequest("POST", `/api/qr/${id}/regenerate`);
@@ -413,18 +392,7 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                 Exportar Todos
               </Button>
             )}
-            {qrCodes.length > 0 && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => clearHistoryMutation.mutate()}
-                disabled={clearHistoryMutation.isPending}
-                className="border-red-500 text-red-300 hover:text-red-200 hover:bg-red-800/30"
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Limpiar
-              </Button>
-            )}
+
           </div>
         </div>
         
@@ -466,9 +434,7 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
           </div>
         ) : (
           <div className="space-y-4 max-h-96 overflow-y-auto">
-            {filteredQRCodes.map((qrCode: any) => {
-              console.log('QR Code data:', qrCode);
-              return (
+            {filteredQRCodes.map((qrCode: any) => (
               <div
                 key={qrCode.id}
                 className="flex items-center gap-4 p-4 border border-gray-700 rounded-lg hover:bg-gray-800 transition-colors"
@@ -1098,7 +1064,7 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                   </Button>
                 </div>
               </div>
-            )})}
+            ))}
           </div>
         )}
         
