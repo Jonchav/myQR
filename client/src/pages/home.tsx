@@ -12,10 +12,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Download, QrCode, Link, CheckCircle, AlertCircle, RefreshCw, Settings, User, LogOut, Moon, Sun, History, Palette, Sparkles, Shield, Crown, Clock } from "lucide-react";
+import { Loader2, Download, QrCode, Link, CheckCircle, AlertCircle, RefreshCw, Settings, User, LogOut, Moon, Sun, History, Palette, Sparkles, Shield, Crown, Clock, TrendingUp, Calendar, Eye } from "lucide-react";
 import { QRCustomizer } from "@/components/QRCustomizer";
 import { QRHistory } from "@/components/QRHistory";
 import { DownloadButton } from "@/components/DownloadButton";
+import StatsDashboard from "@/components/StatsDashboard";
 import { useTheme } from "@/components/ThemeProvider";
 
 export default function Home() {
@@ -294,7 +295,7 @@ export default function Home() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
+          <TabsList className="grid w-full grid-cols-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
             <TabsTrigger value="generate" className="flex items-center gap-2 text-gray-600 dark:text-gray-400 data-[state=active]:text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-600">
               <QrCode className="w-4 h-4" />
               Generar
@@ -306,6 +307,10 @@ export default function Home() {
             <TabsTrigger value="history" className="flex items-center gap-2 text-gray-600 dark:text-gray-400 data-[state=active]:text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-600">
               <History className="w-4 h-4" />
               Historial PRO
+            </TabsTrigger>
+            <TabsTrigger value="stats" className="flex items-center gap-2 text-gray-600 dark:text-gray-400 data-[state=active]:text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-600">
+              <TrendingUp className="w-4 h-4" />
+              Estadísticas PRO
             </TabsTrigger>
           </TabsList>
 
@@ -685,6 +690,110 @@ export default function Home() {
             ) : (
               <div className="max-w-4xl mx-auto">
                 <QRHistory onEditQR={handleEditQR} />
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="stats" className="mt-8">
+            {!isAuthenticated || !isProActive ? (
+              <Card className="border-purple-200 dark:border-purple-700 bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20">
+                <CardHeader>
+                  <CardTitle className="text-xl text-center text-purple-800 dark:text-purple-200">
+                    Estadísticas PRO
+                  </CardTitle>
+                  <p className="text-center text-purple-600 dark:text-purple-300">
+                    Accede a análisis detallados de tus códigos QR
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-purple-200 dark:border-purple-700">
+                      <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <TrendingUp className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                      </div>
+                      <h3 className="font-semibold text-sm text-gray-900 dark:text-white mb-1">
+                        QR Más Populares
+                      </h3>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                        Descubre qué códigos QR reciben más escaneos
+                      </p>
+                    </div>
+                    
+                    <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-purple-200 dark:border-purple-700">
+                      <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <Calendar className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                      </div>
+                      <h3 className="font-semibold text-sm text-gray-900 dark:text-white mb-1">
+                        Filtros por Fecha
+                      </h3>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                        Analiza el rendimiento por rangos de fechas específicos
+                      </p>
+                    </div>
+                    
+                    <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-purple-200 dark:border-purple-700">
+                      <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <Sparkles className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                      </div>
+                      <h3 className="font-semibold text-sm text-gray-900 dark:text-white mb-1">
+                        Gráficos Interactivos
+                      </h3>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                        Visualiza datos con gráficos de barras y estadísticas
+                      </p>
+                    </div>
+                    
+                    <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-purple-200 dark:border-purple-700">
+                      <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <Eye className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                      </div>
+                      <h3 className="font-semibold text-sm text-gray-900 dark:text-white mb-1">
+                        Métricas Detalladas
+                      </h3>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                        Obtén insights profundos sobre el rendimiento
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    {!isAuthenticated ? (
+                      <>
+                        <Button 
+                          className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
+                          asChild
+                        >
+                          <a href="/api/login">
+                            <User className="w-4 h-4 mr-2" />
+                            Iniciar Sesión para PRO
+                          </a>
+                        </Button>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          Inicia sesión para acceder a las estadísticas PRO
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <Button 
+                          className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
+                          asChild
+                        >
+                          <a href="/subscription">
+                            <Crown className="w-4 h-4 mr-2" />
+                            {trialAvailable ? "Probar 3 días gratis" : "Upgrade a PRO"}
+                          </a>
+                        </Button>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {trialAvailable ? "Prueba gratuita por 3 días, cancela cuando quieras" : "Desbloquea todas las funciones PRO"}
+                        </p>
+                      </>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="max-w-7xl mx-auto">
+                <StatsDashboard />
               </div>
             )}
           </TabsContent>

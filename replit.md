@@ -146,6 +146,12 @@ Preferred communication style: Simple, everyday language.
 - **Gestión Automática**: Sistema mantiene automáticamente los últimos 100 QR codes, eliminando los más antiguos cuando se excede el límite
 - **Indicadores de Límite**: Agregados badges y mensajes informativos mostrando progreso hacia el límite (ej: "95/100")
 - **Optimización de Base de Datos**: Prevención de acumulación excesiva de datos para mejor rendimiento general del sistema
+- **Dashboard de Estadísticas**: Implementado sistema completo de estadísticas con QR codes ordenados por número de scans (mayor a menor)
+- **Filtros por Fecha**: Agregada funcionalidad para filtrar estadísticas por rangos de fechas específicos con botones de aplicar y limpiar filtros
+- **Métricas Totales**: Mostrando estadísticas generales como total de QR codes y total de scans con iconos distintivos
+- **Gráficos Interactivos**: Implementados gráficos de barras usando Recharts para visualizar los top 10 QR codes más escaneados
+- **Tabla de Rankings**: Lista detallada de QR codes ordenada por popularidad con información de URL, fecha de creación y número de scans
+- **Pestaña PRO Exclusiva**: Estadísticas disponibles solo para usuarios con suscripción PRO activa, con UI de promoción para usuarios gratuitos
 
 ### December 2024
 - **Stripe Payment Integration**: Implemented complete payment system with subscription plans and 3-day free trial

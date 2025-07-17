@@ -1,9 +1,9 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertQRCodeSchema, qrCodes } from "@shared/schema";
+import { insertQRCodeSchema, qrCodes, qrScans } from "@shared/schema";
 import { db } from "./db";
-import { sql, eq } from "drizzle-orm";
+import { sql, eq, and, gte, lte } from "drizzle-orm";
 import { z } from "zod";
 import QRCode from "qrcode";
 import { setupAuth, isAuthenticated } from "./replitAuth";
@@ -3245,6 +3245,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
         success: false,
         error: "Error al registrar scan"
       });
+    }
+  });
+
+  // Get general statistics dashboard
+  app.get("/api/stats/dashboard", isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req.user as any).claims.sub;
+      const startDate = req.query.startDate as string;
+      const endDate = req.query.endDate as string;
+      
+      // Build date filter
+      let dateFilter = eq(qrCodes.userId, userId);
+      if (startDate && endDate) {
+        dateFilter = and(
+          eq(qrCodes.userId, userId),
+          gte(qrCodes.createdAt, new Date(startDate)),
+          lte(qrCodes.createdAt, new Date(endDate))
+        );
+      }
+      
+      // Get QR codes with their scan counts
+      const qrCodesWithStats = await db
+        .select({
+          id: qrCodes.id,
+          url: qrCodes.url,
+          title: qrCodes.title,
+          createdAt: qrCodes.createdAt,
+          totalScans: sql<number>`COALESCE(COUNT(${qrScans.id}), 0)`.as('totalScans')
+        })
+        .from(qrCodes)
+        .leftJoin(qrScans, eq(qrCodes.id, qrScans.qrCodeId))
+        .where(dateFilter)
+        .groupBy(qrCodes.id)
+        .orderBy(sql`totalScans DESC`)
+        .limit(50);
+      
+      // Get total statistics
+      const totalStats = await db
+        .select({
+          totalQRCodes: sql<number>`COUNT(DISTINCT ${qrCodes.id})`,
+          totalScans: sql<number>`COUNT(${qrScans.id})`
+        })
+        .from(qrCodes)
+        .leftJoin(qrScans, eq(qrCodes.id, qrScans.qrCodeId))
+        .where(dateFilter);
+      
+      res.json({
+        success: true,
+        data: {
+          topQRCodes: qrCodesWithStats,
+          totalStats: totalStats[0] || { totalQRCodes: 0, totalScans: 0 }
+        }
+      });
+    } catch (error) {
+      console.error("Error getting dashboard stats:", error);
+      res.status(500).json({ error: "Error al obtener estadísticas del dashboard" });
     }
   });
 
