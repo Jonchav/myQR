@@ -186,6 +186,7 @@ Dashboard preference: Dashboard should only display graphs and metrics, not deta
 - **Enfoque en Estadísticas**: Reorientada la propaganda hacia funcionalidades de seguimiento de scans, gráficos y análisis de rendimiento con diseño más sobrio
 - **Integración PayPal Completa**: Implementado sistema completo de pagos PayPal con SDK oficial, botones integrados en interfaz de planes y procesamiento de pagos en tiempo real
 - **Opciones de Pago Flexibles**: Usuarios pueden pagar directamente con PayPal sin registro previo, o iniciar sesión primero para acceso tradicional
+- **PayPal Producción**: Configurado con credenciales de producción para procesar pagos reales (no sandbox)
 
 ### December 2024
 - **Stripe Payment Integration**: Implemented complete payment system with subscription plans and 3-day free trial

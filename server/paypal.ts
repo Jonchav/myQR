@@ -17,7 +17,7 @@ import { Request, Response } from "express";
 
 /* PayPal Controllers Setup */
 
-const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET } = process.env;
+const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, PAYPAL_ENVIRONMENT } = process.env;
 
 if (!PAYPAL_CLIENT_ID) {
   throw new Error("Missing PAYPAL_CLIENT_ID");
@@ -25,6 +25,9 @@ if (!PAYPAL_CLIENT_ID) {
 if (!PAYPAL_CLIENT_SECRET) {
   throw new Error("Missing PAYPAL_CLIENT_SECRET");
 }
+
+console.log('PayPal Environment:', PAYPAL_ENVIRONMENT);
+console.log('PayPal Client ID (first 20 chars):', PAYPAL_CLIENT_ID.substring(0, 20) + '...');
 const client = new Client({
   clientCredentialsAuthCredentials: {
     oAuthClientId: PAYPAL_CLIENT_ID,
@@ -32,7 +35,7 @@ const client = new Client({
   },
   timeout: 0,
   environment:
-                process.env.NODE_ENV === "production"
+                process.env.PAYPAL_ENVIRONMENT?.toLowerCase() === "production"
                   ? Environment.Production
                   : Environment.Sandbox,
   logging: {
