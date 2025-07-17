@@ -3479,12 +3479,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = (req.user as any).claims.sub;
       console.log('Clear history endpoint called for user:', userId);
       
-      const result = await storage.clearUserHistory(userId);
-      console.log('clearUserHistory result:', result);
+      // Direct SQL approach using pool to bypass ORM issues
+      const { pool } = await import("./db");
+      
+      // Delete scans first
+      const scansResult = await pool.query(`
+        DELETE FROM qr_scans 
+        WHERE qr_code_id IN (
+          SELECT id FROM qr_codes WHERE user_id = $1
+        )
+      `, [userId]);
+      
+      console.log('Scans deleted:', scansResult.rowCount);
+      
+      // Delete QR codes
+      const qrResult = await pool.query(`
+        DELETE FROM qr_codes WHERE user_id = $1
+      `, [userId]);
+      
+      console.log('QR codes deleted:', qrResult.rowCount);
       
       res.json({
         success: true,
-        message: "Historial eliminado exitosamente"
+        message: "Historial eliminado exitosamente",
+        deleted: {
+          scans: scansResult.rowCount,
+          qrCodes: qrResult.rowCount
+        }
       });
     } catch (error) {
       console.error('Error in clear history endpoint:', error);
