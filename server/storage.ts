@@ -13,7 +13,7 @@ import {
   type UpdateUserPreferences,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, and, count, sql } from "drizzle-orm";
+import { eq, desc, and, count, sql, inArray } from "drizzle-orm";
 
 export interface IStorage {
   // User operations
@@ -36,6 +36,7 @@ export interface IStorage {
   getQRCode(id: number): Promise<QRCode | undefined>;
   deleteQRCode(id: number, userId?: string): Promise<boolean>;
   updateQRCode(id: number, updates: any, userId?: string): Promise<QRCode | undefined>;
+  maintainQRLimit(userId: string, limit?: number): Promise<void>;
   
   // QR Code statistics operations
   recordQRScan(qrCodeId: number, userAgent?: string, ipAddress?: string): Promise<void>;
@@ -116,7 +117,49 @@ export class DatabaseStorage implements IStorage {
       .insert(qrCodes)
       .values(insertData)
       .returning();
+    
+    // Si hay userId, mantener solo los últimos 100 QR codes del usuario
+    if (userId) {
+      await this.maintainQRLimit(userId);
+    }
+    
     return qrCode;
+  }
+
+  async maintainQRLimit(userId: string, limit: number = 100): Promise<void> {
+    // Obtener el total de QR codes del usuario
+    const totalQRs = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(qrCodes)
+      .where(eq(qrCodes.userId, userId));
+    
+    const count = totalQRs[0]?.count || 0;
+    
+    // Si excede el límite, eliminar los más antiguos
+    if (count > limit) {
+      const excessCount = count - limit;
+      
+      // Obtener los IDs de los QR codes más antiguos a eliminar
+      const oldestQRs = await db
+        .select({ id: qrCodes.id })
+        .from(qrCodes)
+        .where(eq(qrCodes.userId, userId))
+        .orderBy(qrCodes.createdAt)
+        .limit(excessCount);
+      
+      // Eliminar los QR codes más antiguos
+      if (oldestQRs.length > 0) {
+        const idsToDelete = oldestQRs.map(qr => qr.id);
+        await db
+          .delete(qrCodes)
+          .where(
+            and(
+              eq(qrCodes.userId, userId),
+              inArray(qrCodes.id, idsToDelete)
+            )
+          );
+      }
+    }
   }
 
   async getQRCodes(userId?: string, limit: number = 50, offset: number = 0): Promise<QRCode[]> {

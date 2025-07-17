@@ -142,6 +142,10 @@ Preferred communication style: Simple, everyday language.
 - **Navegación de Páginas**: Agregados controles de navegación "Anterior/Siguiente" con indicadores de progreso para explorar historial completo
 - **Optimización de Memoria**: Implementado sistema de consulta paginada para prevenir errores de memoria en historial extenso
 - **Mejoras de Rendimiento**: Reducidos tiempos de carga del historial eliminando carga masiva de datos innecesarios
+- **Límite de QR Codes**: Establecido límite máximo de 100 QR codes por usuario con eliminación automática de los más antiguos
+- **Gestión Automática**: Sistema mantiene automáticamente los últimos 100 QR codes, eliminando los más antiguos cuando se excede el límite
+- **Indicadores de Límite**: Agregados badges y mensajes informativos mostrando progreso hacia el límite (ej: "95/100")
+- **Optimización de Base de Datos**: Prevención de acumulación excesiva de datos para mejor rendimiento general del sistema
 
 ### December 2024
 - **Stripe Payment Integration**: Implemented complete payment system with subscription plans and 3-day free trial

@@ -1,7 +1,9 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertQRCodeSchema } from "@shared/schema";
+import { insertQRCodeSchema, qrCodes } from "@shared/schema";
+import { db } from "./db";
+import { sql, eq } from "drizzle-orm";
 import { z } from "zod";
 import QRCode from "qrcode";
 import { setupAuth, isAuthenticated } from "./replitAuth";
@@ -3091,17 +3093,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/qr/history", isAuthenticated, async (req, res) => {
     try {
       const userId = (req.user as any).claims.sub;
-      const limit = parseInt(req.query.limit as string) || 50;
+      const limit = parseInt(req.query.limit as string) || 20;
       const offset = parseInt(req.query.offset as string) || 0;
       
-      const qrCodes = await storage.getQRCodes(userId, limit, offset);
+      const userQRCodes = await storage.getQRCodes(userId, limit, offset);
+      
+      // Obtener estadísticas del historial
+      const totalQRs = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(qrCodes)
+        .where(eq(qrCodes.userId, userId));
+      
+      const totalCount = totalQRs[0]?.count || 0;
+      
       res.json({
         success: true,
-        qrCodes,
+        qrCodes: userQRCodes,
         pagination: {
           limit,
           offset,
-          hasMore: qrCodes.length === limit
+          hasMore: userQRCodes.length === limit,
+          totalCount,
+          maxLimit: 100
         }
       });
     } catch (error) {

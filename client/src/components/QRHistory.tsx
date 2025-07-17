@@ -363,6 +363,8 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
 
   const qrCodes = data?.qrCodes || [];
   const pagination = data?.pagination;
+  const totalCount = pagination?.totalCount || 0;
+  const maxLimit = pagination?.maxLimit || 100;
   
   // Filter QR codes based on search query
   const filteredQRCodes = qrCodes.filter((qrCode: any) => {
@@ -385,6 +387,9 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
           <CardTitle className="flex items-center gap-2 text-white">
             <History className="w-5 h-5 text-purple-400" />
             Historial de QR ({filteredQRCodes.length}{qrCodes.length !== filteredQRCodes.length ? ` de ${qrCodes.length}` : ''})
+            <Badge variant="outline" className="ml-2 text-xs border-gray-500/50 text-gray-300">
+              {totalCount}/{maxLimit}
+            </Badge>
           </CardTitle>
           <div className="flex items-center gap-2">
             <Button
@@ -1099,7 +1104,12 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
         {pagination && (
           <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-700">
             <div className="text-sm text-gray-400">
-              Mostrando {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, ((currentPage - 1) * itemsPerPage) + qrCodes.length)} de {((currentPage - 1) * itemsPerPage) + qrCodes.length + (pagination.hasMore ? 1 : 0)}+ QR codes
+              Mostrando {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, ((currentPage - 1) * itemsPerPage) + qrCodes.length)} de {totalCount} QR codes
+              {totalCount >= maxLimit && (
+                <span className="text-amber-400 ml-2">
+                  (Límite alcanzado: {maxLimit})
+                </span>
+              )}
             </div>
             <div className="flex items-center gap-2">
               <Button
