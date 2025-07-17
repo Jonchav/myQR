@@ -811,6 +811,114 @@ function generateCardBackground(style: string, width: number, height: number): s
 
 
 // Function to generate creative card with QR code
+// Function to generate text integration around QR code
+function generateTextIntegration(options: any, width: number, height: number, qrX: number, qrY: number, qrSize: number): string {
+  const {
+    textContent,
+    textPosition,
+    textAlign,
+    textSize,
+    textColor,
+    textFont,
+    textBold,
+    textShadow
+  } = options;
+  
+  if (!textContent) return '';
+  
+  const fontSize = textSize || 28;
+  const fontFamily = textFont || 'Arial';
+  const fontWeight = textBold ? 'bold' : 'normal';
+  const color = textColor || '#ffffff';
+  
+  let textX: number;
+  let textY: number;
+  let textAnchor = 'middle';
+  
+  // Calculate text position based on QR position and user selection
+  switch (textPosition) {
+    case 'top':
+      textX = qrX + qrSize / 2;
+      textY = qrY - fontSize * 0.5; // Above QR
+      textAnchor = 'middle';
+      break;
+    case 'bottom':
+      textX = qrX + qrSize / 2;
+      textY = qrY + qrSize + fontSize * 1.2; // Below QR
+      textAnchor = 'middle';
+      break;
+    case 'left':
+      textX = qrX - fontSize * 0.5; // Left of QR
+      textY = qrY + qrSize / 2 + fontSize * 0.3;
+      textAnchor = 'end';
+      break;
+    case 'right':
+      textX = qrX + qrSize + fontSize * 0.5; // Right of QR
+      textY = qrY + qrSize / 2 + fontSize * 0.3;
+      textAnchor = 'start';
+      break;
+    default:
+      textX = qrX + qrSize / 2;
+      textY = qrY + qrSize + fontSize * 1.2; // Default to bottom
+      textAnchor = 'middle';
+  }
+  
+  // Apply text alignment
+  switch (textAlign) {
+    case 'left':
+      textAnchor = 'start';
+      break;
+    case 'right':
+      textAnchor = 'end';
+      break;
+    case 'center':
+    default:
+      textAnchor = 'middle';
+  }
+  
+  // Create shadow filter if enabled
+  const shadowFilter = textShadow ? `
+    <defs>
+      <filter id="textShadow" x="-50%" y="-50%" width="200%" height="200%">
+        <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="rgba(0,0,0,0.7)"/>
+      </filter>
+    </defs>
+  ` : '';
+  
+  const shadowAttribute = textShadow ? 'filter="url(#textShadow)"' : '';
+  
+  // Create text background for better visibility
+  const textBackground = `
+    <rect 
+      x="${textX - (textContent.length * fontSize * 0.3)}" 
+      y="${textY - fontSize * 0.8}" 
+      width="${textContent.length * fontSize * 0.6}" 
+      height="${fontSize * 1.2}"
+      fill="rgba(0,0,0,0.3)"
+      rx="8"
+      ry="8"
+    />
+  `;
+  
+  return `
+    ${shadowFilter}
+    ${textBackground}
+    <text 
+      x="${textX}" 
+      y="${textY}" 
+      font-family="${fontFamily}" 
+      font-size="${fontSize}" 
+      font-weight="${fontWeight}" 
+      fill="${color}" 
+      text-anchor="${textAnchor}" 
+      dominant-baseline="middle"
+      ${shadowAttribute}
+    >
+      ${textContent}
+    </text>
+  `;
+}
+
 async function generateCreativeCard(qrDataUrl: string, options: any): Promise<string> {
   try {
     const { cardTemplate, cardStyle, customBackgroundImage, backgroundColor } = options;
@@ -917,6 +1025,12 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
         break;
     }
     
+    // Generate text integration if enabled
+    let textSVG = '';
+    if (options.includeText && options.textContent) {
+      textSVG = generateTextIntegration(options, width, height, qrX, qrY, qrSize);
+    }
+    
     // Create the card background SVG (sin recuadro blanco para imagen personalizada)
     const cardBackgroundSVG = `
       <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
@@ -924,7 +1038,8 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
         
         <!-- Rectángulo blanco eliminado para evitar marco innecesario -->
         
-        <!-- No text support -->
+        <!-- Integrated text -->
+        ${textSVG}
       </svg>
     `;
     

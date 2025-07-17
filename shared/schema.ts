@@ -60,7 +60,7 @@ export const qrCodes = pgTable("qr_codes", {
   // Advanced text options
   includeText: boolean("include_text").default(false),
   textContent: text("text_content"),
-  textPosition: varchar("text_position").default("bottom"), // top, center, bottom
+  textPosition: varchar("text_position").default("bottom"), // top, bottom, left, right
   textAlign: varchar("text_align").default("center"), // left, center, right
   textSize: integer("text_size").default(24), // Font size in pixels
   textColor: varchar("text_color").default("#000000"),
