@@ -132,6 +132,10 @@ export default function StatsDashboard() {
     url: qr.url.length > 30 ? qr.url.substring(0, 30) + "..." : qr.url
   }));
 
+  // Calculate max scans for Y-axis ticks
+  const maxScans = Math.max(...chartData.map(d => d.scans), 1);
+  const yAxisTicks = Array.from({length: maxScans + 1}, (_, i) => i);
+
   return (
     <div className="space-y-6">
       {/* Header with filters */}
@@ -262,7 +266,10 @@ export default function StatsDashboard() {
                   <YAxis 
                     tick={{ fill: '#9CA3AF' }} 
                     tickFormatter={(value) => Math.round(value).toString()}
-                    domain={[0, 'dataMax']}
+                    domain={[0, maxScans]}
+                    allowDecimals={false}
+                    type="number"
+                    ticks={yAxisTicks}
                   />
                   <Tooltip 
                     contentStyle={{ 
