@@ -371,24 +371,34 @@ export class DatabaseStorage implements IStorage {
   // History operations
   async clearUserHistory(userId: string): Promise<boolean> {
     try {
+      console.log('Starting clearUserHistory for user:', userId);
+      
       // First, get all QR code IDs for this user
       const userQRCodes = await db.select({ id: qrCodes.id })
         .from(qrCodes)
         .where(eq(qrCodes.userId, userId));
       
+      console.log('Found QR codes to delete:', userQRCodes.length);
+      
       if (userQRCodes.length === 0) {
+        console.log('No QR codes found for user, returning true');
         return true; // No data to delete
       }
       
       const qrCodeIds = userQRCodes.map(qr => qr.id);
+      console.log('QR code IDs to delete:', qrCodeIds);
       
-      // Delete all scans for these QR codes
-      await db.delete(qrScans)
+      // Delete all scans for these QR codes first
+      const scansDeleteResult = await db.delete(qrScans)
         .where(inArray(qrScans.qrCodeId, qrCodeIds));
+      console.log('Scans deleted:', scansDeleteResult.rowCount);
       
-      // Delete all QR codes for this user
-      const result = await db.delete(qrCodes).where(eq(qrCodes.userId, userId));
-      return (result.rowCount ?? 0) > 0;
+      // Then delete all QR codes for this user
+      const qrDeleteResult = await db.delete(qrCodes)
+        .where(eq(qrCodes.userId, userId));
+      console.log('QR codes deleted:', qrDeleteResult.rowCount);
+      
+      return true; // Return true if no error occurred
     } catch (error) {
       console.error('Error clearing user history:', error);
       throw error;
