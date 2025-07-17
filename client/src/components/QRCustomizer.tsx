@@ -104,21 +104,81 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* QR Preview */}
-        <div className="w-full max-w-[280px] mx-auto">
-          {qrCode ? (
-            <div className="relative">
-              <img
-                src={qrCode}
-                alt="QR Code"
-                className="w-full h-auto rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm"
-              />
-            </div>
-          ) : (
-            <div className="aspect-square bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center">
-              <p className="text-gray-500 dark:text-gray-400 text-sm">Vista previa del QR</p>
+        {/* QR Preview with Position Controls */}
+        <div className="flex items-center justify-center gap-6">
+          {/* QR Position Controls - Solo las flechas */}
+          {settings.cardStyle !== "none" && (
+            <div className="flex-shrink-0">
+              <div className="grid grid-cols-3 gap-2 max-w-[120px]">
+                {/* Top row */}
+                <div></div>
+                <Button
+                  size="sm"
+                  variant={settings.qrPosition === "top" ? "default" : "outline"}
+                  onClick={() => applyRealTimeChange("qrPosition", "top")}
+                  className="h-8 w-8 text-xs p-0"
+                >
+                  ↑
+                </Button>
+                <div></div>
+                
+                {/* Middle row */}
+                <Button
+                  size="sm"
+                  variant={settings.qrPosition === "left" ? "default" : "outline"}
+                  onClick={() => applyRealTimeChange("qrPosition", "left")}
+                  className="h-8 w-8 text-xs p-0"
+                >
+                  ←
+                </Button>
+                <Button
+                  size="sm"
+                  variant={settings.qrPosition === "center" ? "default" : "outline"}
+                  onClick={() => applyRealTimeChange("qrPosition", "center")}
+                  className="h-8 w-8 text-xs p-0"
+                >
+                  •
+                </Button>
+                <Button
+                  size="sm"
+                  variant={settings.qrPosition === "right" ? "default" : "outline"}
+                  onClick={() => applyRealTimeChange("qrPosition", "right")}
+                  className="h-8 w-8 text-xs p-0"
+                >
+                  →
+                </Button>
+                
+                {/* Bottom row */}
+                <div></div>
+                <Button
+                  size="sm"
+                  variant={settings.qrPosition === "bottom" ? "default" : "outline"}
+                  onClick={() => applyRealTimeChange("qrPosition", "bottom")}
+                  className="h-8 w-8 text-xs p-0"
+                >
+                  ↓
+                </Button>
+                <div></div>
+              </div>
             </div>
           )}
+          
+          {/* QR Preview */}
+          <div className="w-full max-w-[280px] flex-shrink-0">
+            {qrCode ? (
+              <div className="relative">
+                <img
+                  src={qrCode}
+                  alt="QR Code"
+                  className="w-full h-auto rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm"
+                />
+              </div>
+            ) : (
+              <div className="aspect-square bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center">
+                <p className="text-gray-500 dark:text-gray-400 text-sm">Vista previa del QR</p>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="space-y-6">

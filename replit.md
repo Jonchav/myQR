@@ -128,6 +128,10 @@ Preferred communication style: Simple, everyday language.
 - **Reorganización Interfaz PRO**: Eliminada sección duplicada "Estilo de Tarjeta" e integrada opción de imagen personalizada directamente en carrete de estilos con ícono Upload
 - **Priorización Imagen Personalizada**: Movida opción "Imagen Personalizada" al inicio del carrete de estilos de tarjeta para fácil acceso
 - **Optimización Backend**: Corregido manejo de cardStyle "custom_image" con validación de imagen y fallback a fondo gris por defecto
+- **Controles de Posición QR**: Implementado sistema completo de posicionamiento QR con 5 posiciones (centro, arriba, abajo, izquierda, derecha) con cálculo de coordenadas dinámicas
+- **Migración de Controles**: Movidos controles de posición del QR desde pantalla "Generar" a pantalla "Personalizar PRO" con diseño simplificado (solo flechas, sin título)
+- **Restricción PRO**: Controles de posición disponibles únicamente para usuarios con suscripción PRO activa
+- **Layout Horizontal**: Controles ubicados a la izquierda del QR en diseño horizontal compacto para mejor UX
 
 ### December 2024
 - **Stripe Payment Integration**: Implemented complete payment system with subscription plans and 3-day free trial
