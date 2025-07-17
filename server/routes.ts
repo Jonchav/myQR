@@ -880,9 +880,8 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
       // If custom_image is selected but no image provided, use default gradient
       background = generateCardBackground("modern_gradient", width, height);
     } else {
-      // Use predefined style background or transparent if requested
-      const backgroundStyle = backgroundColor === "transparent" ? "transparent" : cardStyle;
-      background = generateCardBackground(backgroundStyle, width, height);
+      // Use predefined style background - always use the card style, transparency is only for QR background
+      background = generateCardBackground(cardStyle, width, height);
     }
     
     // Calculate QR code size and position - perfectamente centrado (aumentado 50% total)
@@ -895,7 +894,8 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
       <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
         ${background}
         
-        <!-- Solo para estilos predefinidos, no para imágenes personalizadas o fondos transparentes -->
+        <!-- Solo para estilos predefinidos, no para imágenes personalizadas -->
+        <!-- Para fondos transparentes, no mostrar el recuadro blanco para que el QR se vea sobre el gradiente -->
         ${cardStyle !== "custom_image" && backgroundColor !== "transparent" ? `
         <rect x="${qrX - 25}" y="${qrY - 25}" width="${qrSize + 50}" height="${qrSize + 50}" 
               fill="white" rx="25" opacity="0.95" 
