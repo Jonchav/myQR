@@ -125,6 +125,9 @@ Preferred communication style: Simple, everyday language.
 - **Fondo de Texto**: Implementado fondo semitransparente automático para mejor legibilidad en cualquier diseño de tarjeta
 - **Eliminación Módulo Avanzado**: Removido completamente el módulo "Avanzado" por inconsistencias en patrones/estilos QR, simplificando la interfaz a 4 pestañas principales
 - **Estilos de Tarjeta Vibrantes**: Reemplazados todos los estilos de tarjeta con fondos blancos/grises por gradientes coloridos vibrantes - minimalist (azul-púrpura), corporate (azul-verde), electric_lime (lima vibrante), deep_space (azul brillante), silver_chrome (púrpura-índigo), pearl_white (naranja-rojo)
+- **Reorganización Interfaz PRO**: Eliminada sección duplicada "Estilo de Tarjeta" e integrada opción de imagen personalizada directamente en carrete de estilos con ícono Upload
+- **Priorización Imagen Personalizada**: Movida opción "Imagen Personalizada" al inicio del carrete de estilos de tarjeta para fácil acceso
+- **Optimización Backend**: Corregido manejo de cardStyle "custom_image" con validación de imagen y fallback a fondo gris por defecto
 
 ### December 2024
 - **Stripe Payment Integration**: Implemented complete payment system with subscription plans and 3-day free trial

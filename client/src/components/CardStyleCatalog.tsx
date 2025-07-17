@@ -13,6 +13,7 @@ export function CardStyleCatalog({ onStyleSelect, selectedStyle, isGenerating }:
   const [isLoading, setIsLoading] = useState(false);
 
   const cardStyles = [
+    { id: 'custom_image', name: 'Imagen Personalizada', colors: ['#e0e0e0', '#d0d0d0'] },
     { id: 'none', name: 'Ninguna', colors: ['#ffffff', '#f0f0f0'] },
     { id: 'modern_gradient', name: 'Gradiente Moderno', colors: ['#667eea', '#764ba2'] },
     { id: 'neon_glow', name: 'Resplandor Neón', colors: ['#00f5ff', '#0099ff'] },
@@ -43,8 +44,7 @@ export function CardStyleCatalog({ onStyleSelect, selectedStyle, isGenerating }:
     { id: 'copper_bronze', name: 'Bronce Cobre', colors: ['#b79891', '#94716b'] },
     { id: 'neon_night', name: 'Noche Neón', colors: ['#0f0f23', '#ff006e'] },
     { id: 'pearl_white', name: 'Blanco Perla', colors: ['#f7f7f7', '#e3e3e3'] },
-    { id: 'galaxy_swirl', name: 'Remolino Galaxia', colors: ['#667eea', '#764ba2'] },
-    { id: 'custom_image', name: 'Imagen Personalizada', colors: ['#e0e0e0', '#d0d0d0'] }
+    { id: 'galaxy_swirl', name: 'Remolino Galaxia', colors: ['#667eea', '#764ba2'] }
   ];
 
   const generateCardPreview = async (cardStyleId: string) => {
