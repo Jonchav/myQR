@@ -17,6 +17,7 @@ import { QRCustomizer } from "@/components/QRCustomizer";
 import { DownloadButton } from "@/components/DownloadButton";
 import StatsAndHistory from "@/components/StatsAndHistory";
 import { useTheme } from "@/components/ThemeProvider";
+import PayPalPlans from "@/components/PayPalPlans";
 
 export default function Home() {
   const [url, setUrl] = useState("");
@@ -516,19 +517,43 @@ export default function Home() {
                       </div>
                     </div>
 
-                    <div className="text-center">
-                      <Button 
-                        className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
-                        asChild
-                      >
-                        <a href="/api/login">
-                          <User className="w-4 h-4 mr-2" />
-                          Iniciar Sesión para Comenzar
-                        </a>
-                      </Button>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                        3 días de prueba gratuita incluidos
-                      </p>
+                    <div className="space-y-4">
+                      <div className="text-center">
+                        <Button 
+                          className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+                          asChild
+                        >
+                          <a href="/api/login">
+                            <User className="w-4 h-4 mr-2" />
+                            Iniciar Sesión para Comenzar
+                          </a>
+                        </Button>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                          3 días de prueba gratuita incluidos
+                        </p>
+                      </div>
+                      
+                      <div className="border-t pt-4">
+                        <p className="text-sm text-center text-gray-600 dark:text-gray-400 mb-3">
+                          O paga directamente con PayPal
+                        </p>
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-gray-700 dark:text-gray-300">Plan Semanal:</span>
+                            <div id="paypal-weekly-button" className="paypal-button-container"></div>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-gray-700 dark:text-gray-300">Plan Mensual:</span>
+                            <div id="paypal-monthly-button" className="paypal-button-container"></div>
+                          </div>
+                        </div>
+                        <PayPalPlans onPaymentSuccess={(planType) => {
+                          toast({
+                            title: "Pago exitoso",
+                            description: `Tu suscripción ${planType === 'weekly' ? 'semanal' : 'mensual'} ha sido activada correctamente.`,
+                          });
+                        }} />
+                      </div>
                     </div>
                   </CardContent>
                 </Card>

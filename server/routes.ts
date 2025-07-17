@@ -13,6 +13,7 @@ import * as XLSX from "xlsx";
 import { QR } from "qr-svg";
 import geoip from "geoip-lite";
 // Removido: import fetch from "node-fetch";
+import { createPaypalOrder, capturePaypalOrder, loadPaypalDefault } from "./paypal";
 
 // Configurar Sharp para máximo rendimiento
 sharp.concurrency(1); // Limitar concurrencia para mejor uso de memoria
@@ -3819,6 +3820,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Subscription endpoints removed - replaced with free access
+
+  // PayPal routes
+  app.get("/paypal/setup", async (req, res) => {
+    await loadPaypalDefault(req, res);
+  });
+
+  app.post("/paypal/order", async (req, res) => {
+    // Request body should contain: { intent, amount, currency }
+    await createPaypalOrder(req, res);
+  });
+
+  app.post("/paypal/order/:orderID/capture", async (req, res) => {
+    await capturePaypalOrder(req, res);
+  });
 
   const httpServer = createServer(app);
   return httpServer;
