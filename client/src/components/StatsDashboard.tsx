@@ -259,7 +259,11 @@ export default function StatsDashboard() {
                     textAnchor="end"
                     height={60}
                   />
-                  <YAxis tick={{ fill: '#9CA3AF' }} />
+                  <YAxis 
+                    tick={{ fill: '#9CA3AF' }} 
+                    tickFormatter={(value) => Math.round(value).toString()}
+                    domain={[0, 'dataMax']}
+                  />
                   <Tooltip 
                     contentStyle={{ 
                       backgroundColor: '#1F2937', 
