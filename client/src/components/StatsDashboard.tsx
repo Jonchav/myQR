@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { TrendingUp, Eye } from "lucide-react";
+import { TrendingUp, Eye, RotateCcw } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface QRCodeStats {
   id: number;
@@ -30,6 +31,8 @@ export default function StatsDashboard() {
     startDate?: string;
     endDate?: string;
   }>({});
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   const { data, isLoading, error } = useQuery<{ success: boolean; data: DashboardStats }>({
     queryKey: ['/api/stats/dashboard', appliedFilters],
@@ -55,6 +58,14 @@ export default function StatsDashboard() {
     setStartDate("");
     setEndDate("");
     setAppliedFilters({});
+  };
+
+  const refreshData = () => {
+    queryClient.invalidateQueries({ queryKey: ['/api/stats/dashboard'] });
+    toast({
+      title: "Datos actualizados",
+      description: "La información se ha actualizado correctamente",
+    });
   };
 
   if (isLoading) {
@@ -93,10 +104,21 @@ export default function StatsDashboard() {
       {/* Header with filters */}
       <Card className="gradient-card elegant-border">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-white">
-            <TrendingUp className="w-5 h-5 text-purple-400" />
-            Estadísticas del Dashboard
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2 text-white">
+              <TrendingUp className="w-5 h-5 text-purple-400" />
+              Estadísticas del Dashboard
+            </CardTitle>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={refreshData}
+              className="border-purple-500 text-purple-300 hover:text-purple-200 hover:bg-purple-800/30"
+              title="Actualizar Dashboard"
+            >
+              <RotateCcw className="w-4 h-4" />
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
