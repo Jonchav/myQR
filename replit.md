@@ -161,10 +161,10 @@ Dashboard preference: Dashboard should only display graphs and metrics, not deta
 - **Migración Automática**: Creada funcionalidad para actualizar QR codes existentes al sistema de tracking con endpoint `/api/qr/migrate-tracking`
 - **Geolocalización por País**: Agregado tracking automático de país basado en IP usando geoip-lite - cada scan registra automáticamente el país de origen
 - **Estadísticas Geográficas**: Implementado endpoint `/api/stats/countries` que proporciona estadísticas de scans agrupadas por país
-- **Estadísticas de Ciudades**: Creado endpoint `/api/stats/cities` que genera datos de ciudades aproximados basados en direcciones IP y códigos de país
-- **Componente GeographicStats**: Reemplazado WorldMap con gráficos de barras horizontales que muestran países y ciudades ordenados por número de scans (de mayor a menor)
-- **Navegación por Pestañas**: Implementado sistema de pestañas para alternar entre vista de países y ciudades con gráficos de barras coloridos
-- **Visualización de Datos**: Gráficos de barras horizontales con gradientes (azul-púrpura para países, verde-teal para ciudades) y estadísticas resumidas
+- **Estadísticas de IP Auténticas**: Creado endpoint `/api/stats/ips` que muestra datos reales de direcciones IP de scans registrados en la base de datos
+- **Componente GeographicStats**: Reemplazado WorldMap con gráficos de barras horizontales que muestran países y direcciones IP ordenados por número de scans (de mayor a menor)
+- **Navegación por Pestañas**: Implementado sistema de pestañas para alternar entre vista de países y direcciones IP con gráficos de barras coloridos
+- **Visualización de Datos**: Gráficos de barras horizontales con gradientes (azul-púrpura para países, naranja-rojo para IPs) y estadísticas resumidas con datos únicamente reales
 - **Esquema BD Geolocalización**: Añadido campo `country` a tabla `qr_scans` para almacenar código de país ISO de cada scan
 
 ### December 2024
