@@ -2676,12 +2676,15 @@ async function generateAdvancedQRCode(options: any): Promise<string> {
   let qrForegroundColor = options.foregroundColor || "#000000";
   let qrBackgroundColor = options.backgroundColor === "transparent" ? "#ffffff" : (options.backgroundColor || "#ffffff");
   
-  // Override with creative style colors if specified
+  // Override with creative style colors if specified, but respect transparent background
   if (options.creativeStyle && options.creativeStyle !== "classic") {
     const styleColors = getCreativeStyleColors(options.creativeStyle);
     qrForegroundColor = styleColors.foreground;
-    qrBackgroundColor = styleColors.background;
-    console.log('Using creative style colors:', options.creativeStyle, 'Foreground:', qrForegroundColor);
+    // Only override background if user didn't request transparent
+    if (options.backgroundColor !== "transparent") {
+      qrBackgroundColor = styleColors.background;
+    }
+    console.log('Using creative style colors:', options.creativeStyle, 'Foreground:', qrForegroundColor, 'Background preserved for transparent:', options.backgroundColor === "transparent");
   }
   
   // Log the colors being used for debugging
