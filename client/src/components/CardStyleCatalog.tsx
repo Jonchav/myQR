@@ -115,9 +115,10 @@ export function CardStyleCatalog({ onStyleSelect, selectedStyle, isGenerating }:
     }
   };
 
-  useEffect(() => {
-    generateAllPreviews();
-  }, []);
+  // Disabled automatic preview generation to prevent interference with user's QR generation
+  // useEffect(() => {
+  //   generateAllPreviews();
+  // }, []);
 
   const scrollLeft = () => {
     const container = document.getElementById('card-styles-container');
