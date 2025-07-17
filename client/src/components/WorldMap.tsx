@@ -33,28 +33,28 @@ const WorldMap: React.FC<WorldMapProps> = ({ data }) => {
     return 'fill-blue-700';
   };
 
-  // Country positions for markers (simplified)
+  // Country positions for markers (based on realistic world map coordinates)
   const countryPositions: { [key: string]: { x: number; y: number; name: string } } = {
-    'US': { x: 200, y: 120, name: 'Estados Unidos' },
-    'CA': { x: 150, y: 80, name: 'Canadá' },
-    'MX': { x: 180, y: 160, name: 'México' },
-    'BR': { x: 320, y: 280, name: 'Brasil' },
-    'AR': { x: 300, y: 360, name: 'Argentina' },
-    'GB': { x: 480, y: 100, name: 'Reino Unido' },
-    'FR': { x: 500, y: 120, name: 'Francia' },
-    'DE': { x: 520, y: 100, name: 'Alemania' },
-    'IT': { x: 520, y: 140, name: 'Italia' },
-    'ES': { x: 460, y: 140, name: 'España' },
-    'RU': { x: 600, y: 80, name: 'Rusia' },
-    'CN': { x: 700, y: 140, name: 'China' },
-    'JP': { x: 760, y: 160, name: 'Japón' },
-    'KR': { x: 740, y: 150, name: 'Corea del Sur' },
-    'IN': { x: 650, y: 180, name: 'India' },
-    'AU': { x: 750, y: 320, name: 'Australia' },
-    'ZA': { x: 540, y: 320, name: 'Sudáfrica' },
-    'EG': { x: 540, y: 180, name: 'Egipto' },
-    'NG': { x: 500, y: 220, name: 'Nigeria' },
-    'TR': { x: 560, y: 140, name: 'Turquía' },
+    'US': { x: 230, y: 160, name: 'Estados Unidos' },
+    'CA': { x: 200, y: 120, name: 'Canadá' },
+    'MX': { x: 220, y: 200, name: 'México' },
+    'BR': { x: 350, y: 280, name: 'Brasil' },
+    'AR': { x: 330, y: 360, name: 'Argentina' },
+    'GB': { x: 480, y: 140, name: 'Reino Unido' },
+    'FR': { x: 495, y: 160, name: 'Francia' },
+    'DE': { x: 510, y: 140, name: 'Alemania' },
+    'IT': { x: 515, y: 170, name: 'Italia' },
+    'ES': { x: 470, y: 170, name: 'España' },
+    'RU': { x: 620, y: 120, name: 'Rusia' },
+    'CN': { x: 680, y: 180, name: 'China' },
+    'JP': { x: 720, y: 180, name: 'Japón' },
+    'KR': { x: 700, y: 175, name: 'Corea del Sur' },
+    'IN': { x: 620, y: 200, name: 'India' },
+    'AU': { x: 720, y: 320, name: 'Australia' },
+    'ZA': { x: 530, y: 320, name: 'Sudáfrica' },
+    'EG': { x: 530, y: 200, name: 'Egipto' },
+    'NG': { x: 490, y: 240, name: 'Nigeria' },
+    'TR': { x: 540, y: 170, name: 'Turquía' },
   };
 
   return (
@@ -85,30 +85,42 @@ const WorldMap: React.FC<WorldMapProps> = ({ data }) => {
             </defs>
             <rect width="900" height="450" fill="url(#worldPattern)"/>
             
-            {/* More detailed world map */}
+            {/* Realistic world map based on actual geographic coordinates */}
             {/* North America */}
-            <path d="M50,100 Q100,60 150,80 Q200,50 250,70 Q300,60 350,100 Q380,140 350,180 Q300,200 250,190 Q200,200 150,190 Q100,180 70,150 Q50,125 50,100 Z" 
-                  fill="#374151" stroke="#4B5563" strokeWidth="1" opacity="0.7"/>
+            <path d="M90,90 L150,70 L180,80 L220,75 L260,85 L300,95 L340,110 L370,130 L380,150 L375,170 L365,185 L350,195 L330,200 L310,195 L290,185 L270,175 L250,165 L230,155 L210,145 L190,135 L170,125 L150,115 L130,105 L110,95 L90,90 Z" 
+                  fill="#374151" stroke="#4B5563" strokeWidth="1" opacity="0.8"/>
+            
+            {/* Greenland */}
+            <path d="M380,60 L400,65 L415,75 L420,90 L415,105 L400,115 L385,120 L370,115 L365,100 L370,85 L380,70 L380,60 Z" 
+                  fill="#374151" stroke="#4B5563" strokeWidth="1" opacity="0.8"/>
             
             {/* South America */}
-            <path d="M280,240 Q320,230 340,260 Q360,300 350,340 Q340,380 320,400 Q300,420 280,400 Q260,380 250,340 Q240,300 250,260 Q260,240 280,240 Z" 
-                  fill="#374151" stroke="#4B5563" strokeWidth="1" opacity="0.7"/>
+            <path d="M310,240 L320,230 L330,235 L340,245 L350,260 L360,275 L365,290 L370,305 L375,320 L370,335 L365,350 L355,365 L345,380 L335,390 L325,395 L315,390 L305,385 L295,375 L290,365 L285,355 L290,345 L295,335 L300,325 L305,315 L310,305 L315,295 L320,285 L315,275 L310,265 L305,255 L310,245 L310,240 Z" 
+                  fill="#374151" stroke="#4B5563" strokeWidth="1" opacity="0.8"/>
             
             {/* Europe */}
-            <path d="M450,80 Q500,70 550,80 Q580,90 590,120 Q580,140 550,150 Q500,160 450,150 Q420,140 410,120 Q420,100 450,80 Z" 
-                  fill="#374151" stroke="#4B5563" strokeWidth="1" opacity="0.7"/>
+            <path d="M450,100 L470,95 L490,100 L510,105 L530,110 L550,115 L570,120 L585,130 L595,140 L590,150 L585,160 L575,165 L565,170 L555,172 L545,170 L535,168 L525,165 L515,162 L505,159 L495,155 L485,150 L475,145 L465,140 L460,130 L455,120 L450,110 L450,100 Z" 
+                  fill="#374151" stroke="#4B5563" strokeWidth="1" opacity="0.8"/>
             
             {/* Africa */}
-            <path d="M480,180 Q520,170 560,180 Q590,200 600,240 Q590,280 570,320 Q550,360 520,370 Q490,360 470,320 Q450,280 460,240 Q470,200 480,180 Z" 
-                  fill="#374151" stroke="#4B5563" strokeWidth="1" opacity="0.7"/>
+            <path d="M480,160 L500,155 L520,160 L540,170 L560,180 L575,195 L585,210 L590,225 L595,240 L600,255 L595,270 L590,285 L585,300 L575,315 L565,330 L555,345 L545,360 L535,370 L525,375 L515,370 L505,365 L495,360 L485,355 L475,350 L465,345 L460,340 L455,335 L460,325 L465,315 L470,305 L475,295 L480,285 L485,275 L480,265 L475,255 L470,245 L475,235 L480,225 L485,215 L490,205 L485,195 L480,185 L475,175 L480,165 L480,160 Z" 
+                  fill="#374151" stroke="#4B5563" strokeWidth="1" opacity="0.8"/>
             
             {/* Asia */}
-            <path d="M600,70 Q650,60 700,70 Q750,80 800,90 Q820,120 810,150 Q780,180 750,190 Q700,200 650,190 Q600,180 580,150 Q570,120 590,90 Q600,70 600,70 Z" 
-                  fill="#374151" stroke="#4B5563" strokeWidth="1" opacity="0.7"/>
+            <path d="M600,90 L630,85 L660,90 L690,95 L720,100 L750,105 L780,110 L810,115 L830,125 L840,140 L845,155 L840,170 L835,180 L825,190 L810,195 L795,198 L780,200 L765,198 L750,196 L735,194 L720,191 L705,188 L690,185 L675,181 L660,177 L645,173 L630,168 L620,158 L615,148 L610,138 L608,128 L610,118 L615,108 L620,98 L615,88 L600,90 Z" 
+                  fill="#374151" stroke="#4B5563" strokeWidth="1" opacity="0.8"/>
+            
+            {/* India */}
+            <path d="M615,190 L625,185 L635,190 L645,195 L655,200 L665,210 L670,220 L675,230 L672,240 L668,248 L664,256 L658,262 L650,265 L642,268 L634,267 L626,265 L618,263 L612,258 L608,252 L604,246 L603,238 L605,230 L607,222 L610,214 L613,206 L616,198 L615,190 Z" 
+                  fill="#374151" stroke="#4B5563" strokeWidth="1" opacity="0.8"/>
+            
+            {/* China */}
+            <path d="M665,160 L685,155 L705,160 L725,165 L745,170 L765,175 L780,180 L795,185 L805,195 L810,205 L815,215 L812,225 L805,232 L798,239 L788,243 L778,245 L768,247 L758,246 L748,244 L738,242 L728,239 L718,236 L708,233 L698,229 L690,224 L682,219 L676,212 L672,204 L668,196 L667,187 L668,178 L669,169 L671,160 L675,153 L679,146 L684,141 L690,138 L696,135 L702,134 L708,135 L714,136 L720,139 L665,160 Z" 
+                  fill="#374151" stroke="#4B5563" strokeWidth="1" opacity="0.8"/>
             
             {/* Australia */}
-            <path d="M750,320 Q780,310 810,320 Q830,340 820,360 Q800,380 780,370 Q760,360 750,340 Q740,320 750,320 Z" 
-                  fill="#374151" stroke="#4B5563" strokeWidth="1" opacity="0.7"/>
+            <path d="M720,300 L740,295 L760,300 L780,305 L800,310 L815,320 L825,335 L835,350 L830,365 L820,375 L810,385 L795,390 L780,388 L765,386 L750,380 L735,374 L720,368 L710,358 L705,345 L700,332 L702,318 L708,308 L714,298 L720,295 L720,300 Z" 
+                  fill="#374151" stroke="#4B5563" strokeWidth="1" opacity="0.8"/>
             
             {/* Country markers with enhanced styling */}
             {Object.entries(countryPositions).map(([code, position]) => {
