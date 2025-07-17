@@ -826,10 +826,11 @@ function generateTextIntegration(options: any, width: number, height: number, qr
   
   if (!textContent) return '';
   
-  const fontSize = textSize || 28;
+  const fontSize = (textSize || 28) * 2; // Make text larger for better visibility
   const fontFamily = textFont || 'Arial';
   const fontWeight = textBold ? 'bold' : 'normal';
-  const color = textColor || '#ffffff';
+  // Use black text on light backgrounds for better visibility
+  const color = textColor === '#ffffff' ? '#000000' : (textColor || '#000000');
   
   let textX: number;
   let textY: number;
@@ -904,7 +905,9 @@ function generateTextIntegration(options: any, width: number, height: number, qr
       y="${textY - textHeight / 2}" 
       width="${textWidth}" 
       height="${textHeight}"
-      fill="rgba(0,0,0,0.6)"
+      fill="rgba(255,255,255,0.9)"
+      stroke="rgba(0,0,0,0.3)"
+      stroke-width="1"
       rx="8"
       ry="8"
     />
