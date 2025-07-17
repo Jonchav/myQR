@@ -106,10 +106,10 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
       <CardContent className="space-y-6">
         {/* QR Preview with Position Controls */}
         <div className="flex items-center justify-center gap-6">
-          {/* QR Position Controls - Solo las flechas */}
+          {/* QR Position Controls - Solo las flechas centradas */}
           {settings.cardStyle !== "none" && (
-            <div className="flex-shrink-0 space-y-4">
-              <div className="grid grid-cols-3 gap-2 max-w-[120px]">
+            <div className="flex flex-col items-center space-y-4">
+              <div className="grid grid-cols-3 gap-2 w-[120px]">
                 {/* Top row */}
                 <div></div>
                 <Button
@@ -161,11 +161,11 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                 <div></div>
               </div>
               
-              {/* Botón Aplicar cambios cerca de los controles */}
+              {/* Botón Aplicar cambios centrado */}
               <Button
                 onClick={onGenerate}
                 disabled={isGenerating}
-                className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium py-2 px-4 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105 text-sm"
+                className="w-[180px] bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium py-2 px-4 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105 text-sm"
               >
                 {isGenerating ? (
                   <>
@@ -201,13 +201,13 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
             )}
           </div>
           
-          {/* Botón Aplicar cambios cuando no hay cardStyle */}
+          {/* Botón Aplicar cambios cuando no hay cardStyle - centrado */}
           {settings.cardStyle === "none" && (
-            <div className="flex-shrink-0">
+            <div className="flex flex-col items-center">
               <Button
                 onClick={onGenerate}
                 disabled={isGenerating}
-                className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium py-2 px-4 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105 text-sm"
+                className="w-[180px] bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium py-2 px-4 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105 text-sm"
               >
                 {isGenerating ? (
                   <>
