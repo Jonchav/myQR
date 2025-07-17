@@ -922,13 +922,7 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
       <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
         ${background}
         
-        <!-- Solo para estilos predefinidos, no para imágenes personalizadas -->
-        <!-- Para fondos transparentes, no mostrar el recuadro blanco para que el QR se vea sobre el gradiente -->
-        ${cardStyle !== "custom_image" && backgroundColor !== "transparent" ? `
-        <rect x="${qrX - 25}" y="${qrY - 25}" width="${qrSize + 50}" height="${qrSize + 50}" 
-              fill="white" rx="25" opacity="0.95" 
-              style="filter: drop-shadow(0 8px 16px rgba(0,0,0,0.3))"/>
-        ` : ''}
+        <!-- Rectángulo blanco eliminado para evitar marco innecesario -->
         
         <!-- No text support -->
       </svg>
