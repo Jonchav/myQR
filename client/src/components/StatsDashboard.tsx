@@ -1,13 +1,11 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { TrendingUp, Eye, Calendar, ExternalLink } from "lucide-react";
-import { format } from "date-fns";
+import { TrendingUp, Eye } from "lucide-react";
 
 interface QRCodeStats {
   id: number;
@@ -213,49 +211,7 @@ export default function StatsDashboard() {
         </Card>
       )}
 
-      {/* Top QR Codes Table */}
-      <Card className="gradient-card elegant-border">
-        <CardHeader>
-          <CardTitle className="text-white">QR Codes con Más Scans</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {topQRCodes.length === 0 ? (
-            <div className="text-center py-8 text-gray-400">
-              No hay QR codes en el rango de fechas seleccionado
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {topQRCodes.map((qr, index) => (
-                <div key={qr.id} className="flex items-center justify-between p-4 bg-gray-800/30 rounded-lg border border-gray-700/50">
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center justify-center w-8 h-8 bg-purple-500/20 rounded-full">
-                      <span className="text-sm font-bold text-purple-400">#{index + 1}</span>
-                    </div>
-                    <div>
-                      <h3 className="font-medium text-white">
-                        {qr.title || `QR Code ${qr.id}`}
-                      </h3>
-                      <p className="text-sm text-gray-400 flex items-center gap-1">
-                        <ExternalLink className="w-3 h-3" />
-                        {qr.url.length > 50 ? qr.url.substring(0, 50) + "..." : qr.url}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        <Calendar className="w-3 h-3 inline mr-1" />
-                        Creado: {format(new Date(qr.createdAt), 'dd/MM/yyyy')}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <Badge variant="secondary" className="bg-purple-500/20 text-purple-300 border-purple-500/30">
-                      {qr.totalScans} scans
-                    </Badge>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+
     </div>
   );
 }

@@ -7,6 +7,7 @@ This is a full-stack web application built with React and Express that allows us
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Dashboard preference: Dashboard should only display graphs and metrics, not detailed QR code lists.
 
 ## Recent Changes
 
