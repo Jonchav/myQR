@@ -488,7 +488,7 @@ export default function Home() {
                           <div className="text-center">
                             <h4 className="font-semibold text-emerald-700 dark:text-emerald-300">Plan Semanal</h4>
                             <div className="mt-2">
-                              <span className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">$3.45</span>
+                              <span className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">$1.99</span>
                               <span className="text-sm text-gray-600 dark:text-gray-400">/semana</span>
                             </div>
                             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -505,7 +505,7 @@ export default function Home() {
                           <div className="text-center">
                             <h4 className="font-semibold text-blue-700 dark:text-blue-300">Plan Mensual</h4>
                             <div className="mt-2">
-                              <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">$6.45</span>
+                              <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">$3.45</span>
                               <span className="text-sm text-gray-600 dark:text-gray-400">/mes</span>
                             </div>
                             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
