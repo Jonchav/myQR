@@ -379,6 +379,11 @@ function getCardDimensions(template: string): { width: number; height: number } 
 
 // Function to generate card background based on style
 function generateCardBackground(style: string, width: number, height: number): string {
+  // Handle transparent background
+  if (style === "transparent") {
+    return `<!-- Transparent background -->`;
+  }
+  
   const backgrounds: { [key: string]: string } = {
     "modern_gradient": `
       <defs>
@@ -817,10 +822,9 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
       return qrDataUrl;
     }
     
-    // If transparent background is requested, return the QR as-is without any card
+    // If transparent background is requested, we'll generate a card with transparent background
     if (backgroundColor === "transparent") {
-      console.log('Transparent background requested, returning QR without card');
-      return qrDataUrl;
+      console.log('Transparent background requested, generating card with transparent background');
     }
     
     const { width, height } = getCardDimensions(cardTemplate);
@@ -876,8 +880,9 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
       // If custom_image is selected but no image provided, use default gradient
       background = generateCardBackground("modern_gradient", width, height);
     } else {
-      // Use predefined style background
-      background = generateCardBackground(cardStyle, width, height);
+      // Use predefined style background or transparent if requested
+      const backgroundStyle = backgroundColor === "transparent" ? "transparent" : cardStyle;
+      background = generateCardBackground(backgroundStyle, width, height);
     }
     
     // Calculate QR code size and position - perfectamente centrado (aumentado 50% total)
@@ -890,8 +895,8 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
       <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
         ${background}
         
-        <!-- Solo para estilos predefinidos, no para imágenes personalizadas -->
-        ${cardStyle !== "custom_image" ? `
+        <!-- Solo para estilos predefinidos, no para imágenes personalizadas o fondos transparentes -->
+        ${cardStyle !== "custom_image" && backgroundColor !== "transparent" ? `
         <rect x="${qrX - 25}" y="${qrY - 25}" width="${qrSize + 50}" height="${qrSize + 50}" 
               fill="white" rx="25" opacity="0.95" 
               style="filter: drop-shadow(0 8px 16px rgba(0,0,0,0.3))"/>
