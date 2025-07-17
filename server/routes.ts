@@ -807,12 +807,19 @@ function generateCardBackground(style: string, width: number, height: number): s
 // Function to generate creative card with QR code
 async function generateCreativeCard(qrDataUrl: string, options: any): Promise<string> {
   try {
-    const { cardTemplate, cardStyle, customBackgroundImage } = options;
+    const { cardTemplate, cardStyle, customBackgroundImage, backgroundColor } = options;
     
     console.log('generateCreativeCard - cardStyle:', cardStyle);
     console.log('generateCreativeCard - customBackgroundImage present:', !!customBackgroundImage);
+    console.log('generateCreativeCard - backgroundColor:', backgroundColor);
     
     if (cardTemplate === "none" && cardStyle === "none") {
+      return qrDataUrl;
+    }
+    
+    // If transparent background is requested, return the QR as-is without any card
+    if (backgroundColor === "transparent") {
+      console.log('Transparent background requested, returning QR without card');
       return qrDataUrl;
     }
     
@@ -2679,6 +2686,7 @@ async function generateAdvancedQRCode(options: any): Promise<string> {
   
   // Log the colors being used for debugging
   console.log('QR Colors - Foreground:', qrForegroundColor, 'Background:', qrBackgroundColor);
+  console.log('backgroundColor value:', options.backgroundColor);
   
   // Professional QR code options with user colors
   const qrOptions = {
@@ -2702,40 +2710,38 @@ async function generateAdvancedQRCode(options: any): Promise<string> {
   
   // If transparent background is requested, convert white pixels to transparent
   if (options.backgroundColor === "transparent") {
+    console.log('Creating transparent background QR');
     const qrBase64 = qrDataUrl.replace(/^data:image\/[a-z]+;base64,/, '');
     const qrBuffer = Buffer.from(qrBase64, 'base64');
     
-    // Create transparent background version
-    const transparentQRBuffer = await sharp(qrBuffer)
-      .png({
-        quality: 90,
-        compressionLevel: 6,
-        progressive: false,
-        force: true
-      })
-      .toBuffer();
-    
-    // Convert white pixels to transparent
-    const { data, info } = await sharp(transparentQRBuffer)
+    // Get image info and raw data
+    const { data, info } = await sharp(qrBuffer)
       .raw()
       .toBuffer({ resolveWithObject: true });
     
-    // Process pixels to make white transparent
-    const transparentData = new Uint8Array(data.length);
-    for (let i = 0; i < data.length; i += 3) {
-      const r = data[i];
-      const g = data[i + 1];
-      const b = data[i + 2];
+    // Create new buffer with alpha channel (RGBA)
+    const pixelCount = info.width * info.height;
+    const transparentData = new Uint8Array(pixelCount * 4); // 4 channels (RGBA)
+    
+    // Process each pixel
+    for (let i = 0; i < pixelCount; i++) {
+      const rgbIndex = i * 3;
+      const rgbaIndex = i * 4;
       
-      // If pixel is white (or very close to white), make it transparent
+      const r = data[rgbIndex];
+      const g = data[rgbIndex + 1];
+      const b = data[rgbIndex + 2];
+      
+      // Copy RGB values
+      transparentData[rgbaIndex] = r;
+      transparentData[rgbaIndex + 1] = g;
+      transparentData[rgbaIndex + 2] = b;
+      
+      // Set alpha channel - transparent for white pixels, opaque for colored pixels
       if (r > 250 && g > 250 && b > 250) {
-        transparentData[i] = 255;     // R
-        transparentData[i + 1] = 255; // G
-        transparentData[i + 2] = 255; // B
+        transparentData[rgbaIndex + 3] = 0; // Transparent
       } else {
-        transparentData[i] = r;
-        transparentData[i + 1] = g;
-        transparentData[i + 2] = b;
+        transparentData[rgbaIndex + 3] = 255; // Opaque
       }
     }
     
@@ -2744,7 +2750,7 @@ async function generateAdvancedQRCode(options: any): Promise<string> {
       raw: {
         width: info.width,
         height: info.height,
-        channels: 3
+        channels: 4
       }
     })
     .png({ 
@@ -2755,6 +2761,7 @@ async function generateAdvancedQRCode(options: any): Promise<string> {
     .toBuffer();
     
     qrDataUrl = `data:image/png;base64,${finalBuffer.toString('base64')}`;
+    console.log('Transparent QR created successfully');
   }
   
   // Apply enhanced styling with gradients if specified  
