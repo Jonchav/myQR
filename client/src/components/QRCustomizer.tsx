@@ -192,7 +192,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                     />
                     <Input
                       type="text"
-                      value={settings.foregroundColor}
+                      value={settings.foregroundColor || "#000000"}
                       onChange={(e) => applyRealTimeChange("foregroundColor", e.target.value)}
                       placeholder="#000000"
                       className="font-mono text-sm"

@@ -424,80 +424,91 @@ export default function Home() {
                     <div className="mb-6">
                       {qrCode ? (
                         <div className="space-y-4">
-                          <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-                            <img 
-                              src={qrCode} 
-                              alt="Código QR generado" 
-                              className="mx-auto border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-w-[280px] w-full h-auto"
-                            />
-                          </div>
-                          
-                          {/* QR Position Controls */}
-                          {qrSettings.cardStyle !== "none" && (
-                            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
-                              <div className="flex items-center justify-between mb-3">
-                                <h3 className="text-sm font-medium text-gray-900 dark:text-white">Posición del QR</h3>
-                                <div className="text-xs text-gray-500 dark:text-gray-400">
-                                  Actual: {qrSettings.qrPosition === "center" ? "Centro" : 
-                                          qrSettings.qrPosition === "top" ? "Arriba" : 
-                                          qrSettings.qrPosition === "bottom" ? "Abajo" : 
-                                          qrSettings.qrPosition === "left" ? "Izquierda" : "Derecha"}
+                          {/* Layout horizontal con controles a la izquierda y QR a la derecha */}
+                          <div className="flex items-center justify-center gap-6">
+                            {/* Controles de posición del QR - Solo PRO */}
+                            {qrSettings.cardStyle !== "none" && isProActive && (
+                              <div className="flex-shrink-0">
+                                <div className="bg-white dark:bg-gray-800 rounded-lg border border-purple-200 dark:border-purple-700 p-4 shadow-sm">
+                                  <div className="text-center mb-3">
+                                    <h3 className="text-sm font-medium text-gray-900 dark:text-white flex items-center justify-center gap-2">
+                                      <Crown className="w-4 h-4 text-purple-500" />
+                                      Posición QR
+                                    </h3>
+                                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                      {qrSettings.qrPosition === "center" ? "Centro" : 
+                                       qrSettings.qrPosition === "top" ? "Arriba" : 
+                                       qrSettings.qrPosition === "bottom" ? "Abajo" : 
+                                       qrSettings.qrPosition === "left" ? "Izquierda" : "Derecha"}
+                                    </div>
+                                  </div>
+                                  
+                                  <div className="grid grid-cols-3 gap-2 max-w-[150px]">
+                                    {/* Top row */}
+                                    <div></div>
+                                    <Button
+                                      size="sm"
+                                      variant={qrSettings.qrPosition === "top" ? "default" : "outline"}
+                                      onClick={() => handleSettingsChange({ qrPosition: "top" })}
+                                      className="h-8 text-xs"
+                                    >
+                                      ↑
+                                    </Button>
+                                    <div></div>
+                                    
+                                    {/* Middle row */}
+                                    <Button
+                                      size="sm"
+                                      variant={qrSettings.qrPosition === "left" ? "default" : "outline"}
+                                      onClick={() => handleSettingsChange({ qrPosition: "left" })}
+                                      className="h-8 text-xs"
+                                    >
+                                      ←
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant={qrSettings.qrPosition === "center" ? "default" : "outline"}
+                                      onClick={() => handleSettingsChange({ qrPosition: "center" })}
+                                      className="h-8 text-xs"
+                                    >
+                                      •
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant={qrSettings.qrPosition === "right" ? "default" : "outline"}
+                                      onClick={() => handleSettingsChange({ qrPosition: "right" })}
+                                      className="h-8 text-xs"
+                                    >
+                                      →
+                                    </Button>
+                                    
+                                    {/* Bottom row */}
+                                    <div></div>
+                                    <Button
+                                      size="sm"
+                                      variant={qrSettings.qrPosition === "bottom" ? "default" : "outline"}
+                                      onClick={() => handleSettingsChange({ qrPosition: "bottom" })}
+                                      className="h-8 text-xs"
+                                    >
+                                      ↓
+                                    </Button>
+                                    <div></div>
+                                  </div>
                                 </div>
                               </div>
-                              
-                              <div className="grid grid-cols-3 gap-2 max-w-[200px] mx-auto">
-                                {/* Top row */}
-                                <div></div>
-                                <Button
-                                  size="sm"
-                                  variant={qrSettings.qrPosition === "top" ? "default" : "outline"}
-                                  onClick={() => handleSettingsChange({ qrPosition: "top" })}
-                                  className="h-8 text-xs"
-                                >
-                                  ↑
-                                </Button>
-                                <div></div>
-                                
-                                {/* Middle row */}
-                                <Button
-                                  size="sm"
-                                  variant={qrSettings.qrPosition === "left" ? "default" : "outline"}
-                                  onClick={() => handleSettingsChange({ qrPosition: "left" })}
-                                  className="h-8 text-xs"
-                                >
-                                  ←
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant={qrSettings.qrPosition === "center" ? "default" : "outline"}
-                                  onClick={() => handleSettingsChange({ qrPosition: "center" })}
-                                  className="h-8 text-xs"
-                                >
-                                  •
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant={qrSettings.qrPosition === "right" ? "default" : "outline"}
-                                  onClick={() => handleSettingsChange({ qrPosition: "right" })}
-                                  className="h-8 text-xs"
-                                >
-                                  →
-                                </Button>
-                                
-                                {/* Bottom row */}
-                                <div></div>
-                                <Button
-                                  size="sm"
-                                  variant={qrSettings.qrPosition === "bottom" ? "default" : "outline"}
-                                  onClick={() => handleSettingsChange({ qrPosition: "bottom" })}
-                                  className="h-8 text-xs"
-                                >
-                                  ↓
-                                </Button>
-                                <div></div>
+                            )}
+                            
+                            {/* QR Code Display */}
+                            <div className="flex-shrink-0">
+                              <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                                <img 
+                                  src={qrCode} 
+                                  alt="Código QR generado" 
+                                  className="mx-auto border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-w-[280px] w-full h-auto"
+                                />
                               </div>
                             </div>
-                          )}
+                          </div>
                           
                           <Alert className="bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-700">
                             <Link className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
