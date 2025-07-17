@@ -108,7 +108,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
         <div className="flex items-center justify-center gap-6">
           {/* QR Position Controls - Solo las flechas */}
           {settings.cardStyle !== "none" && (
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 space-y-4">
               <div className="grid grid-cols-3 gap-2 max-w-[120px]">
                 {/* Top row */}
                 <div></div>
@@ -160,6 +160,27 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                 </Button>
                 <div></div>
               </div>
+              
+              {/* Botón Aplicar cambios cerca de los controles */}
+              <Button
+                onClick={onGenerate}
+                disabled={isGenerating}
+                className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium py-2 px-4 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105 text-sm"
+              >
+                {isGenerating ? (
+                  <>
+                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white mr-2"></div>
+                    Aplicando...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Aplicar cambios
+                  </>
+                )}
+              </Button>
             </div>
           )}
           
@@ -179,6 +200,31 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
               </div>
             )}
           </div>
+          
+          {/* Botón Aplicar cambios cuando no hay cardStyle */}
+          {settings.cardStyle === "none" && (
+            <div className="flex-shrink-0">
+              <Button
+                onClick={onGenerate}
+                disabled={isGenerating}
+                className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium py-2 px-4 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105 text-sm"
+              >
+                {isGenerating ? (
+                  <>
+                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white mr-2"></div>
+                    Aplicando...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Aplicar cambios
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
         </div>
 
         <div className="space-y-6">
@@ -434,32 +480,6 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
           </Card>
 
 
-        </div>
-        
-        {/* Botón universal para aplicar cambios */}
-        <div className="mt-6 pt-4 border-t border-purple-200 dark:border-purple-700">
-          <Button
-            onClick={onGenerate}
-            disabled={isGenerating}
-            className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium py-3 px-6 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105"
-          >
-            {isGenerating ? (
-              <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                Generando QR personalizado...
-              </>
-            ) : (
-              <>
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-                Aplicar cambios
-              </>
-            )}
-          </Button>
-          <p className="text-xs text-center text-muted-foreground mt-2">
-            Haz clic para aplicar todas las personalizaciones seleccionadas
-          </p>
         </div>
       </CardContent>
     </Card>
