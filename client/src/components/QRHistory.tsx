@@ -466,7 +466,9 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
           </div>
         ) : (
           <div className="space-y-4 max-h-96 overflow-y-auto">
-            {filteredQRCodes.map((qrCode: any) => (
+            {filteredQRCodes.map((qrCode: any) => {
+              console.log('QR Code data:', qrCode);
+              return (
               <div
                 key={qrCode.id}
                 className="flex items-center gap-4 p-4 border border-gray-700 rounded-lg hover:bg-gray-800 transition-colors"
@@ -1096,7 +1098,7 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                   </Button>
                 </div>
               </div>
-            ))}
+            )})}
           </div>
         )}
         

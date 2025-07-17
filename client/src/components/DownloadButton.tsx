@@ -23,6 +23,7 @@ export function DownloadButton({ qrDataUrl, filename = 'qr-code', className }: D
   const { toast } = useToast();
 
   const handleDownload = async (format: string, formatName: string) => {
+    console.log('Download attempt:', { qrDataUrl, format, formatName });
     if (!qrDataUrl) {
       toast({
         title: "Error",
