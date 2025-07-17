@@ -2714,8 +2714,25 @@ async function generateAdvancedQRCode(options: any): Promise<string> {
     const qrBase64 = qrDataUrl.replace(/^data:image\/[a-z]+;base64,/, '');
     const qrBuffer = Buffer.from(qrBase64, 'base64');
     
+    // Use Sharp's built-in method to make white pixels transparent
+    const transparentQRBuffer = await sharp(qrBuffer)
+      .png({
+        quality: 90,
+        compressionLevel: 6,
+        progressive: false
+      })
+      .toBuffer();
+    
+    // Get the foreground color RGB values for comparison
+    const foregroundColor = qrForegroundColor;
+    const fgR = parseInt(foregroundColor.slice(1, 3), 16);
+    const fgG = parseInt(foregroundColor.slice(3, 5), 16);
+    const fgB = parseInt(foregroundColor.slice(5, 7), 16);
+    
+    console.log('Foreground color RGB:', fgR, fgG, fgB);
+    
     // Get image info and raw data
-    const { data, info } = await sharp(qrBuffer)
+    const { data, info } = await sharp(transparentQRBuffer)
       .raw()
       .toBuffer({ resolveWithObject: true });
     
@@ -2737,11 +2754,24 @@ async function generateAdvancedQRCode(options: any): Promise<string> {
       transparentData[rgbaIndex + 1] = g;
       transparentData[rgbaIndex + 2] = b;
       
-      // Set alpha channel - transparent for white pixels, opaque for colored pixels
-      if (r > 250 && g > 250 && b > 250) {
-        transparentData[rgbaIndex + 3] = 0; // Transparent
+      // Check if pixel is close to the foreground color (QR code parts)
+      const isForegroundColor = Math.abs(r - fgR) < 30 && Math.abs(g - fgG) < 30 && Math.abs(b - fgB) < 30;
+      
+      // Set alpha channel - keep QR parts opaque, make white/light pixels transparent
+      if (isForegroundColor) {
+        transparentData[rgbaIndex + 3] = 255; // Opaque for QR code parts
+      } else if (r > 240 && g > 240 && b > 240) {
+        transparentData[rgbaIndex + 3] = 0; // Transparent for white background
       } else {
-        transparentData[rgbaIndex + 3] = 255; // Opaque
+        // For other colors, check if they're closer to white or foreground
+        const distanceToWhite = Math.abs(r - 255) + Math.abs(g - 255) + Math.abs(b - 255);
+        const distanceToForeground = Math.abs(r - fgR) + Math.abs(g - fgG) + Math.abs(b - fgB);
+        
+        if (distanceToWhite < distanceToForeground) {
+          transparentData[rgbaIndex + 3] = 0; // More similar to white - transparent
+        } else {
+          transparentData[rgbaIndex + 3] = 255; // More similar to foreground - opaque
+        }
       }
     }
     
