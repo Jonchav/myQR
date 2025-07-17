@@ -373,24 +373,36 @@ export class DatabaseStorage implements IStorage {
     try {
       console.log('Starting clearUserHistory for user:', userId);
       
-      // Simple approach: delete all scans first, then all QR codes
-      // Delete all scans for QR codes belonging to this user
-      const scansDeleteResult = await db.delete(qrScans)
-        .where(
-          sql`${qrScans.qrCodeId} IN (
-            SELECT ${qrCodes.id} FROM ${qrCodes} WHERE ${qrCodes.userId} = ${userId}
-          )`
-        );
-      console.log('Scans deleted:', scansDeleteResult.rowCount);
+      // Get all QR codes for this user first
+      const userQRCodes = await db.select({ id: qrCodes.id })
+        .from(qrCodes)
+        .where(eq(qrCodes.userId, userId));
       
-      // Then delete all QR codes for this user
+      console.log('Found QR codes to delete:', userQRCodes.length);
+      
+      if (userQRCodes.length === 0) {
+        console.log('No QR codes found for user, returning true');
+        return true;
+      }
+      
+      // Delete scans one by one to avoid SQL complexity
+      let deletedScansCount = 0;
+      for (const qrCode of userQRCodes) {
+        const result = await db.delete(qrScans)
+          .where(eq(qrScans.qrCodeId, qrCode.id));
+        deletedScansCount += result.rowCount ?? 0;
+      }
+      console.log('Scans deleted:', deletedScansCount);
+      
+      // Delete all QR codes for this user
       const qrDeleteResult = await db.delete(qrCodes)
         .where(eq(qrCodes.userId, userId));
       console.log('QR codes deleted:', qrDeleteResult.rowCount);
       
-      return true; // Return true if no error occurred
+      return true;
     } catch (error) {
       console.error('Error clearing user history:', error);
+      console.error('Error details:', error.message);
       throw error;
     }
   }

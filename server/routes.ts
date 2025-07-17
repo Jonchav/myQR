@@ -3477,26 +3477,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/qr/history", isAuthenticated, async (req, res) => {
     try {
       const userId = (req.user as any).claims.sub;
-      console.log('Clearing history for user:', userId);
+      console.log('Clear history endpoint called for user:', userId);
       
       const result = await storage.clearUserHistory(userId);
+      console.log('clearUserHistory result:', result);
       
-      if (result) {
-        res.json({
-          success: true,
-          message: "Historial eliminado exitosamente"
-        });
-      } else {
-        res.json({
-          success: false,
-          error: "No se encontraron datos para eliminar"
-        });
-      }
+      res.json({
+        success: true,
+        message: "Historial eliminado exitosamente"
+      });
     } catch (error) {
       console.error('Error in clear history endpoint:', error);
+      console.error('Error stack:', error.stack);
       res.status(500).json({
         success: false,
-        error: "Error al eliminar el historial"
+        error: `Error al eliminar el historial: ${error.message}`
       });
     }
   });
