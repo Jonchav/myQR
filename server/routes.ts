@@ -1027,7 +1027,15 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
     
     // Generate text integration if enabled
     let textSVG = '';
-    if (options.includeText && options.textContent) {
+    console.log('Text integration check:', {
+      includeText: options.includeText,
+      textContent: options.textContent,
+      textContentType: typeof options.textContent,
+      textContentLength: options.textContent?.length
+    });
+    
+    if (options.includeText && options.textContent && options.textContent.trim()) {
+      console.log('Generating text integration with:', options.textContent);
       textSVG = generateTextIntegration(options, width, height, qrX, qrY, qrSize);
     }
     
@@ -3146,9 +3154,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/qr/generate", async (req, res) => {
     try {
       console.log('Received QR generation request:', JSON.stringify(req.body, null, 2));
-      // Remove null values before validation
+      // Remove null values before validation, but keep empty strings for textContent
       const cleanedBody = Object.fromEntries(
-        Object.entries(req.body).filter(([_, value]) => value !== null)
+        Object.entries(req.body).filter(([key, value]) => {
+          if (key === 'textContent') {
+            return value !== null; // Keep empty strings for textContent
+          }
+          return value !== null;
+        })
       );
       const validatedData = qrGenerationSchema.parse(cleanedBody);
       console.log('Validated data:', JSON.stringify(validatedData, null, 2));
