@@ -179,6 +179,7 @@ Dashboard preference: Dashboard should only display graphs and metrics, not deta
 - **Eliminación de Estadísticas Geográficas**: Removida completamente la sección de estadísticas geográficas que no funcionaba correctamente, incluyendo componente GeographicStats.tsx y endpoints relacionados
 - **Corrección de Marca**: Actualizadas referencias de "QR Pro" a "myQR" en toda la aplicación para consistencia de marca
 - **Mejora de Accesibilidad**: Reemplazado "funciones PRO" por "funciones gratuitas" para reflejar el modelo completamente gratuito de la aplicación
+- **Eliminación de Selección de Tamaño de QR**: Removida la opción de seleccionar tamaño del QR (pequeño, mediano, grande) de la interfaz de personalización, manteniendo solo el formato de redes sociales
 
 ### December 2024
 - **Stripe Payment Integration**: Implemented complete payment system with subscription plans and 3-day free trial

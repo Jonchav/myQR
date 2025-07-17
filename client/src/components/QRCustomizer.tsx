@@ -434,51 +434,35 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
 
           {/* Text controls removed */}
 
-          {/* Size and Social Media Dimensions */}
+          {/* Social Media Dimensions */}
           <Card className="border-purple-200 dark:border-purple-700">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2">
                 <Maximize2 className="w-5 h-5 text-purple-500" />
-                Tamaño y Dimensiones
+                Formato Red Social
               </CardTitle>
               <p className="text-sm text-muted-foreground">
-                Configura el tamaño y margen según la red social
+                Configura las dimensiones según la red social
               </p>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Tamaño del QR</Label>
-                  <Select value={settings.size} onValueChange={(value) => applyRealTimeChange("size", value)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="small">📱 Pequeño (800px)</SelectItem>
-                      <SelectItem value="medium">💻 Mediano (1200px)</SelectItem>
-                      <SelectItem value="large">🖥️ Grande (1600px)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label>Formato Red Social</Label>
-                  <Select value={settings.cardTemplate} onValueChange={(value) => applyRealTimeChange("cardTemplate", value)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">🔳 Sin formato especial</SelectItem>
-                      <SelectItem value="instagram_post">📸 Instagram Post (1080x1080)</SelectItem>
-                      <SelectItem value="instagram_story">📱 Instagram Story (1080x1920)</SelectItem>
-                      <SelectItem value="facebook_post">👥 Facebook Post (1200x630)</SelectItem>
-                      <SelectItem value="twitter_post">🐦 Twitter Post (1200x675)</SelectItem>
-                      <SelectItem value="linkedin_post">💼 LinkedIn Post (1200x627)</SelectItem>
-                      <SelectItem value="youtube_thumbnail">🎥 YouTube Thumbnail (1280x720)</SelectItem>
-                      <SelectItem value="tiktok_video">🎵 TikTok Video (1080x1920)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+              <div className="space-y-2">
+                <Label>Formato Red Social</Label>
+                <Select value={settings.cardTemplate} onValueChange={(value) => applyRealTimeChange("cardTemplate", value)}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">🔳 Sin formato especial</SelectItem>
+                    <SelectItem value="instagram_post">📸 Instagram Post (1080x1080)</SelectItem>
+                    <SelectItem value="instagram_story">📱 Instagram Story (1080x1920)</SelectItem>
+                    <SelectItem value="facebook_post">👥 Facebook Post (1200x630)</SelectItem>
+                    <SelectItem value="twitter_post">🐦 Twitter Post (1200x675)</SelectItem>
+                    <SelectItem value="linkedin_post">💼 LinkedIn Post (1200x627)</SelectItem>
+                    <SelectItem value="youtube_thumbnail">🎥 YouTube Thumbnail (1280x720)</SelectItem>
+                    <SelectItem value="tiktok_video">🎵 TikTok Video (1080x1920)</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </CardContent>
           </Card>
