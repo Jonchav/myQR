@@ -11,7 +11,7 @@ import sharp from "sharp";
 import * as XLSX from "xlsx";
 import Stripe from "stripe";
 import { QR } from "qr-svg";
-import * as geoip from "geoip-lite";
+import geoip from "geoip-lite";
 // Removido: import fetch from "node-fetch";
 
 // Configurar Sharp para máximo rendimiento
@@ -3352,8 +3352,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get country from IP address
       let country = null;
       try {
-        const geo = geoip.lookup(ipAddress);
-        country = geo?.country || null;
+        if (ipAddress && ipAddress !== '::1' && ipAddress !== '127.0.0.1') {
+          const geo = geoip.lookup(ipAddress);
+          country = geo?.country || null;
+        }
       } catch (error) {
         console.error("Error getting geolocation:", error);
       }

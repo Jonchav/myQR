@@ -67,70 +67,95 @@ const WorldMap: React.FC<WorldMapProps> = ({ data }) => {
       </CardHeader>
       <CardContent>
         <div className="relative">
-          {/* Simplified world map SVG */}
+          {/* World map SVG */}
           <svg
-            viewBox="0 0 800 400"
-            className="w-full h-64 bg-gray-800/30 rounded-lg border border-gray-700/50"
+            viewBox="0 0 900 450"
+            className="w-full h-80 bg-gray-900/50 rounded-lg border border-gray-700/50"
           >
             {/* World map background */}
             <defs>
-              <pattern id="worldPattern" patternUnits="userSpaceOnUse" width="20" height="20">
-                <rect width="20" height="20" fill="#374151" opacity="0.1"/>
-                <circle cx="10" cy="10" r="1" fill="#6B7280" opacity="0.3"/>
+              <pattern id="worldPattern" patternUnits="userSpaceOnUse" width="30" height="30">
+                <rect width="30" height="30" fill="#1F2937" opacity="0.5"/>
+                <circle cx="15" cy="15" r="0.5" fill="#374151" opacity="0.7"/>
               </pattern>
+              <radialGradient id="scanGradient" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor="#60A5FA" stopOpacity="0.8"/>
+                <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.4"/>
+              </radialGradient>
             </defs>
-            <rect width="800" height="400" fill="url(#worldPattern)"/>
+            <rect width="900" height="450" fill="url(#worldPattern)"/>
             
-            {/* Continental shapes (simplified) */}
+            {/* More detailed world map */}
             {/* North America */}
-            <path d="M50,80 L250,60 L280,120 L300,180 L200,200 L100,160 Z" 
-                  fill="#4B5563" stroke="#6B7280" strokeWidth="1" opacity="0.6"/>
+            <path d="M50,100 Q100,60 150,80 Q200,50 250,70 Q300,60 350,100 Q380,140 350,180 Q300,200 250,190 Q200,200 150,190 Q100,180 70,150 Q50,125 50,100 Z" 
+                  fill="#374151" stroke="#4B5563" strokeWidth="1" opacity="0.7"/>
             
             {/* South America */}
-            <path d="M250,220 L320,200 L350,300 L320,380 L280,360 L260,280 Z" 
-                  fill="#4B5563" stroke="#6B7280" strokeWidth="1" opacity="0.6"/>
+            <path d="M280,240 Q320,230 340,260 Q360,300 350,340 Q340,380 320,400 Q300,420 280,400 Q260,380 250,340 Q240,300 250,260 Q260,240 280,240 Z" 
+                  fill="#374151" stroke="#4B5563" strokeWidth="1" opacity="0.7"/>
             
             {/* Europe */}
-            <path d="M450,80 L550,70 L560,120 L500,140 L440,120 Z" 
-                  fill="#4B5563" stroke="#6B7280" strokeWidth="1" opacity="0.6"/>
+            <path d="M450,80 Q500,70 550,80 Q580,90 590,120 Q580,140 550,150 Q500,160 450,150 Q420,140 410,120 Q420,100 450,80 Z" 
+                  fill="#374151" stroke="#4B5563" strokeWidth="1" opacity="0.7"/>
             
             {/* Africa */}
-            <path d="M480,160 L580,150 L590,280 L540,340 L480,320 L470,240 Z" 
-                  fill="#4B5563" stroke="#6B7280" strokeWidth="1" opacity="0.6"/>
+            <path d="M480,180 Q520,170 560,180 Q590,200 600,240 Q590,280 570,320 Q550,360 520,370 Q490,360 470,320 Q450,280 460,240 Q470,200 480,180 Z" 
+                  fill="#374151" stroke="#4B5563" strokeWidth="1" opacity="0.7"/>
             
             {/* Asia */}
-            <path d="M580,60 L750,50 L780,160 L720,200 L600,180 L570,120 Z" 
-                  fill="#4B5563" stroke="#6B7280" strokeWidth="1" opacity="0.6"/>
+            <path d="M600,70 Q650,60 700,70 Q750,80 800,90 Q820,120 810,150 Q780,180 750,190 Q700,200 650,190 Q600,180 580,150 Q570,120 590,90 Q600,70 600,70 Z" 
+                  fill="#374151" stroke="#4B5563" strokeWidth="1" opacity="0.7"/>
             
             {/* Australia */}
-            <path d="M720,300 L780,290 L790,330 L740,340 Z" 
-                  fill="#4B5563" stroke="#6B7280" strokeWidth="1" opacity="0.6"/>
+            <path d="M750,320 Q780,310 810,320 Q830,340 820,360 Q800,380 780,370 Q760,360 750,340 Q740,320 750,320 Z" 
+                  fill="#374151" stroke="#4B5563" strokeWidth="1" opacity="0.7"/>
             
-            {/* Country markers */}
+            {/* Country markers with enhanced styling */}
             {Object.entries(countryPositions).map(([code, position]) => {
               const scanCount = countryMap.get(code) || 0;
               if (scanCount === 0) return null;
               
-              const radius = Math.max(4, Math.min(12, scanCount * 2));
+              const radius = Math.max(6, Math.min(16, Math.sqrt(scanCount) * 3));
               const colorIntensity = getColorIntensity(scanCount);
               
               return (
                 <g key={code}>
+                  {/* Outer glow effect */}
+                  <circle
+                    cx={position.x}
+                    cy={position.y}
+                    r={radius + 4}
+                    fill="url(#scanGradient)"
+                    opacity="0.3"
+                  />
+                  {/* Main marker */}
                   <circle
                     cx={position.x}
                     cy={position.y}
                     r={radius}
                     className={`${colorIntensity} stroke-white`}
                     strokeWidth="2"
-                    opacity="0.8"
+                    opacity="0.9"
                   />
+                  {/* Scan count text */}
                   <text
                     x={position.x}
-                    y={position.y - radius - 5}
+                    y={position.y + 1}
                     textAnchor="middle"
-                    className="text-xs font-medium fill-white"
+                    className="text-xs font-bold fill-white"
+                    style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
                   >
                     {scanCount}
+                  </text>
+                  {/* Country label */}
+                  <text
+                    x={position.x}
+                    y={position.y - radius - 8}
+                    textAnchor="middle"
+                    className="text-xs font-medium fill-gray-200"
+                    style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
+                  >
+                    {countryPositions[code]?.name || code}
                   </text>
                 </g>
               );
