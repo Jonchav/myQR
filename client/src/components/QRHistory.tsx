@@ -602,7 +602,7 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                       <DialogHeader>
                         <DialogTitle className="text-white flex items-center gap-2">
                           <BarChart3 className="w-5 h-5" />
-                          Estadísticas Avanzadas del QR
+                          Estadísticas del QR
                         </DialogTitle>
                         <DialogDescription className="text-gray-400">
                           Análisis detallado del uso y rendimiento de tu código QR

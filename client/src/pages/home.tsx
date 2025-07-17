@@ -45,7 +45,7 @@ export default function Home() {
     type: "url",
     // Text fields removed
     errorCorrection: "M",
-    // Configuración por defecto para tarjeta PRO
+    // Configuración por defecto para tarjeta personalizada
     cardTemplate: "none",
     cardStyle: "modern_gradient",
     // Text configuration removed
@@ -225,7 +225,7 @@ export default function Home() {
                 <h1 className="text-xl font-bold text-gray-900 dark:text-white">
                   my<span className="text-primary vibrant-pulse">QR</span>
                 </h1>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Generador Profesional</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Generador de Códigos QR</p>
               </div>
             </div>
             
@@ -414,7 +414,7 @@ export default function Home() {
                               </Button>
                             </div>
                             
-                            {/* PRO Customization CTA */}
+                            {/* Customization CTA */}
                             <Card className="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 border-emerald-200 dark:border-emerald-700">
                               <CardContent className="p-4">
                                 <div className="flex items-center justify-between">
@@ -432,7 +432,7 @@ export default function Home() {
                                     </div>
                                   </div>
                                   <Badge className="bg-amber-400 text-amber-900 border-0">
-                                    PRO
+                                    Personalizar
                                   </Badge>
                                 </div>
                                 <Button 
@@ -473,7 +473,7 @@ export default function Home() {
                       <Palette className="w-8 h-8 text-white" />
                     </div>
                     <CardTitle className="text-2xl text-purple-700 dark:text-purple-300">
-                      Personalización Avanzada
+                      Personalización
                     </CardTitle>
                     <p className="text-gray-600 dark:text-gray-400 mt-2">
                       Accede a todas las funciones de personalización gratuitas
@@ -495,7 +495,7 @@ export default function Home() {
                             </a>
                           </Button>
                           <p className="text-xs text-gray-500 dark:text-gray-400">
-                            Inicia sesión para acceder a las funciones PRO
+                            Inicia sesión para acceder a todas las funciones gratuitas
                           </p>
                         </>
                       ) : (

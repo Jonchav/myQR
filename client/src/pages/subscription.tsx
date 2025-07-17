@@ -53,7 +53,7 @@ export default function Subscription() {
                     </li>
                     <li className="flex items-center gap-2">
                       <Check className="w-4 h-4 text-green-600" />
-                      <span>Tarjetas profesionales</span>
+                      <span>Tarjetas personalizadas</span>
                     </li>
                   </ul>
                 </div>

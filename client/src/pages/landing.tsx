@@ -18,7 +18,7 @@ export default function Landing() {
                 <h1 className="text-xl font-bold text-gray-900 dark:text-white">
                   my<span className="text-primary vibrant-pulse">QR</span>
                 </h1>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Generador Profesional</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Generador de Códigos QR</p>
               </div>
             </div>
             <Button asChild className="bg-primary hover:bg-primary/90 vibrant-pulse color-glow">
@@ -35,16 +35,16 @@ export default function Landing() {
       <section className="max-w-7xl mx-auto px-4 py-16 text-center">
         <Badge variant="outline" className="mb-6">
           <Sparkles className="w-4 h-4 mr-2" />
-          Características Avanzadas
+          Características
         </Badge>
         
         <h2 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
           Genera Códigos QR
-          <span className="bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent vibrant-pulse"> Profesionales</span>
+          <span className="bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent vibrant-pulse"> Personalizados</span>
         </h2>
         
         <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
-          Crea códigos QR personalizados con opciones avanzadas de diseño, colores, estilos y marcos. 
+          Crea códigos QR personalizados con opciones completas de diseño, colores, estilos y marcos. 
           Perfecto para empresas, marketing y uso personal.
         </p>
         
@@ -68,7 +68,7 @@ export default function Landing() {
             Características Principales
           </h3>
           <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Todas las herramientas que necesitas para crear códigos QR profesionales
+            Todas las herramientas que necesitas para crear códigos QR personalizados
           </p>
         </div>
 
@@ -151,7 +151,7 @@ export default function Landing() {
       <section className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h3 className="text-3xl font-bold mb-4">
-            ¿Listo para crear códigos QR profesionales?
+            ¿Listo para crear códigos QR personalizados?
           </h3>
           <p className="text-xl mb-8 opacity-90">
             Únete a miles de usuarios que ya confían en nuestra plataforma
@@ -172,10 +172,10 @@ export default function Landing() {
             <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
               <QrCode className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold">QR Pro</span>
+            <span className="text-xl font-bold">myQR</span>
           </div>
           <p className="text-gray-400">
-            &copy; 2024 QR Pro. Hecho con ❤️ para facilitar la creación de códigos QR profesionales.
+            &copy; 2024 myQR. Hecho con ❤️ para facilitar la creación de códigos QR personalizados.
           </p>
         </div>
       </footer>
