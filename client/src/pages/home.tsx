@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-import { useSubscription } from "@/hooks/useSubscription";
+
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,7 +27,6 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState("generate");
   const { toast } = useToast();
   const { user, isAuthenticated, isLoading } = useAuth();
-  const { isProActive, trialAvailable, plan, status } = useSubscription();
   const { theme, toggleTheme } = useTheme();
   const queryClient = useQueryClient();
 
@@ -60,12 +59,11 @@ export default function Home() {
     setQrSettings(prev => ({ ...prev, url }));
   }, [url]);
 
-  // Activate PRO card configuration when switching to customize tab
+  // Activate card configuration when switching to customize tab
   useEffect(() => {
-    if (activeTab === "customize" && isProActive) {
+    if (activeTab === "customize") {
       setQrSettings(prev => ({
         ...prev,
-        // Text fields removed
         cardTemplate: "none",
         cardStyle: "modern_gradient",
         backgroundColor: "#ffffff",
@@ -74,7 +72,7 @@ export default function Home() {
         pattern: "standard",
       }));
     }
-  }, [activeTab, isProActive]);
+  }, [activeTab]);
 
   const generateQRMutation = useMutation({
     mutationFn: async (settings: any) => {
@@ -243,30 +241,6 @@ export default function Home() {
               
               {isAuthenticated ? (
                 <div className="flex items-center space-x-3">
-                  {/* Subscription Status */}
-                  {isProActive ? (
-                    <div className="flex items-center space-x-2">
-                      <Badge className="bg-green-600 text-white">
-                        <Crown className="w-3 h-3 mr-1" />
-                        PRO {plan}
-                      </Badge>
-                    </div>
-                  ) : trialAvailable ? (
-                    <Button size="sm" variant="outline" className="text-purple-600 border-purple-600 hover:bg-purple-50" asChild>
-                      <a href="/subscription">
-                        <Clock className="w-4 h-4 mr-1" />
-                        Prueba 3 días gratis
-                      </a>
-                    </Button>
-                  ) : (
-                    <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white" asChild>
-                      <a href="/subscription">
-                        <Crown className="w-4 h-4 mr-1" />
-                        Upgrade PRO
-                      </a>
-                    </Button>
-                  )}
-                  
                   <div className="flex items-center space-x-2">
                     <div className="w-8 h-8 bg-gradient-to-r from-primary to-primary/80 rounded-full flex items-center justify-center vibrant-pulse">
                       <User className="w-4 h-4 text-white" />
@@ -301,11 +275,11 @@ export default function Home() {
             </TabsTrigger>
             <TabsTrigger value="customize" className="flex items-center gap-2 text-gray-600 dark:text-gray-400 data-[state=active]:text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-600">
               <Palette className="w-4 h-4" />
-              Personalizar PRO
+              Personalizar
             </TabsTrigger>
             <TabsTrigger value="stats" className="flex items-center gap-2 text-gray-600 dark:text-gray-400 data-[state=active]:text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-600">
               <TrendingUp className="w-4 h-4" />
-              Estadísticas PRO
+              Estadísticas
             </TabsTrigger>
           </TabsList>
 
@@ -450,7 +424,7 @@ export default function Home() {
                                     </div>
                                     <div>
                                       <h3 className="font-semibold text-sm text-emerald-700 dark:text-emerald-300">
-                                        Personalización PRO
+                                        Personalización Avanzada
                                       </h3>
                                       <p className="text-xs text-gray-600 dark:text-gray-400">
                                         Colores, estilos, logos y más
@@ -467,7 +441,7 @@ export default function Home() {
                                   size="sm"
                                 >
                                   <Sparkles className="w-4 h-4 mr-2" />
-                                  Personalizar PRO
+                                  Personalizar
                                 </Button>
                               </CardContent>
                             </Card>
@@ -491,7 +465,7 @@ export default function Home() {
           </TabsContent>
 
           <TabsContent value="customize" className="mt-8">
-            {!isAuthenticated || !isProActive ? (
+            {!isAuthenticated ? (
               <div className="max-w-2xl mx-auto">
                 <Card className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border-purple-200 dark:border-purple-700">
                   <CardHeader className="text-center">
@@ -499,7 +473,7 @@ export default function Home() {
                       <Palette className="w-8 h-8 text-white" />
                     </div>
                     <CardTitle className="text-2xl text-purple-700 dark:text-purple-300">
-                      Personalización PRO
+                      Personalización Avanzada
                     </CardTitle>
                     <p className="text-gray-600 dark:text-gray-400 mt-2">
                       Desbloquea colores personalizados, estilos únicos, logos y patrones avanzados
@@ -553,7 +527,7 @@ export default function Home() {
                           >
                             <a href="/api/login">
                               <User className="w-4 h-4 mr-2" />
-                              Iniciar Sesión para PRO
+                              Iniciar Sesión para Personalizar
                             </a>
                           </Button>
                           <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -568,11 +542,11 @@ export default function Home() {
                           >
                             <a href="/subscription">
                               <Crown className="w-4 h-4 mr-2" />
-                              {trialAvailable ? "Probar 3 días gratis" : "Upgrade a PRO"}
+                              Obtener Acceso Completo
                             </a>
                           </Button>
                           <p className="text-xs text-gray-500 dark:text-gray-400">
-                            {trialAvailable ? "Prueba gratuita por 3 días, cancela cuando quieras" : "Desbloquea todas las funciones PRO"}
+                            Accede a todas las funciones premium completamente gratis
                           </p>
                         </>
                       )}
@@ -597,11 +571,11 @@ export default function Home() {
 
 
           <TabsContent value="stats" className="mt-8">
-            {!isAuthenticated || !isProActive ? (
+            {!isAuthenticated ? (
               <Card className="border-purple-200 dark:border-purple-700 bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20">
                 <CardHeader>
                   <CardTitle className="text-xl text-center text-purple-800 dark:text-purple-200">
-                    Estadísticas PRO
+                    Estadísticas
                   </CardTitle>
                   <p className="text-center text-purple-600 dark:text-purple-300">
                     Accede a análisis detallados e historial completo de tus códigos QR
@@ -667,7 +641,7 @@ export default function Home() {
                         >
                           <a href="/api/login">
                             <User className="w-4 h-4 mr-2" />
-                            Iniciar Sesión para PRO
+                            Iniciar Sesión para Personalizar
                           </a>
                         </Button>
                         <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -682,11 +656,11 @@ export default function Home() {
                         >
                           <a href="/subscription">
                             <Crown className="w-4 h-4 mr-2" />
-                            {trialAvailable ? "Probar 3 días gratis" : "Upgrade a PRO"}
+                            Acceso Completo
                           </a>
                         </Button>
                         <p className="text-xs text-gray-500 dark:text-gray-400">
-                          {trialAvailable ? "Prueba gratuita por 3 días, cancela cuando quieras" : "Desbloquea todas las funciones PRO"}
+                          Todas las funciones premium ahora completamente gratis
                         </p>
                       </>
                     )}

@@ -1,481 +1,103 @@
-import { useState, useEffect } from "react";
-import { useStripe, Elements, PaymentElement, useElements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Check, Crown, Zap, Calendar, Clock } from "lucide-react";
-
-// Make sure to call `loadStripe` outside of a component's render to avoid
-// recreating the `Stripe` object on every render.
-if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
-  throw new Error('Missing required Stripe key: VITE_STRIPE_PUBLIC_KEY');
-}
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
-
-const SubscriptionForm = ({ plan, onSuccess }: { plan: string; onSuccess: () => void }) => {
-  const stripe = useStripe();
-  const elements = useElements();
-  const { toast } = useToast();
-  const [isProcessing, setIsProcessing] = useState(false);
-  
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!stripe || !elements) {
-      return;
-    }
-    
-    setIsProcessing(true);
-    
-    try {
-      const { error } = await stripe.confirmPayment({
-        elements,
-        confirmParams: {
-          return_url: window.location.origin + '/subscription?success=true',
-        },
-      });
-      
-      if (error) {
-        toast({
-          title: "Error en el pago",
-          description: error.message,
-          variant: "destructive",
-        });
-      } else {
-        onSuccess();
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Hubo un problema procesando el pago",
-        variant: "destructive",
-      });
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-  
-  return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <PaymentElement />
-      <Button 
-        type="submit" 
-        className="w-full" 
-        disabled={!stripe || !elements || isProcessing}
-      >
-        {isProcessing ? "Procesando..." : `Suscribirse al Plan ${plan}`}
-      </Button>
-    </form>
-  );
-};
-
-const SubscriptionPayment = ({ plan, clientSecret, onSuccess }: { 
-  plan: string; 
-  clientSecret: string; 
-  onSuccess: () => void;
-}) => {
-  const options = {
-    clientSecret,
-    appearance: {
-      theme: 'stripe' as const,
-    },
-  };
-  
-  return (
-    <Elements options={options} stripe={stripePromise}>
-      <SubscriptionForm plan={plan} onSuccess={onSuccess} />
-    </Elements>
-  );
-};
+import { Check, Crown } from "lucide-react";
 
 export default function Subscription() {
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
-  const [clientSecret, setClientSecret] = useState<string | null>(null);
-  
-  // Get subscription status
-  const { data: subscriptionStatus, isLoading } = useQuery({
-    queryKey: ["/api/subscription/status"],
-    retry: false,
-  });
-  
-  // Start trial mutation
-  const startTrialMutation = useMutation({
-    mutationFn: async () => {
-      const response = await apiRequest("POST", "/api/subscription/trial");
-      return response.json();
-    },
-    onSuccess: () => {
-      toast({
-        title: "¡Prueba gratuita activada!",
-        description: "Disfruta de myQR Pro por 3 días gratis",
-      });
-      queryClient.invalidateQueries({ queryKey: ["/api/subscription/status"] });
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "No se pudo activar la prueba gratuita",
-        variant: "destructive",
-      });
-    },
-  });
-  
-  // Create subscription mutation
-  const createSubscriptionMutation = useMutation({
-    mutationFn: async (plan: string) => {
-      const response = await apiRequest("POST", "/api/subscription/create", { plan });
-      return response.json();
-    },
-    onSuccess: (data) => {
-      setClientSecret(data.clientSecret);
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "No se pudo crear la suscripción",
-        variant: "destructive",
-      });
-    },
-  });
-  
-  // Cancel subscription mutation
-  const cancelSubscriptionMutation = useMutation({
-    mutationFn: async () => {
-      const response = await apiRequest("POST", "/api/subscription/cancel");
-      return response.json();
-    },
-    onSuccess: () => {
-      toast({
-        title: "Suscripción cancelada",
-        description: "Tu suscripción se ha cancelado exitosamente",
-      });
-      queryClient.invalidateQueries({ queryKey: ["/api/subscription/status"] });
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "No se pudo cancelar la suscripción",
-        variant: "destructive",
-      });
-    },
-  });
-  
-  const handlePlanSelect = (plan: string) => {
-    setSelectedPlan(plan);
-    createSubscriptionMutation.mutate(plan);
-  };
-  
-  const handlePaymentSuccess = () => {
-    toast({
-      title: "¡Pago exitoso!",
-      description: "Tu suscripción se ha activado correctamente",
-    });
-    setSelectedPlan(null);
-    setClientSecret(null);
-    queryClient.invalidateQueries({ queryKey: ["/api/subscription/status"] });
-  };
-  
-  const plans = [
-    {
-      id: "weekly",
-      name: "Semanal",
-      price: "$3.45",
-      period: "por semana",
-      icon: Calendar,
-      description: "Ideal para uso regular",
-      popular: true,
-      features: [
-        "Acceso completo a myQR Pro",
-        "Historial ilimitado",
-        "Estadísticas avanzadas",
-        "Exportación a Excel",
-        "Customización premium",
-        "Cancela cuando quieras"
-      ]
-    },
-    {
-      id: "monthly",
-      name: "Mensual",
-      price: "$6.45",
-      period: "por mes",
-      icon: Crown,
-      description: "Máximo ahorro para usuarios frecuentes",
-      features: [
-        "Acceso completo a myQR Pro",
-        "Historial ilimitado",
-        "Estadísticas avanzadas",
-        "Exportación a Excel",
-        "Customización premium",
-        "Mejor valor por dinero"
-      ]
-    }
-  ];
-  
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
-        <div className="animate-spin w-8 h-8 border-4 border-purple-600 border-t-transparent rounded-full" />
-      </div>
-    );
-  }
-  
-  // Show payment form if a plan is selected
-  if (clientSecret && selectedPlan) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 py-12">
-        <div className="max-w-2xl mx-auto px-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Crown className="w-5 h-5 text-purple-600" />
-                Completar Suscripción
-              </CardTitle>
-              <CardDescription>
-                Completa tu pago para activar myQR Pro - Plan {selectedPlan}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <SubscriptionPayment 
-                plan={selectedPlan} 
-                clientSecret={clientSecret} 
-                onSuccess={handlePaymentSuccess}
-              />
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
-  
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
       <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Elige tu Plan myQR Pro
+            myQR - Ahora Completamente Gratis
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-300">
-            Desbloquea todas las características premium de myQR
+            Todas las características premium ahora están disponibles sin costo
           </p>
         </div>
         
-        {/* Current subscription status */}
-        {subscriptionStatus?.isActive && (
-          <div className="max-w-2xl mx-auto mb-8">
-            <Card className="border-green-200 bg-green-50 dark:bg-green-950">
-              <CardHeader>
-                <CardTitle className="text-green-800 dark:text-green-200 flex items-center gap-2">
-                  <Check className="w-5 h-5" />
-                  Suscripción Activa
-                </CardTitle>
-                <CardDescription className="text-green-700 dark:text-green-300">
-                  Plan: {subscriptionStatus.plan} | Estado: {subscriptionStatus.status}
-                  {subscriptionStatus.subscriptionEndDate && (
-                    <span className="block">
-                      Expira: {new Date(subscriptionStatus.subscriptionEndDate).toLocaleDateString()}
-                    </span>
-                  )}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  variant="outline" 
-                  onClick={() => cancelSubscriptionMutation.mutate()}
-                  disabled={cancelSubscriptionMutation.isPending}
-                  className="border-red-300 text-red-600 hover:bg-red-50"
-                >
-                  {cancelSubscriptionMutation.isPending ? "Cancelando..." : "Cancelar Suscripción"}
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-        
-        {/* Free trial offer */}
-        {!subscriptionStatus?.trialUsed && !subscriptionStatus?.isActive && (
-          <div className="max-w-2xl mx-auto mb-8">
-            <Card className="border-purple-200 bg-purple-50 dark:bg-purple-950">
-              <CardHeader>
-                <CardTitle className="text-purple-800 dark:text-purple-200 flex items-center gap-2">
-                  <Clock className="w-5 h-5" />
-                  Prueba Gratuita de 3 Días
-                </CardTitle>
-                <CardDescription className="text-purple-700 dark:text-purple-300">
-                  Prueba todas las características premium sin costo
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  onClick={() => startTrialMutation.mutate()}
-                  disabled={startTrialMutation.isPending}
-                  className="bg-purple-600 hover:bg-purple-700"
-                >
-                  {startTrialMutation.isPending ? "Activando..." : "Iniciar Prueba Gratuita"}
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-        
-        {/* Test card information */}
-        <div className="max-w-4xl mx-auto mb-8">
-          <Card className="border-blue-200 bg-blue-50 dark:bg-blue-950">
-            <CardHeader>
-              <CardTitle className="text-blue-800 dark:text-blue-200 flex items-center gap-2">
-                <Zap className="w-5 h-5" />
-                Modo de Prueba - Información para Testing
-              </CardTitle>
-              <CardDescription className="text-blue-700 dark:text-blue-300">
-                Usa estas tarjetas de prueba para probar el sistema de pagos
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="font-semibold mb-3 text-blue-800 dark:text-blue-200">Tarjetas de Prueba:</h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="p-2 bg-white dark:bg-gray-800 rounded border">
-                      <strong>Visa:</strong> 4242 4242 4242 4242
-                    </div>
-                    <div className="p-2 bg-white dark:bg-gray-800 rounded border">
-                      <strong>Mastercard:</strong> 5555 5555 5555 4444
-                    </div>
-                    <div className="p-2 bg-white dark:bg-gray-800 rounded border">
-                      <strong>American Express:</strong> 3782 822463 10005
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-3 text-blue-800 dark:text-blue-200">Datos adicionales:</h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="p-2 bg-white dark:bg-gray-800 rounded border">
-                      <strong>Fecha de vencimiento:</strong> Cualquier fecha futura
-                    </div>
-                    <div className="p-2 bg-white dark:bg-gray-800 rounded border">
-                      <strong>CVC:</strong> Cualquier número de 3 dígitos
-                    </div>
-                    <div className="p-2 bg-white dark:bg-gray-800 rounded border">
-                      <strong>Código postal:</strong> Cualquier código válido
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded">
-                <p className="text-sm text-yellow-800 dark:text-yellow-300">
-                  <strong>Importante:</strong> No uses tarjetas reales. Este es un entorno de pruebas de Stripe.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Subscription plans */}
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          {plans.map((plan) => {
-            const Icon = plan.icon;
-            return (
-              <Card key={plan.id} className={`relative ${plan.popular ? 'border-purple-500 shadow-lg' : ''}`}>
-                {plan.popular && (
-                  <Badge className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-purple-600">
-                    Más Popular
-                  </Badge>
-                )}
-                <CardHeader className="text-center">
-                  <div className="flex justify-center mb-4">
-                    <Icon className="w-12 h-12 text-purple-600" />
-                  </div>
-                  <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                  <div className="text-3xl font-bold text-purple-600">
-                    {plan.price}
-                    <span className="text-sm text-gray-500 font-normal">/{plan.period}</span>
-                  </div>
-                  <CardDescription>{plan.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3 mb-6">
-                    {plan.features.map((feature, index) => (
-                      <li key={index} className="flex items-center gap-2">
-                        <Check className="w-4 h-4 text-green-600" />
-                        <span className="text-sm">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Button 
-                    className="w-full" 
-                    onClick={() => handlePlanSelect(plan.id)}
-                    disabled={createSubscriptionMutation.isPending || subscriptionStatus?.isActive}
-                    variant={plan.popular ? "default" : "outline"}
-                  >
-                    {createSubscriptionMutation.isPending && selectedPlan === plan.id
-                      ? "Procesando..."
-                      : subscriptionStatus?.isActive 
-                        ? "Ya Tienes Suscripción" 
-                        : "Seleccionar Plan"
-                    }
-                  </Button>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-        
-        {/* Features comparison */}
+        {/* Features showcase */}
         <div className="mt-16">
           <Card>
             <CardHeader>
-              <CardTitle className="text-center">¿Qué Incluye myQR Pro?</CardTitle>
+              <CardTitle className="text-center">¿Qué Incluye myQR?</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div className="space-y-4">
-                  <h3 className="font-semibold text-lg">Gratis</h3>
+                  <h3 className="font-semibold text-lg text-purple-600">Generación Básica</h3>
                   <ul className="space-y-2">
                     <li className="flex items-center gap-2">
                       <Check className="w-4 h-4 text-green-600" />
-                      <span>Generación básica de QR</span>
+                      <span>Generación de QR ilimitada</span>
                     </li>
                     <li className="flex items-center gap-2">
                       <Check className="w-4 h-4 text-green-600" />
-                      <span>Descarga inmediata</span>
+                      <span>Descarga en múltiples formatos</span>
                     </li>
                     <li className="flex items-center gap-2">
                       <Check className="w-4 h-4 text-green-600" />
-                      <span>Colores básicos</span>
+                      <span>Colores personalizados</span>
                     </li>
                   </ul>
                 </div>
                 <div className="space-y-4">
-                  <h3 className="font-semibold text-lg text-purple-600">myQR Pro</h3>
+                  <h3 className="font-semibold text-lg text-purple-600">Personalización</h3>
                   <ul className="space-y-2">
                     <li className="flex items-center gap-2">
                       <Check className="w-4 h-4 text-green-600" />
-                      <span>Historial completo de QR codes</span>
+                      <span>Estilos creativos vibrantes</span>
                     </li>
                     <li className="flex items-center gap-2">
                       <Check className="w-4 h-4 text-green-600" />
-                      <span>Estadísticas de escaneos en tiempo real</span>
+                      <span>Gradientes y efectos</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-green-600" />
+                      <span>Tarjetas profesionales</span>
+                    </li>
+                  </ul>
+                </div>
+                <div className="space-y-4">
+                  <h3 className="font-semibold text-lg text-purple-600">Análisis</h3>
+                  <ul className="space-y-2">
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-green-600" />
+                      <span>Historial completo</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-green-600" />
+                      <span>Estadísticas geográficas</span>
                     </li>
                     <li className="flex items-center gap-2">
                       <Check className="w-4 h-4 text-green-600" />
                       <span>Exportación a Excel</span>
                     </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-green-600" />
-                      <span>Customización avanzada</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-green-600" />
-                      <span>Seguimiento de clicks</span>
-                    </li>
                   </ul>
                 </div>
               </div>
+            </CardContent>
+          </Card>
+        </div>
+        
+        {/* Call to action */}
+        <div className="text-center mt-12">
+          <Card className="max-w-2xl mx-auto">
+            <CardHeader>
+              <CardTitle className="text-2xl text-purple-600">
+                ¡Empieza a crear QR codes ahora!
+              </CardTitle>
+              <CardDescription className="text-lg">
+                Sin límites, sin pagos, sin restricciones
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button 
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white text-lg py-6"
+                onClick={() => window.location.href = '/'}
+              >
+                <Crown className="w-5 h-5 mr-2" />
+                Ir al Generador de QR
+              </Button>
             </CardContent>
           </Card>
         </div>

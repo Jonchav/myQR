@@ -36,41 +36,7 @@ const GeographicStats: React.FC<GeographicStatsProps> = ({ data }) => {
     },
   });
 
-  // Delete history function
-  const handleDeleteHistory = async () => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar todo el historial de scans? Esta acción no se puede deshacer.')) {
-      try {
-        const response = await apiRequest('DELETE', '/api/qr/history');
-        const result = await response.json();
-        
-        if (result.success) {
-          // Invalidate all related queries
-          queryClient.invalidateQueries({ queryKey: ['/api/stats/countries'] });
-          queryClient.invalidateQueries({ queryKey: ['/api/stats/ips'] });
-          queryClient.invalidateQueries({ queryKey: ['/api/stats/dashboard'] });
-          queryClient.invalidateQueries({ queryKey: ['/api/qr/history'] });
-          
-          toast({
-            title: "Historial eliminado",
-            description: "Se ha eliminado todo el historial de scans correctamente.",
-          });
-        } else {
-          toast({
-            title: "Error",
-            description: result.error || "No se pudo eliminar el historial",
-            variant: "destructive",
-          });
-        }
-      } catch (error) {
-        console.error('Error deleting history:', error);
-        toast({
-          title: "Error",
-          description: "No se pudo eliminar el historial. Inténtalo de nuevo.",
-          variant: "destructive",
-        });
-      }
-    }
-  };
+
 
   // Get country names
   const countryNames: { [key: string]: string } = {
@@ -107,21 +73,10 @@ const GeographicStats: React.FC<GeographicStatsProps> = ({ data }) => {
   return (
     <Card className="gradient-card elegant-border">
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-white">
-            <Globe className="w-5 h-5 text-blue-400" />
-            Estadísticas Geográficas
-          </CardTitle>
-          <Button
-            onClick={handleDeleteHistory}
-            variant="outline"
-            size="sm"
-            className="bg-red-900/20 border-red-500/30 text-red-400 hover:bg-red-900/40 hover:text-red-300 transition-colors"
-          >
-            <Trash2 className="w-4 h-4 mr-2" />
-            Eliminar Historial
-          </Button>
-        </div>
+        <CardTitle className="flex items-center gap-2 text-white">
+          <Globe className="w-5 h-5 text-blue-400" />
+          Estadísticas Geográficas
+        </CardTitle>
         
         {/* Tab Navigation */}
         <div className="flex gap-2 mt-4">
