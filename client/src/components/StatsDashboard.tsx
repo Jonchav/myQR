@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { TrendingUp, Eye, RotateCcw } from "lucide-react";
+import { TrendingUp, Eye, RotateCcw, FileSpreadsheet } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface QRCodeStats {
@@ -68,6 +68,36 @@ export default function StatsDashboard() {
     });
   };
 
+  const exportAllQRStatsToExcel = async () => {
+    try {
+      const response = await fetch('/api/qr/export/all');
+      if (!response.ok) {
+        throw new Error('Error al exportar todas las estadísticas');
+      }
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `dashboard-stats.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      toast({
+        title: "Exportación exitosa",
+        description: "Estadísticas del dashboard exportadas a Excel",
+      });
+    } catch (error) {
+      toast({
+        title: "Error al exportar",
+        description: "No se pudieron exportar las estadísticas",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -109,15 +139,27 @@ export default function StatsDashboard() {
               <TrendingUp className="w-5 h-5 text-purple-400" />
               Estadísticas del Dashboard
             </CardTitle>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={refreshData}
-              className="border-purple-500 text-purple-300 hover:text-purple-200 hover:bg-purple-800/30"
-              title="Actualizar Dashboard"
-            >
-              <RotateCcw className="w-4 h-4" />
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={refreshData}
+                className="border-purple-500 text-purple-300 hover:text-purple-200 hover:bg-purple-800/30"
+                title="Actualizar Dashboard"
+              >
+                <RotateCcw className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={exportAllQRStatsToExcel}
+                className="border-green-500 text-green-300 hover:text-green-200 hover:bg-green-800/30"
+                title="Exportar Dashboard a Excel"
+              >
+                <FileSpreadsheet className="w-4 h-4 mr-2" />
+                Exportar
+              </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
