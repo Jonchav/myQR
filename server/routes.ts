@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertQRCodeSchema, qrCodes, qrScans } from "@shared/schema";
 import { db } from "./db";
-import { sql, eq, and, gte, lte } from "drizzle-orm";
+import { sql, eq, and, gte, lte, desc } from "drizzle-orm";
 import { z } from "zod";
 import QRCode from "qrcode";
 import { setupAuth, isAuthenticated } from "./replitAuth";
@@ -3265,30 +3265,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
         );
       }
       
-      // Get QR codes with their scan counts
+      // Get QR codes with their scan counts (using scanCount column)
       const qrCodesWithStats = await db
         .select({
           id: qrCodes.id,
           url: qrCodes.url,
           title: qrCodes.title,
           createdAt: qrCodes.createdAt,
-          totalScans: sql<number>`COALESCE(COUNT(${qrScans.id}), 0)`.as('totalScans')
+          totalScans: qrCodes.scanCount
         })
         .from(qrCodes)
-        .leftJoin(qrScans, eq(qrCodes.id, qrScans.qrCodeId))
         .where(dateFilter)
-        .groupBy(qrCodes.id)
-        .orderBy(sql`totalScans DESC`)
+        .orderBy(desc(qrCodes.scanCount))
         .limit(50);
       
       // Get total statistics
       const totalStats = await db
         .select({
-          totalQRCodes: sql<number>`COUNT(DISTINCT ${qrCodes.id})`,
-          totalScans: sql<number>`COUNT(${qrScans.id})`
+          totalQRCodes: sql<number>`COUNT(*)`,
+          totalScans: sql<number>`COALESCE(SUM(${qrCodes.scanCount}), 0)`
         })
         .from(qrCodes)
-        .leftJoin(qrScans, eq(qrCodes.id, qrScans.qrCodeId))
         .where(dateFilter);
       
       res.json({
