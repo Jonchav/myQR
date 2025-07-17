@@ -839,27 +839,27 @@ function generateTextIntegration(options: any, width: number, height: number, qr
   switch (textPosition) {
     case 'top':
       textX = qrX + qrSize / 2;
-      textY = qrY - fontSize * 0.5; // Above QR
+      textY = Math.max(qrY - fontSize * 2, fontSize * 2); // Above QR, ensure within bounds
       textAnchor = 'middle';
       break;
     case 'bottom':
       textX = qrX + qrSize / 2;
-      textY = qrY + qrSize + fontSize * 1.2; // Below QR
+      textY = Math.min(qrY + qrSize + fontSize * 2, height - fontSize); // Below QR, ensure within bounds
       textAnchor = 'middle';
       break;
     case 'left':
-      textX = qrX - fontSize * 0.5; // Left of QR
+      textX = Math.max(qrX - fontSize * 2, fontSize * 2); // Left of QR, ensure within bounds
       textY = qrY + qrSize / 2 + fontSize * 0.3;
       textAnchor = 'end';
       break;
     case 'right':
-      textX = qrX + qrSize + fontSize * 0.5; // Right of QR
+      textX = Math.min(qrX + qrSize + fontSize * 2, width - fontSize * 2); // Right of QR, ensure within bounds
       textY = qrY + qrSize / 2 + fontSize * 0.3;
       textAnchor = 'start';
       break;
     default:
       textX = qrX + qrSize / 2;
-      textY = qrY + qrSize + fontSize * 1.2; // Default to bottom
+      textY = Math.min(qrY + qrSize + fontSize * 2, height - fontSize); // Default to bottom
       textAnchor = 'middle';
   }
   
@@ -887,14 +887,24 @@ function generateTextIntegration(options: any, width: number, height: number, qr
   
   const shadowAttribute = textShadow ? 'filter="url(#textShadow)"' : '';
   
+  console.log('Text positioning details:', {
+    textX, textY, textAnchor, fontSize, color,
+    canvasSize: { width, height },
+    qrPosition: { qrX, qrY, qrSize },
+    textPosition
+  });
+  
   // Create text background for better visibility
+  const textWidth = textContent.length * fontSize * 0.6;
+  const textHeight = fontSize * 1.4;
+  
   const textBackground = `
     <rect 
-      x="${textX - (textContent.length * fontSize * 0.3)}" 
-      y="${textY - fontSize * 0.8}" 
-      width="${textContent.length * fontSize * 0.6}" 
-      height="${fontSize * 1.2}"
-      fill="rgba(0,0,0,0.3)"
+      x="${textX - textWidth / 2}" 
+      y="${textY - textHeight / 2}" 
+      width="${textWidth}" 
+      height="${textHeight}"
+      fill="rgba(0,0,0,0.6)"
       rx="8"
       ry="8"
     />
