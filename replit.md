@@ -132,6 +132,8 @@ Preferred communication style: Simple, everyday language.
 - **Migración de Controles**: Movidos controles de posición del QR desde pantalla "Generar" a pantalla "Personalizar PRO" con diseño simplificado (solo flechas, sin título)
 - **Restricción PRO**: Controles de posición disponibles únicamente para usuarios con suscripción PRO activa
 - **Layout Horizontal**: Controles ubicados a la izquierda del QR en diseño horizontal compacto para mejor UX
+- **Corrección Marco Blanco**: Eliminado rectángulo blanco innecesario que aparecía al mover el QR a diferentes posiciones
+- **Posicionamiento Limpio**: QR ahora se posiciona directamente sobre el gradiente de fondo sin marcos adicionales
 
 ### December 2024
 - **Stripe Payment Integration**: Implemented complete payment system with subscription plans and 3-day free trial
