@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { TrendingUp, Eye, RotateCcw, FileSpreadsheet } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import WorldMap from "./WorldMap";
+import GeographicStats from "./GeographicStats";
 
 interface QRCodeStats {
   id: number;
@@ -285,8 +285,8 @@ export default function StatsDashboard() {
         </Card>
       )}
 
-      {/* World Map */}
-      <WorldMap data={countryData?.data || []} />
+      {/* Geographic Stats */}
+      <GeographicStats data={countryData?.data || []} />
 
     </div>
   );
