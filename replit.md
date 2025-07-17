@@ -181,6 +181,9 @@ Dashboard preference: Dashboard should only display graphs and metrics, not deta
 - **Mejora de Accesibilidad**: Reemplazado "funciones PRO" por "funciones gratuitas" para reflejar el modelo completamente gratuito de la aplicación
 - **Eliminación de Selección de Tamaño de QR**: Removida la opción de seleccionar tamaño del QR (pequeño, mediano, grande) de la interfaz de personalización, manteniendo solo el formato de redes sociales
 - **Eliminación de Propaganda de Personalización**: Removida completamente la tarjeta promocional de "Personalización Avanzada" que aparecía después de generar códigos QR en la pantalla principal
+- **Rediseño de Pantalla Principal**: Completamente rediseñada eliminando terminología técnica ("Profesional", "Avanzado") y enfocándose en funcionalidad de estadísticas con propaganda más modesta
+- **Nuevos Planes de Suscripción**: Agregados planes semanales ($3.45/semana) y mensuales ($6.45/mes) con 3 días de prueba gratuita en interfaz renovada
+- **Enfoque en Estadísticas**: Reorientada la propaganda hacia funcionalidades de seguimiento de scans, gráficos y análisis de rendimiento con diseño más sobrio
 
 ### December 2024
 - **Stripe Payment Integration**: Implemented complete payment system with subscription plans and 3-day free trial

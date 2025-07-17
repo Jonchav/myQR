@@ -436,54 +436,99 @@ export default function Home() {
 
           <TabsContent value="customize" className="mt-8">
             {!isAuthenticated ? (
-              <div className="max-w-2xl mx-auto">
-                <Card className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border-purple-200 dark:border-purple-700">
+              <div className="max-w-3xl mx-auto">
+                <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200 dark:border-blue-700">
                   <CardHeader className="text-center">
-                    <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
                       <Palette className="w-8 h-8 text-white" />
                     </div>
-                    <CardTitle className="text-2xl text-purple-700 dark:text-purple-300">
-                      Personalización
+                    <CardTitle className="text-2xl text-blue-700 dark:text-blue-300">
+                      Personalización Completa
                     </CardTitle>
                     <p className="text-gray-600 dark:text-gray-400 mt-2">
-                      Accede a todas las funciones de personalización gratuitas
+                      Accede a herramientas de personalización y seguimiento de estadísticas
                     </p>
                   </CardHeader>
-                  <CardContent className="text-center space-y-6">
+                  <CardContent className="space-y-6">
+                    {/* Features Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                        <div className="flex items-center gap-3 mb-2">
+                          <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+                            <Palette className="w-4 h-4 text-blue-600" />
+                          </div>
+                          <h3 className="font-medium text-gray-900 dark:text-white">Colores y Estilos</h3>
+                        </div>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Personaliza colores, patrones y efectos visuales
+                        </p>
+                      </div>
+                      
+                      <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                        <div className="flex items-center gap-3 mb-2">
+                          <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
+                            <TrendingUp className="w-4 h-4 text-green-600" />
+                          </div>
+                          <h3 className="font-medium text-gray-900 dark:text-white">Seguimiento de Scans</h3>
+                        </div>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Monitorea cuántas veces se escanean tus códigos
+                        </p>
+                      </div>
+                    </div>
 
-                    
+                    {/* Pricing Plans */}
                     <div className="space-y-4">
-                      {!isAuthenticated ? (
-                        <>
-                          <Button 
-                            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
-                            asChild
-                          >
-                            <a href="/api/login">
-                              <User className="w-4 h-4 mr-2" />
-                              Iniciar Sesión para Personalizar
-                            </a>
-                          </Button>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
-                            Inicia sesión para acceder a todas las funciones gratuitas
-                          </p>
-                        </>
-                      ) : (
-                        <>
-                          <Button 
-                            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
-                            asChild
-                          >
-                            <a href="/subscription">
-                              <Crown className="w-4 h-4 mr-2" />
-                              Obtener Acceso Completo
-                            </a>
-                          </Button>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
-                            Accede a todas las funciones premium completamente gratis
-                          </p>
-                        </>
-                      )}
+                      <h3 className="text-lg font-semibold text-center text-gray-900 dark:text-white">
+                        Planes de Suscripción
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* Weekly Plan */}
+                        <div className="p-4 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-lg border border-emerald-200 dark:border-emerald-700">
+                          <div className="text-center">
+                            <h4 className="font-semibold text-emerald-700 dark:text-emerald-300">Plan Semanal</h4>
+                            <div className="mt-2">
+                              <span className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">$3.45</span>
+                              <span className="text-sm text-gray-600 dark:text-gray-400">/semana</span>
+                            </div>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                              Perfecto para proyectos cortos
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Monthly Plan */}
+                        <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg border border-blue-200 dark:border-blue-700 relative">
+                          <div className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs px-2 py-1 rounded-full">
+                            Más Popular
+                          </div>
+                          <div className="text-center">
+                            <h4 className="font-semibold text-blue-700 dark:text-blue-300">Plan Mensual</h4>
+                            <div className="mt-2">
+                              <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">$6.45</span>
+                              <span className="text-sm text-gray-600 dark:text-gray-400">/mes</span>
+                            </div>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                              Ideal para uso continuo
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="text-center">
+                      <Button 
+                        className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+                        asChild
+                      >
+                        <a href="/api/login">
+                          <User className="w-4 h-4 mr-2" />
+                          Iniciar Sesión para Comenzar
+                        </a>
+                      </Button>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                        3 días de prueba gratuita incluidos
+                      </p>
                     </div>
                   </CardContent>
                 </Card>
@@ -506,30 +551,57 @@ export default function Home() {
 
           <TabsContent value="stats" className="mt-8">
             {!isAuthenticated ? (
-              <Card className="border-purple-200 dark:border-purple-700 bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20">
-                <CardHeader>
-                  <CardTitle className="text-xl text-center text-purple-800 dark:text-purple-200">
-                    Estadísticas y Dashboard
-                  </CardTitle>
-                  <p className="text-center text-purple-600 dark:text-purple-300">
-                    Accede a análisis detallados, gráficos interactivos e historial completo de tus códigos QR
-                  </p>
-                </CardHeader>
-                <CardContent className="text-center space-y-6">
-                  <Button 
-                    className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
-                    asChild
-                  >
-                    <a href="/api/login">
-                      <User className="w-4 h-4 mr-2" />
-                      Iniciar Sesión para Ver Estadísticas
-                    </a>
-                  </Button>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    Inicia sesión para acceder a todas las funciones gratuitas
-                  </p>
-                </CardContent>
-              </Card>
+              <div className="max-w-2xl mx-auto">
+                <Card className="border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-slate-50 dark:from-gray-900/50 dark:to-slate-900/50">
+                  <CardHeader className="text-center">
+                    <div className="w-16 h-16 bg-gradient-to-r from-slate-600 to-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <TrendingUp className="w-8 h-8 text-white" />
+                    </div>
+                    <CardTitle className="text-xl text-gray-800 dark:text-gray-200">
+                      Seguimiento de Estadísticas
+                    </CardTitle>
+                    <p className="text-gray-600 dark:text-gray-400 mt-2">
+                      Monitorea el rendimiento de tus códigos QR con datos detallados
+                    </p>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    {/* Features List */}
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3 text-sm">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        <span className="text-gray-700 dark:text-gray-300">Número total de escaneos por código QR</span>
+                      </div>
+                      <div className="flex items-center gap-3 text-sm">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span className="text-gray-700 dark:text-gray-300">Historial completo de códigos generados</span>
+                      </div>
+                      <div className="flex items-center gap-3 text-sm">
+                        <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                        <span className="text-gray-700 dark:text-gray-300">Gráficos de rendimiento por fecha</span>
+                      </div>
+                      <div className="flex items-center gap-3 text-sm">
+                        <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                        <span className="text-gray-700 dark:text-gray-300">Ranking de códigos más populares</span>
+                      </div>
+                    </div>
+
+                    <div className="text-center">
+                      <Button 
+                        className="w-full bg-gradient-to-r from-slate-600 to-gray-600 hover:from-slate-700 hover:to-gray-700 text-white"
+                        asChild
+                      >
+                        <a href="/api/login">
+                          <User className="w-4 h-4 mr-2" />
+                          Iniciar Sesión para Ver Estadísticas
+                        </a>
+                      </Button>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                        Funcionalidad incluida en todos los planes
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             ) : (
               <StatsAndHistory onEditQR={handleEditQR} />
             )}
