@@ -40,19 +40,29 @@ const GeographicStats: React.FC<GeographicStatsProps> = ({ data }) => {
   const handleDeleteHistory = async () => {
     if (window.confirm('¿Estás seguro de que quieres eliminar todo el historial de scans? Esta acción no se puede deshacer.')) {
       try {
-        await apiRequest('DELETE', '/api/qr/history');
+        const response = await apiRequest('DELETE', '/api/qr/history');
+        const result = await response.json();
         
-        // Invalidate all related queries
-        queryClient.invalidateQueries({ queryKey: ['/api/stats/countries'] });
-        queryClient.invalidateQueries({ queryKey: ['/api/stats/ips'] });
-        queryClient.invalidateQueries({ queryKey: ['/api/stats/dashboard'] });
-        queryClient.invalidateQueries({ queryKey: ['/api/qr/history'] });
-        
-        toast({
-          title: "Historial eliminado",
-          description: "Se ha eliminado todo el historial de scans correctamente.",
-        });
+        if (result.success) {
+          // Invalidate all related queries
+          queryClient.invalidateQueries({ queryKey: ['/api/stats/countries'] });
+          queryClient.invalidateQueries({ queryKey: ['/api/stats/ips'] });
+          queryClient.invalidateQueries({ queryKey: ['/api/stats/dashboard'] });
+          queryClient.invalidateQueries({ queryKey: ['/api/qr/history'] });
+          
+          toast({
+            title: "Historial eliminado",
+            description: "Se ha eliminado todo el historial de scans correctamente.",
+          });
+        } else {
+          toast({
+            title: "Error",
+            description: result.error || "No se pudo eliminar el historial",
+            variant: "destructive",
+          });
+        }
       } catch (error) {
+        console.error('Error deleting history:', error);
         toast({
           title: "Error",
           description: "No se pudo eliminar el historial. Inténtalo de nuevo.",
