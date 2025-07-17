@@ -842,8 +842,8 @@ function generateTextIntegration(options: any, width: number, height: number, qr
   const fontSize = (textSize || 28) * 2; // Make text larger for better visibility
   const fontFamily = textFont || 'Arial';
   const fontWeight = textBold ? 'bold' : 'normal';
-  // Use black text on light backgrounds for better visibility
-  const color = textColor === '#ffffff' ? '#000000' : (textColor || '#000000');
+  // Use the user-specified color, default to white for better visibility on gradient backgrounds
+  const color = textColor || '#ffffff';
   
   let textX: number;
   let textY: number;
@@ -858,7 +858,7 @@ function generateTextIntegration(options: any, width: number, height: number, qr
       break;
     case 'bottom':
       textX = qrX + qrSize / 2;
-      textY = Math.min(qrY + qrSize + fontSize * 2, height - fontSize); // Below QR, ensure within bounds
+      textY = qrY + qrSize + fontSize * 1.5; // Below QR with reasonable spacing
       textAnchor = 'middle';
       break;
     case 'left':
@@ -909,8 +909,8 @@ function generateTextIntegration(options: any, width: number, height: number, qr
   });
   
   // Create text background for better visibility
-  const textWidth = textContent.length * fontSize * 0.6;
-  const textHeight = fontSize * 1.4;
+  const textWidth = textContent.length * fontSize * 0.5;
+  const textHeight = fontSize * 1.2;
   
   const textBackground = `
     <rect 
@@ -918,11 +918,11 @@ function generateTextIntegration(options: any, width: number, height: number, qr
       y="${textY - textHeight / 2}" 
       width="${textWidth}" 
       height="${textHeight}"
-      fill="rgba(255,255,255,0.9)"
-      stroke="rgba(0,0,0,0.3)"
+      fill="rgba(0,0,0,0.7)"
+      stroke="rgba(255,255,255,0.5)"
       stroke-width="1"
-      rx="8"
-      ry="8"
+      rx="6"
+      ry="6"
     />
   `;
   
