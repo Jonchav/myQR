@@ -382,50 +382,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                 )}
               </div>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Patrón Decorativo</Label>
-                  <Select value={settings.pattern} onValueChange={(value) => applyRealTimeChange("pattern", value)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="standard">◼️ Estándar</SelectItem>
-                      <SelectItem value="dots">⚫ Puntos (Mejora de brillo)</SelectItem>
-                      <SelectItem value="rounded">🔵 Redondeado (Mejora de saturación)</SelectItem>
-                      <SelectItem value="heart">❤️ Corazón (Tono cálido)</SelectItem>
-                      <SelectItem value="star">⭐ Estrella (Tono dorado)</SelectItem>
-                      <SelectItem value="diamond">💎 Diamante (Tono frío)</SelectItem>
-                      <SelectItem value="hexagon">⬡ Hexágono (Tono púrpura)</SelectItem>
-                      <SelectItem value="flower">🌸 Flor (Tono suave)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Estilo del QR</Label>
-                  <Select value={settings.style} onValueChange={(value) => applyRealTimeChange("style", value)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="square">◼️ Cuadrado Clásico</SelectItem>
-                      <SelectItem value="dots">⚫ Puntos Suaves</SelectItem>
-                      <SelectItem value="rounded">🔵 Redondeado Suave</SelectItem>
-                      <SelectItem value="circle">⭕ Circular</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label className="text-sm">Nota sobre Estilos</Label>
-                  <p className="text-xs text-muted-foreground">
-                    Los estilos creativos añaden colores múltiples y esquinas distintivas manteniendo la funcionalidad del QR
-                  </p>
-                </div>
-              </div>
+
             </CardContent>
           </Card>
 

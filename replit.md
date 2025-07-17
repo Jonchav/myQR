@@ -134,6 +134,9 @@ Preferred communication style: Simple, everyday language.
 - **Layout Horizontal**: Controles ubicados a la izquierda del QR en diseño horizontal compacto para mejor UX
 - **Corrección Marco Blanco**: Eliminado rectángulo blanco innecesario que aparecía al mover el QR a diferentes posiciones
 - **Posicionamiento Limpio**: QR ahora se posiciona directamente sobre el gradiente de fondo sin marcos adicionales
+- **Botón Aplicar Cambios Reubicado**: Movido botón cerca de controles de posición con diseño centrado y estético
+- **Eliminación de Funciones Inútiles**: Removidas secciones "Patrón Decorativo" y "Estilo del QR" que no funcionaban correctamente y no aportaban valor
+- **Interfaz Simplificada**: Reducida interfaz a funciones esenciales manteniendo solo características que funcionan apropiadamente
 
 ### December 2024
 - **Stripe Payment Integration**: Implemented complete payment system with subscription plans and 3-day free trial
