@@ -64,7 +64,10 @@ const qrGenerationSchema = z.object({
   url: z.string().url("Por favor, ingresa una URL válida"),
   data: z.string().optional(),
   type: z.enum(["url", "text", "email", "phone", "sms", "wifi"]).default("url"),
-  backgroundColor: z.string().default("#ffffff"),
+  backgroundColor: z.union([
+    z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Debe ser un color hexadecimal válido"),
+    z.literal("transparent")
+  ]).default("#ffffff"),
   foregroundColor: z.string().default("#000000"),
   style: z.enum(["square", "rounded", "circle", "dots"]).default("square"),
   size: z.enum(["small", "medium", "large", "xlarge"]).default("medium"),
@@ -2664,7 +2667,7 @@ async function generateAdvancedQRCode(options: any): Promise<string> {
   
   // Use creative style colors if available, otherwise use user-selected colors
   let qrForegroundColor = options.foregroundColor || "#000000";
-  let qrBackgroundColor = options.backgroundColor || "#ffffff";
+  let qrBackgroundColor = options.backgroundColor === "transparent" ? "#ffffff" : (options.backgroundColor || "#ffffff");
   
   // Override with creative style colors if specified
   if (options.creativeStyle && options.creativeStyle !== "classic") {
@@ -2683,7 +2686,7 @@ async function generateAdvancedQRCode(options: any): Promise<string> {
     margin: Math.floor((options.margin || 150) / 30), // Convert pixels to QR margin units
     color: {
       dark: qrForegroundColor,
-      light: qrBackgroundColor
+      light: options.backgroundColor === "transparent" ? "#ffffff" : qrBackgroundColor
     },
     errorCorrectionLevel,
     type: 'image/png',
@@ -2696,6 +2699,63 @@ async function generateAdvancedQRCode(options: any): Promise<string> {
   // Generate the QR code
   const dataToEncode = options.data || options.url;
   let qrDataUrl = await QRCode.toDataURL(dataToEncode, qrOptions);
+  
+  // If transparent background is requested, convert white pixels to transparent
+  if (options.backgroundColor === "transparent") {
+    const qrBase64 = qrDataUrl.replace(/^data:image\/[a-z]+;base64,/, '');
+    const qrBuffer = Buffer.from(qrBase64, 'base64');
+    
+    // Create transparent background version
+    const transparentQRBuffer = await sharp(qrBuffer)
+      .png({
+        quality: 90,
+        compressionLevel: 6,
+        progressive: false,
+        force: true
+      })
+      .toBuffer();
+    
+    // Convert white pixels to transparent
+    const { data, info } = await sharp(transparentQRBuffer)
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+    
+    // Process pixels to make white transparent
+    const transparentData = new Uint8Array(data.length);
+    for (let i = 0; i < data.length; i += 3) {
+      const r = data[i];
+      const g = data[i + 1];
+      const b = data[i + 2];
+      
+      // If pixel is white (or very close to white), make it transparent
+      if (r > 250 && g > 250 && b > 250) {
+        transparentData[i] = 255;     // R
+        transparentData[i + 1] = 255; // G
+        transparentData[i + 2] = 255; // B
+      } else {
+        transparentData[i] = r;
+        transparentData[i + 1] = g;
+        transparentData[i + 2] = b;
+      }
+    }
+    
+    // Create new image with alpha channel
+    const finalBuffer = await sharp(transparentData, {
+      raw: {
+        width: info.width,
+        height: info.height,
+        channels: 3
+      }
+    })
+    .png({ 
+      quality: 90,
+      compressionLevel: 6,
+      progressive: false
+    })
+    .toBuffer();
+    
+    qrDataUrl = `data:image/png;base64,${finalBuffer.toString('base64')}`;
+  }
   
   // Apply enhanced styling with gradients if specified  
   console.log('Checking creative style:', options.creativeStyle);

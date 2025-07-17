@@ -150,6 +150,10 @@ export const insertQRCodeSchema = createInsertSchema(qrCodes).pick({
   qrDataUrl: true,
   margin: true,
 }).extend({
+  backgroundColor: z.union([
+    z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Debe ser un color hexadecimal válido"),
+    z.literal("transparent")
+  ]).default("#ffffff"),
   creativeStyle: z.enum([
     "classic",
     "vibrant_rainbow",

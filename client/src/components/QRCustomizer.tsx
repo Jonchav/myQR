@@ -140,9 +140,10 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                   <div className="flex gap-2">
                     <input
                       type="color"
-                      value={settings.backgroundColor}
+                      value={settings.backgroundColor === "transparent" ? "#ffffff" : settings.backgroundColor}
                       onChange={(e) => applyRealTimeChange("backgroundColor", e.target.value)}
                       className="w-12 h-10 rounded border border-gray-300 dark:border-gray-600 cursor-pointer"
+                      disabled={settings.backgroundColor === "transparent"}
                     />
                     <Input
                       type="text"
@@ -150,7 +151,33 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                       onChange={(e) => applyRealTimeChange("backgroundColor", e.target.value)}
                       placeholder="#ffffff"
                       className="font-mono text-sm"
+                      disabled={settings.backgroundColor === "transparent"}
                     />
+                    <Button
+                      variant={settings.backgroundColor === "transparent" ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => applyRealTimeChange("backgroundColor", settings.backgroundColor === "transparent" ? "#ffffff" : "transparent")}
+                      className="px-3 py-2 h-10 whitespace-nowrap"
+                      title={settings.backgroundColor === "transparent" ? "Usar color sólido" : "Usar transparente"}
+                    >
+                      {settings.backgroundColor === "transparent" ? (
+                        <div className="flex items-center gap-1">
+                          <div className="w-4 h-4 bg-transparent border border-gray-400 rounded-sm bg-gradient-to-br from-white to-gray-200" style={{
+                            backgroundImage: 'linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%)',
+                            backgroundSize: '8px 8px',
+                            backgroundPosition: '0 0, 0 4px, 4px -4px, -4px 0px'
+                          }} />
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-1">
+                          <div className="w-4 h-4 bg-transparent border border-gray-400 rounded-sm" style={{
+                            backgroundImage: 'linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%)',
+                            backgroundSize: '8px 8px',
+                            backgroundPosition: '0 0, 0 4px, 4px -4px, -4px 0px'
+                          }} />
+                        </div>
+                      )}
+                    </Button>
                   </div>
                 </div>
                 
