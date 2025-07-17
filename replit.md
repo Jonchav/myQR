@@ -12,6 +12,10 @@ Dashboard preference: Dashboard should only display graphs and metrics, not deta
 ## Recent Changes
 
 ### January 2025
+- **Eliminación Completa del Sistema de Pagos**: Removido completamente el sistema de suscripción Stripe de la aplicación, eliminando todos los endpoints de pago, simplificando hooks de autenticación y convirtiendo la aplicación en completamente gratuita
+- **Interfaz Simplificada sin Promociones**: Eliminadas todas las tarjetas promocionales, anuncios de upgrade y referencias a funciones PRO, dando mayor relevancia a las estadísticas y dashboard con interfaz limpia
+- **Pestaña Dashboard Mejorada**: Cambiado "Estadísticas" a "Dashboard" en la navegación principal, eliminando promociones y enfocándose en análisis de datos reales
+- **Acceso Universal**: Todas las funciones de personalización ahora disponibles gratuitamente para todos los usuarios autenticados sin restricciones
 - **QR Funcionalidad Crítica Solucionada**: Corregido problema donde códigos QR no eran funcionales al escanearse - ahora contienen URL original del usuario en lugar de URL de tracking interno
 - **Nuevo Sistema de Colores Creativos**: Implementado aplicación de colores creativos directamente sobre QR funcional usando Sharp con transformaciones de matiz, saturación, brillo y tinte
 - **Mejoras de Rendimiento**: Eliminado uso de qr-svg problemático y reemplazado por sistema de modulación de color que preserva funcionalidad completa del QR

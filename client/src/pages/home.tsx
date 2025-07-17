@@ -279,7 +279,7 @@ export default function Home() {
             </TabsTrigger>
             <TabsTrigger value="stats" className="flex items-center gap-2 text-gray-600 dark:text-gray-400 data-[state=active]:text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-600">
               <TrendingUp className="w-4 h-4" />
-              Estadísticas
+              Dashboard
             </TabsTrigger>
           </TabsList>
 
@@ -476,47 +476,11 @@ export default function Home() {
                       Personalización Avanzada
                     </CardTitle>
                     <p className="text-gray-600 dark:text-gray-400 mt-2">
-                      Desbloquea colores personalizados, estilos únicos, logos y patrones avanzados
+                      Accede a todas las funciones de personalización gratuitas
                     </p>
                   </CardHeader>
                   <CardContent className="text-center space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-purple-200 dark:border-purple-700">
-                        <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-3">
-                          <Palette className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                        </div>
-                        <h3 className="font-semibold text-sm text-gray-900 dark:text-white mb-1">
-                          Colores Personalizados
-                        </h3>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">
-                          Combina colores de fondo y primer plano únicos para tu marca
-                        </p>
-                      </div>
-                      
-                      <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-purple-200 dark:border-purple-700">
-                        <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-3">
-                          <Sparkles className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                        </div>
-                        <h3 className="font-semibold text-sm text-gray-900 dark:text-white mb-1">
-                          Estilos Avanzados
-                        </h3>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">
-                          Patrones circulares, marcos decorativos y efectos especiales
-                        </p>
-                      </div>
-                      
-                      <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-purple-200 dark:border-purple-700">
-                        <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-3">
-                          <Settings className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                        </div>
-                        <h3 className="font-semibold text-sm text-gray-900 dark:text-white mb-1">
-                          Logos y Branding
-                        </h3>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">
-                          Añade tu logo y elementos de marca profesionales
-                        </p>
-                      </div>
-                    </div>
+
                     
                     <div className="space-y-4">
                       {!isAuthenticated ? (
@@ -575,96 +539,25 @@ export default function Home() {
               <Card className="border-purple-200 dark:border-purple-700 bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20">
                 <CardHeader>
                   <CardTitle className="text-xl text-center text-purple-800 dark:text-purple-200">
-                    Estadísticas
+                    Estadísticas y Dashboard
                   </CardTitle>
                   <p className="text-center text-purple-600 dark:text-purple-300">
-                    Accede a análisis detallados e historial completo de tus códigos QR
+                    Accede a análisis detallados, gráficos interactivos e historial completo de tus códigos QR
                   </p>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-purple-200 dark:border-purple-700">
-                      <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <TrendingUp className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                      </div>
-                      <h3 className="font-semibold text-sm text-gray-900 dark:text-white mb-1">
-                        QR Más Populares
-                      </h3>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
-                        Descubre qué códigos QR reciben más escaneos
-                      </p>
-                    </div>
-                    
-                    <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-purple-200 dark:border-purple-700">
-                      <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <History className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                      </div>
-                      <h3 className="font-semibold text-sm text-gray-900 dark:text-white mb-1">
-                        Historial Completo
-                      </h3>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
-                        Accede a todos tus códigos QR generados con fechas y detalles
-                      </p>
-                    </div>
-                    
-                    <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-purple-200 dark:border-purple-700">
-                      <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <Calendar className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                      </div>
-                      <h3 className="font-semibold text-sm text-gray-900 dark:text-white mb-1">
-                        Filtros por Fecha
-                      </h3>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
-                        Analiza el rendimiento por rangos de fechas específicos
-                      </p>
-                    </div>
-                    
-                    <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-purple-200 dark:border-purple-700">
-                      <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <Download className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                      </div>
-                      <h3 className="font-semibold text-sm text-gray-900 dark:text-white mb-1">
-                        Exportación Excel
-                      </h3>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
-                        Exporta datos y estadísticas a archivos Excel profesionales
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    {!isAuthenticated ? (
-                      <>
-                        <Button 
-                          className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
-                          asChild
-                        >
-                          <a href="/api/login">
-                            <User className="w-4 h-4 mr-2" />
-                            Iniciar Sesión para Personalizar
-                          </a>
-                        </Button>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                          Inicia sesión para acceder a las estadísticas PRO
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        <Button 
-                          className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
-                          asChild
-                        >
-                          <a href="/subscription">
-                            <Crown className="w-4 h-4 mr-2" />
-                            Acceso Completo
-                          </a>
-                        </Button>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                          Todas las funciones premium ahora completamente gratis
-                        </p>
-                      </>
-                    )}
-                  </div>
+                <CardContent className="text-center space-y-6">
+                  <Button 
+                    className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
+                    asChild
+                  >
+                    <a href="/api/login">
+                      <User className="w-4 h-4 mr-2" />
+                      Iniciar Sesión para Ver Estadísticas
+                    </a>
+                  </Button>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Inicia sesión para acceder a todas las funciones gratuitas
+                  </p>
                 </CardContent>
               </Card>
             ) : (
