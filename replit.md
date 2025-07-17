@@ -155,6 +155,9 @@ Preferred communication style: Simple, everyday language.
 - **Fusión de Historial y Estadísticas**: Unificadas las pestañas "Historial PRO" y "Estadísticas PRO" en una sola pestaña llamada "Estadísticas PRO" con sistema de pestañas internas (Dashboard y Historial) para mejor organización
 - **Interfaz Simplificada**: Reducido número de pestañas principales de 4 a 3 (Generar, Personalizar PRO, Estadísticas PRO) para navegación más intuitiva
 - **Componente Unificado**: Creado StatsAndHistory que combina funcionalidad de estadísticas y historial en una sola interfaz con pestañas internas
+- **Sistema de Tracking de Scans Corregido**: Solucionado problema crítico donde los QR codes no registraban scans correctamente - ahora todos los códigos QR usan URLs de tracking que redirigen a la URL original mientras registran cada scan automáticamente
+- **Endpoint de Tracking Funcional**: Implementado sistema robusto con endpoint `/api/scan/:id` que registra scans en base de datos y redirige al destino final
+- **Migración Automática**: Creada funcionalidad para actualizar QR codes existentes al sistema de tracking con endpoint `/api/qr/migrate-tracking`
 
 ### December 2024
 - **Stripe Payment Integration**: Implemented complete payment system with subscription plans and 3-day free trial

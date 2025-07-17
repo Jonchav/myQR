@@ -3053,11 +3053,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create tracking URL that will redirect to the actual URL
       const trackingUrl = `${req.protocol}://${req.get('host')}/api/scan/${qrRecord.id}`;
       
-      // Generate QR code with the ORIGINAL URL so it's functional
+      // Generate QR code with the TRACKING URL for scan counting
       const qrDataUrl = await generateAdvancedQRCode({
         ...validatedData,
-        url: validatedData.url,
-        data: validatedData.url
+        url: trackingUrl,
+        data: trackingUrl
       });
 
       // Update the QR record with the generated QR code
@@ -3410,6 +3410,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({
         success: false,
         error: "Error al eliminar el historial"
+      });
+    }
+  });
+
+  // Migrate existing QR codes to use tracking URLs (admin function)
+  app.post("/api/qr/migrate-tracking", isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req.user as any).claims.sub;
+      
+      // Get all QR codes for this user
+      const qrCodes = await storage.getQRCodes(userId, 1000, 0);
+      
+      let migratedCount = 0;
+      
+      for (const qrCode of qrCodes) {
+        // Create tracking URL
+        const trackingUrl = `${req.protocol}://${req.get('host')}/api/scan/${qrCode.id}`;
+        
+        // Generate new QR code with tracking URL
+        const qrDataUrl = await generateAdvancedQRCode({
+          url: trackingUrl,
+          data: trackingUrl,
+          backgroundColor: qrCode.backgroundColor,
+          foregroundColor: qrCode.foregroundColor,
+          style: qrCode.style,
+          size: qrCode.size,
+          pattern: qrCode.pattern,
+          frame: qrCode.frame,
+          gradient: qrCode.gradient,
+          border: qrCode.border,
+          logo: qrCode.logo,
+          errorCorrection: qrCode.errorCorrection,
+          margin: qrCode.margin,
+          qrPosition: qrCode.qrPosition,
+          cardStyle: qrCode.cardStyle,
+          cardTemplate: qrCode.cardTemplate,
+          creativeStyle: qrCode.creativeStyle,
+          customBackgroundImage: qrCode.customBackgroundImage
+        });
+        
+        // Update the QR code record
+        await storage.updateQRCode(qrCode.id, { qrDataUrl }, userId);
+        migratedCount++;
+      }
+      
+      res.json({
+        success: true,
+        message: `${migratedCount} códigos QR migrados exitosamente al sistema de tracking`,
+        migratedCount
+      });
+    } catch (error) {
+      console.error("Error migrating QR codes:", error);
+      res.status(500).json({
+        success: false,
+        error: "Error al migrar los códigos QR"
       });
     }
   });
