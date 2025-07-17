@@ -423,12 +423,16 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                         size="sm"
                         onClick={() => {
                           console.log("Seleccionando SCAN ME!");
-                          applyRealTimeChange("textContent", "SCAN ME!");
-                          applyRealTimeChange("textFont", "Arial");
-                          applyRealTimeChange("textBold", true);
-                          applyRealTimeChange("textSize", 28);
-                          applyRealTimeChange("textColor", "#ffffff");
-                          console.log("Configuración aplicada:", settings);
+                          const newSettings = {
+                            ...settings,
+                            textContent: "SCAN ME!",
+                            textFont: "Arial",
+                            textBold: true,
+                            textSize: 28,
+                            textColor: "#ffffff"
+                          };
+                          console.log("Aplicando configuración completa:", newSettings);
+                          onChange(newSettings);
                         }}
                         className="h-12 text-sm font-bold"
                       >
@@ -438,11 +442,15 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                         variant={settings.textContent === "ESCANÉAME!" ? "default" : "outline"}
                         size="sm"
                         onClick={() => {
-                          applyRealTimeChange("textContent", "ESCANÉAME!");
-                          applyRealTimeChange("textFont", "Arial");
-                          applyRealTimeChange("textBold", true);
-                          applyRealTimeChange("textSize", 28);
-                          applyRealTimeChange("textColor", "#ffffff");
+                          const newSettings = {
+                            ...settings,
+                            textContent: "ESCANÉAME!",
+                            textFont: "Arial",
+                            textBold: true,
+                            textSize: 28,
+                            textColor: "#ffffff"
+                          };
+                          onChange(newSettings);
                         }}
                         className="h-12 text-sm font-bold"
                       >
@@ -452,11 +460,15 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                         variant={settings.textContent === "AQUÍ!" ? "default" : "outline"}
                         size="sm"
                         onClick={() => {
-                          applyRealTimeChange("textContent", "AQUÍ!");
-                          applyRealTimeChange("textFont", "Arial");
-                          applyRealTimeChange("textBold", true);
-                          applyRealTimeChange("textSize", 28);
-                          applyRealTimeChange("textColor", "#ffffff");
+                          const newSettings = {
+                            ...settings,
+                            textContent: "AQUÍ!",
+                            textFont: "Arial",
+                            textBold: true,
+                            textSize: 28,
+                            textColor: "#ffffff"
+                          };
+                          onChange(newSettings);
                         }}
                         className="h-12 text-sm font-bold"
                       >
