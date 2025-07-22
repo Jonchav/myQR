@@ -154,13 +154,12 @@ export default function Home() {
       border: "none",
       logo: "none",
       type: "url",
-      // Text fields removed
       errorCorrection: "M",
       cardTemplate: "none",
       cardStyle: "modern_gradient",
-      // Text configuration removed
       margin: 150,
-      customBackgroundImage: null, // Reset imagen personalizada
+      customBackgroundImage: null,
+      qrPosition: "center"
     });
   };
 
@@ -192,7 +191,8 @@ export default function Home() {
       border: qrData.border || "none",
       logo: qrData.logo || "none",
       type: qrData.type || "url",
-      // Text fields removed
+      margin: qrData.margin || 150,
+      qrPosition: qrData.qrPosition || "center",
       errorCorrection: qrData.errorCorrection || "M",
       cardTemplate: qrData.cardTemplate || "none",
       cardStyle: qrData.cardStyle || "modern_gradient",
@@ -247,7 +247,7 @@ export default function Home() {
                       <User className="w-4 h-4 text-white" />
                     </div>
                     <span className="text-sm font-medium text-gray-900 dark:text-white">
-                      {user?.firstName || user?.email || "Usuario"}
+                      {(user as any)?.firstName || (user as any)?.email || "Usuario"}
                     </span>
                   </div>
                   <Button variant="ghost" size="sm" asChild>
@@ -489,7 +489,7 @@ export default function Home() {
                           <div className="text-center">
                             <h4 className="font-semibold text-emerald-700 dark:text-emerald-300">Plan Semanal</h4>
                             <div className="mt-2">
-                              <span className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">$1.99</span>
+                              <span className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">$0.99</span>
                               <span className="text-sm text-gray-600 dark:text-gray-400">/semana</span>
                             </div>
                             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -506,7 +506,7 @@ export default function Home() {
                           <div className="text-center">
                             <h4 className="font-semibold text-blue-700 dark:text-blue-300">Plan Mensual</h4>
                             <div className="mt-2">
-                              <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">$3.45</span>
+                              <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">$2.15</span>
                               <span className="text-sm text-gray-600 dark:text-gray-400">/mes</span>
                             </div>
                             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">

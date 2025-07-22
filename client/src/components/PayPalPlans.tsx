@@ -58,7 +58,7 @@ export default function PayPalPlans({ onPaymentSuccess }: PayPalPlansProps) {
         weeklyPayPalButton.style.cssText = "width: 120px; height: 35px;";
         weeklyPayPalButton.addEventListener("click", async () => {
           try {
-            const orderPromise = createOrder("1.99", "USD", "CAPTURE");
+            const orderPromise = createOrder("0.99", "USD", "CAPTURE");
             await weeklyCheckout.start({ paymentFlow: "auto" }, orderPromise);
           } catch (e) {
             console.error("Weekly payment error:", e);
@@ -87,7 +87,7 @@ export default function PayPalPlans({ onPaymentSuccess }: PayPalPlansProps) {
         monthlyPayPalButton.style.cssText = "width: 120px; height: 35px;";
         monthlyPayPalButton.addEventListener("click", async () => {
           try {
-            const orderPromise = createOrder("3.45", "USD", "CAPTURE");
+            const orderPromise = createOrder("2.15", "USD", "CAPTURE");
             await monthlyCheckout.start({ paymentFlow: "auto" }, orderPromise);
           } catch (e) {
             console.error("Monthly payment error:", e);
@@ -120,7 +120,7 @@ export default function PayPalPlans({ onPaymentSuccess }: PayPalPlansProps) {
 
   return (
     <div className="paypal-plans">
-      <style jsx>{`
+      <style>{`
         .paypal-button-container {
           display: inline-block;
         }
