@@ -19,11 +19,6 @@ import { Request, Response } from "express";
 
 const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, PAYPAL_ENVIRONMENT } =
   process.env;
-console.log("PayPal Configuración:", {
-  PAYPAL_CLIENT_ID,
-  PAYPAL_CLIENT_SECRET,
-  PAYPAL_ENVIRONMENT,
-});
 if (!PAYPAL_CLIENT_ID) {
   throw new Error("Missing PAYPAL_CLIENT_ID");
 }
@@ -36,9 +31,6 @@ console.log(
   "PayPal Client ID (first 20 chars):",
   PAYPAL_CLIENT_ID.substring(0, 20) + "...",
 );
-console.log("PAYPAL_CLIENT_ID:", PAYPAL_CLIENT_ID);
-console.log("PAYPAL_CLIENT_SECRET:", PAYPAL_CLIENT_SECRET);
-console.log("PAYPAL_ENVIRONMENT:", PAYPAL_ENVIRONMENT);
 const client = new Client({
   clientCredentialsAuthCredentials: {
     oAuthClientId: PAYPAL_CLIENT_ID,
