@@ -17,8 +17,13 @@ import { Request, Response } from "express";
 
 /* PayPal Controllers Setup */
 
-const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, PAYPAL_ENVIRONMENT } = process.env;
-
+const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, PAYPAL_ENVIRONMENT } =
+  process.env;
+console.log("PayPal Configuración:", {
+  PAYPAL_CLIENT_ID,
+  PAYPAL_CLIENT_SECRET,
+  PAYPAL_ENVIRONMENT,
+});
 if (!PAYPAL_CLIENT_ID) {
   throw new Error("Missing PAYPAL_CLIENT_ID");
 }
@@ -26,8 +31,14 @@ if (!PAYPAL_CLIENT_SECRET) {
   throw new Error("Missing PAYPAL_CLIENT_SECRET");
 }
 
-console.log('PayPal Environment:', PAYPAL_ENVIRONMENT);
-console.log('PayPal Client ID (first 20 chars):', PAYPAL_CLIENT_ID.substring(0, 20) + '...');
+console.log("PayPal Environment:", PAYPAL_ENVIRONMENT);
+console.log(
+  "PayPal Client ID (first 20 chars):",
+  PAYPAL_CLIENT_ID.substring(0, 20) + "...",
+);
+console.log("PAYPAL_CLIENT_ID:", PAYPAL_CLIENT_ID);
+console.log("PAYPAL_CLIENT_SECRET:", PAYPAL_CLIENT_SECRET);
+console.log("PAYPAL_ENVIRONMENT:", PAYPAL_ENVIRONMENT);
 const client = new Client({
   clientCredentialsAuthCredentials: {
     oAuthClientId: PAYPAL_CLIENT_ID,
@@ -35,9 +46,9 @@ const client = new Client({
   },
   timeout: 0,
   environment:
-                process.env.PAYPAL_ENVIRONMENT?.toLowerCase() === "production"
-                  ? Environment.Production
-                  : Environment.Sandbox,
+    process.env.PAYPAL_ENVIRONMENT?.toLowerCase() === "production"
+      ? Environment.Production
+      : Environment.Sandbox,
   logging: {
     logLevel: LogLevel.Info,
     logRequest: {
@@ -75,11 +86,9 @@ export async function createPaypalOrder(req: Request, res: Response) {
     const { amount, currency, intent } = req.body;
 
     if (!amount || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
-      return res
-        .status(400)
-        .json({
-          error: "Invalid amount. Amount must be a positive number.",
-        });
+      return res.status(400).json({
+        error: "Invalid amount. Amount must be a positive number.",
+      });
     }
 
     if (!currency) {
@@ -110,7 +119,7 @@ export async function createPaypalOrder(req: Request, res: Response) {
     };
 
     const { body, ...httpResponse } =
-          await ordersController.createOrder(collect);
+      await ordersController.createOrder(collect);
 
     const jsonResponse = JSON.parse(String(body));
     const httpStatusCode = httpResponse.statusCode;
@@ -131,7 +140,7 @@ export async function capturePaypalOrder(req: Request, res: Response) {
     };
 
     const { body, ...httpResponse } =
-          await ordersController.captureOrder(collect);
+      await ordersController.captureOrder(collect);
 
     const jsonResponse = JSON.parse(String(body));
     const httpStatusCode = httpResponse.statusCode;
