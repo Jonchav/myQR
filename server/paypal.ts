@@ -38,7 +38,7 @@ const client = new Client({
   },
   timeout: 0,
   environment:
-    process.env.PAYPAL_ENVIRONMENT?.toLowerCase() === "production"
+    process.env.PAYPAL_ENVIRONMENT === "live"
       ? Environment.Production
       : Environment.Sandbox,
   logging: {
