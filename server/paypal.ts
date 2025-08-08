@@ -22,7 +22,6 @@ const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, PAYPAL_ENVIRONMENT } =
 if (!PAYPAL_CLIENT_ID) {
   throw new Error("Missing PAYPAL_CLIENT_ID");
 }
-console.log("DEBUG ENV:", process.env);
 if (!PAYPAL_CLIENT_SECRET) {
   throw new Error("Missing PAYPAL_CLIENT_SECRET");
 }
