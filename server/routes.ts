@@ -3084,7 +3084,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
     }
   });
-
+  // Delete QR code history (PRO-only)
+  app.delete("/api/qr/history", isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req.user as any).claims.sub;
+      await storage.deleteAllQRCodes(userId);
+      res.json({ success: true, message: "Historial borrado correctamente" });
+    } catch (error) {
+      console.error("Error borrando historial:", error);
+      res.status(500).json({ success: false, error: "Error al borrar el historial" });
+  }
+  });
   // Get QR code history (PRO-only) with pagination
   app.get("/api/qr/history", isAuthenticated, async (req, res) => {
     try {

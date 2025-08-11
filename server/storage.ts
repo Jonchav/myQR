@@ -402,7 +402,7 @@ export class DatabaseStorage implements IStorage {
       return true;
     } catch (error) {
       console.error('Error clearing user history:', error);
-      console.error('Error details:', error.message);
+      console.error('Error details:', error instanceof Error ? error.message : 'Unknown error');
       throw error;
     }
   }

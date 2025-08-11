@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: myqr
+    env: node
+    plan: free
+    buildCommand: ./render-build.sh
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PAYPAL_ENVIRONMENT
+        value: live
+      - key: PORT
+        generateValue: true
+databases:
+  - name: myqr-postgres
+    databaseName: myqr
+    user: myqr
