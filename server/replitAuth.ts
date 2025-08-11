@@ -1,4 +1,3 @@
-import passport from "passport";
 import session from "express-session";
 import type { Express, RequestHandler } from "express";
 import connectPg from "connect-pg-simple";
@@ -40,24 +39,21 @@ function createMockUser() {
 export async function setupAuth(app: Express) {
   app.set("trust proxy", 1);
   app.use(getSession());
-  app.use(passport.initialize());
-  app.use(passport.session());
 
-  // Simple local authentication for deployment
-  passport.serializeUser((user: Express.User, cb) => cb(null, user));
-  passport.deserializeUser((user: Express.User, cb) => cb(null, user));
-
+  // Simple session-based authentication
   app.get("/api/login", async (req, res) => {
-    // Auto-login with demo user for deployment
-    const mockUser = createMockUser();
-    await storage.upsertUser(mockUser);
-    req.login(mockUser, (err) => {
-      if (err) {
-        console.error("Login error:", err);
-        return res.status(500).json({ message: "Login failed" });
-      }
+    try {
+      // Auto-login with demo user for deployment
+      const mockUser = createMockUser();
+      await storage.upsertUser(mockUser);
+      
+      // Store user in session
+      (req.session as any).user = mockUser;
       res.redirect("/");
-    });
+    } catch (error) {
+      console.error("Login error:", error);
+      res.status(500).json({ message: "Login failed" });
+    }
   });
 
   app.get("/api/callback", (req, res) => {
@@ -65,22 +61,29 @@ export async function setupAuth(app: Express) {
   });
 
   app.get("/api/logout", (req, res) => {
-    req.logout((err) => {
-      if (err) {
-        console.error("Logout error:", err);
-        return res.status(500).json({ message: "Logout failed" });
-      }
-      res.redirect("/");
-    });
+    try {
+      (req.session as any).user = null;
+      req.session.destroy((err) => {
+        if (err) {
+          console.error("Session destroy error:", err);
+        }
+        res.redirect("/");
+      });
+    } catch (error) {
+      console.error("Logout error:", error);
+      res.status(500).json({ message: "Logout failed" });
+    }
   });
 }
 
 export const isAuthenticated: RequestHandler = async (req, res, next) => {
-  const user = req.user as any;
+  const user = (req.session as any)?.user;
 
-  if (!req.isAuthenticated() || !user) {
+  if (!user) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
+  // Add user to request object for compatibility
+  (req as any).user = user;
   return next();
 };

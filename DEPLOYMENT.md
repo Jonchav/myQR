@@ -1,5 +1,14 @@
 # Guía de Despliegue para Render
 
+## ✅ CORRECCIONES APLICADAS
+
+### Problemas Resueltos
+- ❌ **Error "clientId must be a non-empty string"** - Sistema OpenID eliminado
+- ✅ **Autenticación simplificada** - Sistema basado en sesiones sin dependencias externas
+- ✅ **Puerto dinámico** - Compatible con Render (`process.env.PORT`)
+- ✅ **Build exitoso** - Sin errores de TypeScript
+- ✅ **Dependencies limpias** - Removidas: passport, openid-client
+
 ## Configuración Necesaria
 
 ### Variables de Entorno Requeridas

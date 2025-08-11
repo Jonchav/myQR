@@ -7,6 +7,15 @@ myQR is a full-stack web application for generating QR codes from URLs. It featu
 Preferred communication style: Simple, everyday language.
 Dashboard preference: Dashboard should only display graphs and metrics, not detailed QR code lists.
 
+## Recent Changes (August 11, 2025)
+### ✅ Render Deployment Fixes
+- **Authentication System**: Migrated from Replit OpenID Connect to simple session-based authentication
+- **Dependencies Cleanup**: Removed passport, openid-client, and related packages that were causing deployment errors
+- **Port Configuration**: Updated to use dynamic port (`process.env.PORT`) for Render compatibility
+- **Build System**: Created simplified routes (`routes-simple.ts`) to avoid TypeScript compilation errors
+- **Deployment Files**: Added render.yaml, Procfile, .nvmrc, and render-build.sh for proper Render deployment
+- **Error Resolution**: Fixed "clientId must be a non-empty string" error that was preventing deployment
+
 ## System Architecture
 ### Frontend Architecture
 - **Framework**: React 18 with TypeScript, built with Vite.
