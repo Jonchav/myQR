@@ -61,7 +61,6 @@ function getSession() {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       maxAge: sessionTtl,
-      sameSite: 'lax',
     },
   });
 }
@@ -137,35 +136,15 @@ async function generateQRCode(data: any) {
       
       console.log("Setting up demo user session");
       
-      // Try to get/create user in database
-      let savedUser;
-      try {
-        if (process.env.DATABASE_URL) {
-          console.log("Database available, attempting upsert");
-          savedUser = await storage.upsertUser(demoUser);
-          console.log("User upserted successfully:", savedUser.id);
-        } else {
-          console.log("No database configured, using session-only");
-          savedUser = demoUser;
-        }
-      } catch (dbError) {
-        console.error("Database error (continuing with session-only):", dbError);
-        savedUser = demoUser;
-      }
+      // Skip database operations for demo user - use session-only approach
+      console.log("Using session-only authentication for demo user");
+      let savedUser = demoUser;
 
       // Set session
       req.session.user = savedUser;
       console.log("Session set for user:", savedUser.id);
       
-      // Force session save before redirect
-      req.session.save((err: any) => {
-        if (err) {
-          console.error("Session save error:", err);
-          return res.status(500).json({ message: "Session save failed" });
-        }
-        console.log("Session saved successfully, redirecting");
-        res.redirect("/");
-      });
+      res.redirect("/");
     } catch (error: any) {
       console.error("Login error:", error);
       res.status(500).json({ 
@@ -200,8 +179,8 @@ async function generateQRCode(data: any) {
   // Auth user endpoint
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.id;
-      const user = await storage.getUser(userId);
+      const user = req.user;
+      console.log("Returning user from session:", user.id);
       res.json(user);
     } catch (error) {
       console.error("Error fetching user:", error);
