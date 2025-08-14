@@ -42,4 +42,8 @@ Generating QR with options: {
 - **Escalabilidad**: Responsive mantenida con `w-full h-auto`
 - **Verificado**: Logs confirman width: 1600px funcionando
 
-🚀 **QR ahora 6.25x más grande en generación + 2.14x más grande en visualización = MEJORA MASIVA**
+🚀 **SOLUCIÓN CELDAS QR:**
+- **Margin**: Reducido a 1 (mínimo) para maximizar espacio QR
+- **Scale**: 10x para celdas más grandes y visibles
+- **Error Correction**: L (baja) = menos celdas = celdas individuales más grandes
+- **Resultado**: Celdas QR negras significativamente más grandes y nítidas

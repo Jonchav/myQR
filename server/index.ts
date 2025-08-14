@@ -103,15 +103,16 @@ async function generateQRCode(data: any) {
     else if (data.size === "large") qrWidth = 2000; 
     else if (data.size === "xlarge") qrWidth = 2400;
     
-    const qrOptions: any = {
+    const qrOptions = {
       width: qrWidth,
-      margin: 2, // Reducido para más espacio al QR
+      margin: 1, // Mínimo margen para maximizar celdas QR
+      scale: 10, // Factor de escala para celdas más grandes
       color: {
         dark: data.foregroundColor,
         light: data.backgroundColor,
       },
-      errorCorrectionLevel: "M",
-      type: 'image/png'
+      errorCorrectionLevel: "L" as 'L' | 'M' | 'Q' | 'H', // Menor corrección = menos celdas = celdas más grandes
+      type: 'image/png' as const
     };
 
     const qrDataUrl = await QRCode.toDataURL(data.url, qrOptions);
@@ -294,15 +295,16 @@ async function generateQRCode(data: any) {
         }
       }
 
-      // Generate QR code with customization
+      // Generate QR code with customization - Celdas más grandes
       const qrOptions = {
         width: qrSize,
-        margin: margin || 2,
+        margin: 1, // Mínimo margen para maximizar celdas
+        scale: 10, // Factor de escala para celdas más grandes
         color: {
           dark: finalForegroundColor,
           light: finalBackgroundColor === 'transparent' ? '#ffffff00' : finalBackgroundColor
         },
-        errorCorrectionLevel: errorCorrection as 'L' | 'M' | 'Q' | 'H',
+        errorCorrectionLevel: 'L' as 'L' | 'M' | 'Q' | 'H', // Menor corrección = celdas más grandes
         type: 'image/png' as const
       };
 
@@ -431,12 +433,13 @@ async function generateQRCode(data: any) {
 
       const qrOptions = {
         width: qrSize,
-        margin: margin || 2,
+        margin: 1, // Mínimo margen para maximizar celdas
+        scale: 10, // Factor de escala para celdas más grandes  
         color: {
           dark: finalForegroundColor,
           light: finalBackgroundColor === 'transparent' ? '#ffffff00' : finalBackgroundColor
         },
-        errorCorrectionLevel: errorCorrection as 'L' | 'M' | 'Q' | 'H',
+        errorCorrectionLevel: 'L' as 'L' | 'M' | 'Q' | 'H', // Menor corrección = celdas más grandes
         type: 'image/png' as const
       };
 
