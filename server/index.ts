@@ -67,12 +67,22 @@ function getSession() {
 
 // Simple authentication middleware
 const isAuthenticated = (req: any, res: any, next: any) => {
-  const user = req.session?.user;
-  if (!user) {
-    return res.status(401).json({ message: "Unauthorized" });
+  try {
+    const user = req.session?.user;
+    console.log("Auth check for user:", user?.id || "none");
+    
+    if (!user) {
+      console.log("No user in session, returning 401");
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    req.user = user;
+    console.log("User authenticated:", user.id);
+    next();
+  } catch (error) {
+    console.error("Authentication middleware error:", error);
+    res.status(500).json({ message: "Authentication error" });
   }
-  req.user = user;
-  next();
 };
 
 // QR generation schema
@@ -113,6 +123,14 @@ async function generateQRCode(data: any) {
   // Auth routes
   app.get("/api/login", async (req: any, res) => {
     try {
+      console.log("Login attempt started");
+      
+      // Check if database connection exists
+      if (!process.env.DATABASE_URL) {
+        console.error("DATABASE_URL not configured");
+        return res.status(500).json({ message: "Database not configured" });
+      }
+
       const demoUser = {
         id: "demo-user-" + Date.now(),
         email: "demo@myqr.app",
@@ -120,21 +138,51 @@ async function generateQRCode(data: any) {
         lastName: "User",
         profileImageUrl: null,
       };
-      await storage.upsertUser(demoUser);
-      req.session.user = demoUser;
+      
+      console.log("Attempting to upsert user:", demoUser.id);
+      
+      // Try to create/update user in database
+      let savedUser;
+      try {
+        savedUser = await storage.upsertUser(demoUser);
+        console.log("User upserted successfully:", savedUser.id);
+      } catch (dbError) {
+        console.error("Database upsert error:", dbError);
+        // Continue with session-only login if DB fails
+        console.log("Continuing with session-only login");
+        savedUser = demoUser;
+      }
+
+      // Set session
+      req.session.user = savedUser;
+      console.log("Session set for user:", savedUser.id);
+      
       res.redirect("/");
     } catch (error) {
       console.error("Login error:", error);
-      res.status(500).json({ message: "Login failed" });
+      res.status(500).json({ 
+        message: "Login failed",
+        error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      });
     }
   });
 
   app.get("/api/logout", (req: any, res) => {
-    req.session.user = null;
-    req.session.destroy((err: any) => {
-      if (err) console.error("Session destroy error:", err);
-      res.redirect("/");
-    });
+    try {
+      console.log("Logout attempt for user:", req.session?.user?.id);
+      req.session.user = null;
+      req.session.destroy((err: any) => {
+        if (err) {
+          console.error("Session destroy error:", err);
+          return res.status(500).json({ message: "Logout failed" });
+        }
+        console.log("Session destroyed successfully");
+        res.redirect("/");
+      });
+    } catch (error: any) {
+      console.error("Logout error:", error);
+      res.status(500).json({ message: "Logout failed" });
+    }
   });
 
   app.get("/api/callback", (req, res) => {
