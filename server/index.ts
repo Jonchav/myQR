@@ -97,14 +97,21 @@ const qrGenerationSchema = z.object({
 // QR code generation function
 async function generateQRCode(data: any) {
   try {
+    // Tamaños ultra-altos para QR más visibles
+    let qrWidth = 1600; // medium por defecto
+    if (data.size === "small") qrWidth = 1200;
+    else if (data.size === "large") qrWidth = 2000; 
+    else if (data.size === "xlarge") qrWidth = 2400;
+    
     const qrOptions: any = {
-      width: data.size === "large" ? 512 : data.size === "small" ? 256 : 400,
-      margin: 4,
+      width: qrWidth,
+      margin: 2, // Reducido para más espacio al QR
       color: {
         dark: data.foregroundColor,
         light: data.backgroundColor,
       },
       errorCorrectionLevel: "M",
+      type: 'image/png'
     };
 
     const qrDataUrl = await QRCode.toDataURL(data.url, qrOptions);
@@ -225,12 +232,12 @@ async function generateQRCode(data: any) {
         });
       }
 
-      // Map size to pixels - Increased for better visibility
+      // Map size to pixels - Ultra-high resolution for better visibility
       const sizeMap = {
-        small: 768,
-        medium: 1024,
-        large: 1280,
-        xlarge: 1600
+        small: 1200,
+        medium: 1600,
+        large: 2000,
+        xlarge: 2400
       };
 
       const qrSize = sizeMap[size as keyof typeof sizeMap] || 1024;
@@ -397,10 +404,10 @@ async function generateQRCode(data: any) {
       } = req.body;
 
       const sizeMap = {
-        small: 768,
-        medium: 1024,
-        large: 1280,
-        xlarge: 1600
+        small: 1200,
+        medium: 1600,
+        large: 2000,
+        xlarge: 2400
       };
 
       const qrSize = sizeMap[size as keyof typeof sizeMap] || 1024;
