@@ -188,12 +188,24 @@ async function generateQRCode(data: any) {
     }
   });
 
-  // Generate QR code - Simplified for production
+  // Generate QR code with customization support
   app.post("/api/qr/generate", async (req, res) => {
     try {
       console.log("QR generation request received:", req.body);
       
-      const { url } = req.body;
+      const { 
+        url, 
+        backgroundColor = "#ffffff", 
+        foregroundColor = "#000000",
+        size = "medium",
+        errorCorrection = "M",
+        margin = 2,
+        style = "square",
+        pattern = "standard",
+        creativeStyle = "classic",
+        cardStyle = "none",
+        customBackgroundImage = null
+      } = req.body;
       
       // Validate URL
       if (!url || typeof url !== 'string') {
@@ -213,29 +225,225 @@ async function generateQRCode(data: any) {
         });
       }
 
-      // Generate QR code using qrcode library
-      const qrDataUrl = await QRCode.toDataURL(url, {
-        width: 512,
-        margin: 2,
+      // Map size to pixels
+      const sizeMap = {
+        small: 256,
+        medium: 512,
+        large: 768,
+        xlarge: 1024
+      };
+
+      const qrSize = sizeMap[size as keyof typeof sizeMap] || 512;
+
+      // Apply creative styles to colors if specified
+      let finalForegroundColor = foregroundColor || '#000000';
+      let finalBackgroundColor = backgroundColor || '#ffffff';
+
+      // Creative style color transformations - Extended styles
+      if (creativeStyle && creativeStyle !== 'classic') {
+        const styleColors = {
+          // Original styles
+          'vibrant_rainbow': '#FF0080',
+          'neon_cyber': '#00FFFF', 
+          'electric_blue': '#0066FF',
+          'sunset_fire': '#FF4500',
+          'forest_nature': '#228B22',
+          'ocean_waves': '#4169E1',
+          'multicolor_blocks': '#6A1B9A',
+          'purple_galaxy': '#8A2BE2',
+          'golden_sunset': '#DAA520',
+          'mint_fresh': '#00C572',
+          'coral_reef': '#FF5722',
+          'volcano_red': '#B71C1C',
+          'autumn_leaves': '#8B4513',
+          'monochrome_red': '#B71C1C',
+          'pastel_dream': '#FF8A95',
+          // New extended styles
+          'cosmic_purple': '#4A148C',
+          'laser_green': '#2E7D32',
+          'neon_pink': '#C2185B',
+          'electric_yellow': '#F57F17',
+          'deep_ocean': '#006064',
+          'royal_blue': '#1A237E',
+          'emerald_shine': '#00695C',
+          'crimson_wave': '#B71C1C',
+          'cyber_orange': '#E65100',
+          'mystic_violet': '#6A1B9A',
+          'arctic_blue': '#0277BD',
+          'jade_matrix': '#2E7D32',
+          'ruby_fire': '#C62828',
+          'sapphire_glow': '#1565C0',
+          'bronze_metal': '#8D6E63',
+          'silver_chrome': '#546E7A',
+          'magenta_burst': '#AD1457',
+          'teal_storm': '#00796B',
+          'amber_lightning': '#FF8F00',
+          'indigo_depth': '#303F9F',
+          'lime_electric': '#689F38'
+        };
+        
+        if (styleColors[creativeStyle as keyof typeof styleColors]) {
+          finalForegroundColor = styleColors[creativeStyle as keyof typeof styleColors];
+        }
+      }
+
+      // Generate QR code with customization
+      const qrOptions = {
+        width: qrSize,
+        margin: margin || 2,
         color: {
-          dark: '#000000',
-          light: '#ffffff'
+          dark: finalForegroundColor,
+          light: finalBackgroundColor === 'transparent' ? '#ffffff00' : finalBackgroundColor
         },
-        errorCorrectionLevel: 'M'
-      });
+        errorCorrectionLevel: errorCorrection as 'L' | 'M' | 'Q' | 'H',
+        type: 'image/png' as const
+      };
+
+      console.log("Generating QR with options:", qrOptions);
+
+      const qrDataUrl = await QRCode.toDataURL(url, qrOptions);
 
       console.log("QR code generated successfully");
 
       res.json({
         success: true,
         qrCode: qrDataUrl,
-        url: url
+        url: url,
+        settings: {
+          backgroundColor: finalBackgroundColor,
+          foregroundColor: finalForegroundColor,
+          size,
+          errorCorrection,
+          margin,
+          style,
+          pattern,
+          creativeStyle,
+          cardStyle
+        }
       });
     } catch (error) {
       console.error("Error generating QR code:", error);
       res.status(500).json({
         success: false,
         message: "Error generating QR code"
+      });
+    }
+  });
+
+  // Image upload endpoint for custom backgrounds
+  app.post("/api/upload/image", async (req, res) => {
+    try {
+      console.log("Image upload request received");
+      
+      const { imageData, filename } = req.body;
+      
+      if (!imageData) {
+        return res.status(400).json({
+          success: false,
+          message: "No image data provided"
+        });
+      }
+
+      // Validate base64 image data
+      if (!imageData.startsWith('data:image/')) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid image format"
+        });
+      }
+
+      // Check file size (estimate from base64 - approximately 15MB limit)
+      const sizeInBytes = (imageData.length * 3) / 4;
+      const maxSizeInBytes = 15 * 1024 * 1024; // 15MB
+      
+      if (sizeInBytes > maxSizeInBytes) {
+        return res.status(400).json({
+          success: false,
+          message: "Image file too large. Maximum size is 15MB."
+        });
+      }
+
+      console.log("Image validation passed, size:", Math.round(sizeInBytes / 1024), "KB");
+
+      // For demo purposes, we'll just return the data back
+      // In a real implementation, you might want to store it somewhere
+      res.json({
+        success: true,
+        imageUrl: imageData,
+        filename: filename || 'uploaded-image',
+        size: Math.round(sizeInBytes / 1024)
+      });
+    } catch (error) {
+      console.error("Error processing image upload:", error);
+      res.status(500).json({
+        success: false,
+        message: "Error processing image upload"
+      });
+    }
+  });
+
+  // Preview endpoint for real-time QR updates
+  app.post("/api/qr/preview", async (req, res) => {
+    try {
+      // Use the same logic as generate but don't save to database
+      const { 
+        url = "https://example.com", 
+        backgroundColor = "#ffffff", 
+        foregroundColor = "#000000",
+        size = "medium",
+        errorCorrection = "M",
+        margin = 2,
+        creativeStyle = "classic"
+      } = req.body;
+
+      const sizeMap = {
+        small: 256,
+        medium: 512,
+        large: 768,
+        xlarge: 1024
+      };
+
+      const qrSize = sizeMap[size as keyof typeof sizeMap] || 512;
+
+      // Apply creative styles
+      let finalForegroundColor = foregroundColor || '#000000';
+      let finalBackgroundColor = backgroundColor || '#ffffff';
+
+      if (creativeStyle && creativeStyle !== 'classic') {
+        const styleColors = {
+          'vibrant_rainbow': '#FF0080',
+          'neon_cyber': '#00FFFF', 
+          'electric_blue': '#0066FF',
+          // Add other styles as needed
+        };
+        
+        if (styleColors[creativeStyle as keyof typeof styleColors]) {
+          finalForegroundColor = styleColors[creativeStyle as keyof typeof styleColors];
+        }
+      }
+
+      const qrOptions = {
+        width: qrSize,
+        margin: margin || 2,
+        color: {
+          dark: finalForegroundColor,
+          light: finalBackgroundColor === 'transparent' ? '#ffffff00' : finalBackgroundColor
+        },
+        errorCorrectionLevel: errorCorrection as 'L' | 'M' | 'Q' | 'H',
+        type: 'image/png' as const
+      };
+
+      const qrDataUrl = await QRCode.toDataURL(url, qrOptions);
+
+      res.json({
+        success: true,
+        preview: qrDataUrl
+      });
+    } catch (error) {
+      console.error("Error generating preview:", error);
+      res.status(500).json({
+        success: false,
+        message: "Error generating preview"
       });
     }
   });
