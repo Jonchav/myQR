@@ -61,6 +61,7 @@ function getSession() {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       maxAge: sessionTtl,
+      sameSite: 'lax',
     },
   });
 }
@@ -156,7 +157,15 @@ async function generateQRCode(data: any) {
       req.session.user = savedUser;
       console.log("Session set for user:", savedUser.id);
       
-      res.redirect("/");
+      // Force session save before redirect
+      req.session.save((err: any) => {
+        if (err) {
+          console.error("Session save error:", err);
+          return res.status(500).json({ message: "Session save failed" });
+        }
+        console.log("Session saved successfully, redirecting");
+        res.redirect("/");
+      });
     } catch (error: any) {
       console.error("Login error:", error);
       res.status(500).json({ 
