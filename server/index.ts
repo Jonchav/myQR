@@ -8,6 +8,7 @@ import session from "express-session";
 import connectPg from "connect-pg-simple";
 import QRCode from "qrcode";
 import { z } from "zod";
+import sharp from "sharp";
 
 const app = express();
 app.use(express.json({ limit: "50mb" }));
@@ -93,6 +94,173 @@ const qrGenerationSchema = z.object({
   foregroundColor: z.string().default("#000000"),
   size: z.enum(["small", "medium", "large"]).default("medium"),
 });
+
+// Función simplificada para generar estilos de tarjeta
+async function generateCreativeCard(qrDataUrl: string, options: any): Promise<string> {
+  try {
+    const { cardStyle, backgroundColor = "#ffffff" } = options;
+    
+    console.log('Generating creative card with style:', cardStyle);
+    
+    if (cardStyle === "none" || !cardStyle) {
+      return qrDataUrl;
+    }
+    
+    const width = 1200;
+    const height = 1200;
+    
+    // Generar fondo basado en el estilo
+    let backgroundSVG = '';
+    
+    switch (cardStyle) {
+      case 'modern_gradient':
+        backgroundSVG = `
+          <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="modernGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+              </linearGradient>
+            </defs>
+            <rect width="${width}" height="${height}" fill="url(#modernGrad)"/>
+          </svg>
+        `;
+        break;
+      case 'neon_glow':
+        backgroundSVG = `
+          <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="neonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#00f5ff;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#0099ff;stop-opacity:1" />
+              </linearGradient>
+            </defs>
+            <rect width="${width}" height="${height}" fill="url(#neonGrad)"/>
+          </svg>
+        `;
+        break;
+      case 'sunset_card':
+        backgroundSVG = `
+          <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="sunsetGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#ff6b6b;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#ffa500;stop-opacity:1" />
+              </linearGradient>
+            </defs>
+            <rect width="${width}" height="${height}" fill="url(#sunsetGrad)"/>
+          </svg>
+        `;
+        break;
+      case 'forest_green':
+        backgroundSVG = `
+          <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="forestGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#134e5e;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#71b280;stop-opacity:1" />
+              </linearGradient>
+            </defs>
+            <rect width="${width}" height="${height}" fill="url(#forestGrad)"/>
+          </svg>
+        `;
+        break;
+      case 'ocean_blue':
+        backgroundSVG = `
+          <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="oceanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#667db6;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#0082c8;stop-opacity:1" />
+              </linearGradient>
+            </defs>
+            <rect width="${width}" height="${height}" fill="url(#oceanGrad)"/>
+          </svg>
+        `;
+        break;
+      case 'purple_haze':
+        backgroundSVG = `
+          <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#8360c3;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#2ebf91;stop-opacity:1" />
+              </linearGradient>
+            </defs>
+            <rect width="${width}" height="${height}" fill="url(#purpleGrad)"/>
+          </svg>
+        `;
+        break;
+      case 'golden_hour':
+        backgroundSVG = `
+          <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="goldenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#ffd89b;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#19547b;stop-opacity:1" />
+              </linearGradient>
+            </defs>
+            <rect width="${width}" height="${height}" fill="url(#goldenGrad)"/>
+          </svg>
+        `;
+        break;
+      default:
+        // Gradiente por defecto
+        backgroundSVG = `
+          <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="defaultGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+              </linearGradient>
+            </defs>
+            <rect width="${width}" height="${height}" fill="url(#defaultGrad)"/>
+          </svg>
+        `;
+    }
+    
+    // Crear el buffer de fondo
+    const backgroundBuffer = Buffer.from(backgroundSVG);
+    
+    // Crear fondo procesado
+    const processedBackground = await sharp(backgroundBuffer)
+      .resize(width, height)
+      .png()
+      .toBuffer();
+    
+    // Procesar QR code
+    const qrBase64 = qrDataUrl.replace(/^data:image\/[a-z]+;base64,/, '');
+    const qrBuffer = Buffer.from(qrBase64, 'base64');
+    
+    // Tamaño del QR en la tarjeta
+    const qrSize = Math.min(width, height) * 0.55;
+    const qrPositionX = (width - qrSize) / 2;
+    const qrPositionY = (height - qrSize) / 2;
+    
+    // Redimensionar QR
+    const resizedQR = await sharp(qrBuffer)
+      .resize(qrSize, qrSize, { fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
+      .toBuffer();
+    
+    // Componer tarjeta final
+    const finalCard = await sharp(processedBackground)
+      .composite([
+        {
+          input: resizedQR,
+          top: Math.round(qrPositionY),
+          left: Math.round(qrPositionX)
+        }
+      ])
+      .png({ quality: 90 })
+      .toBuffer();
+    
+    console.log('Creative card generated successfully');
+    return `data:image/png;base64,${finalCard.toString('base64')}`;
+  } catch (error) {
+    console.error('Error generating creative card:', error);
+    return qrDataUrl; // Return original if fails
+  }
+}
 
 // QR code generation function
 async function generateQRCode(data: any) {
@@ -310,7 +478,20 @@ async function generateQRCode(data: any) {
 
       console.log("Generating QR with options:", qrOptions);
 
-      const qrDataUrl = await QRCode.toDataURL(url, qrOptions);
+      let qrDataUrl = await QRCode.toDataURL(url, qrOptions);
+
+      // Apply card style if specified
+      if (cardStyle && cardStyle !== 'none' && cardStyle !== 'custom_image') {
+        console.log("Applying card style:", cardStyle);
+        qrDataUrl = await generateCreativeCard(qrDataUrl, {
+          cardStyle,
+          customBackgroundImage,
+          backgroundColor: finalBackgroundColor,
+          cardTemplate: 'instagram_post', // Default template
+          qrPosition: 'center'
+        });
+        console.log("Card style applied successfully");
+      }
 
       console.log("QR code generated successfully");
 
