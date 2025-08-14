@@ -219,7 +219,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
           )}
           
           {/* QR Preview */}
-          <div className="w-full max-w-[280px] flex-shrink-0">
+          <div className="w-full max-w-[450px] flex-shrink-0">
             {qrCode ? (
               <div className="relative">
                 <img
