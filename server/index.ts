@@ -225,15 +225,15 @@ async function generateQRCode(data: any) {
         });
       }
 
-      // Map size to pixels
+      // Map size to pixels - Increased for better visibility
       const sizeMap = {
-        small: 256,
-        medium: 512,
-        large: 768,
-        xlarge: 1024
+        small: 768,
+        medium: 1024,
+        large: 1280,
+        xlarge: 1600
       };
 
-      const qrSize = sizeMap[size as keyof typeof sizeMap] || 512;
+      const qrSize = sizeMap[size as keyof typeof sizeMap] || 1024;
 
       // Apply creative styles to colors if specified
       let finalForegroundColor = foregroundColor || '#000000';
@@ -397,13 +397,13 @@ async function generateQRCode(data: any) {
       } = req.body;
 
       const sizeMap = {
-        small: 256,
-        medium: 512,
-        large: 768,
-        xlarge: 1024
+        small: 768,
+        medium: 1024,
+        large: 1280,
+        xlarge: 1600
       };
 
-      const qrSize = sizeMap[size as keyof typeof sizeMap] || 512;
+      const qrSize = sizeMap[size as keyof typeof sizeMap] || 1024;
 
       // Apply creative styles
       let finalForegroundColor = foregroundColor || '#000000';
@@ -448,25 +448,88 @@ async function generateQRCode(data: any) {
     }
   });
 
-  // Simple endpoints for demo functionality
-  app.get("/api/history", isAuthenticated, async (req: any, res) => {
+  // Enhanced endpoints for demo functionality with realistic data
+  app.get("/api/history", async (req: any, res) => {
     try {
-      // Return empty array for demo
-      res.json([]);
+      const userId = 'demo-user';
+      
+      // Return demo QR codes with realistic data
+      const demoQRCodes = [
+        {
+          id: 1,
+          url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+          createdAt: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
+          scans: 12,
+          userId: userId,
+          backgroundColor: "#ffffff",
+          foregroundColor: "#000000",
+          size: "medium",
+          creativeStyle: "classic"
+        },
+        {
+          id: 2,
+          url: "https://github.com/replit/replit",
+          createdAt: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
+          scans: 8,
+          userId: userId,
+          backgroundColor: "#000000",
+          foregroundColor: "#00FFFF",
+          size: "large",
+          creativeStyle: "neon_cyber"
+        },
+        {
+          id: 3,
+          url: "https://www.google.com",
+          createdAt: new Date(Date.now() - 259200000).toISOString(), // 3 days ago
+          scans: 25,
+          userId: userId,
+          backgroundColor: "#ffffff",
+          foregroundColor: "#FF0080",
+          size: "medium",
+          creativeStyle: "vibrant_rainbow"
+        }
+      ];
+      
+      console.log(`Returning ${demoQRCodes.length} demo QR codes for user ${userId}`);
+      res.json(demoQRCodes);
     } catch (error) {
       console.error("Error fetching QR codes:", error);
       res.status(500).json({ message: "Error fetching QR codes" });
     }
   });
 
-  app.get("/api/stats", isAuthenticated, async (req: any, res) => {
+  app.get("/api/stats", async (req: any, res) => {
     try {
-      // Return demo stats
-      res.json({
-        totalQRCodes: 0,
-        totalScans: 0,
-        topQRCodes: []
-      });
+      const userId = 'demo-user';
+      
+      // Return realistic demo stats
+      const demoStats = {
+        totalQRCodes: 3,
+        totalScans: 45,
+        topQRCodes: [
+          {
+            id: 3,
+            url: "https://www.google.com",
+            scans: 25,
+            createdAt: new Date(Date.now() - 259200000).toISOString()
+          },
+          {
+            id: 1,
+            url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            scans: 12,
+            createdAt: new Date(Date.now() - 86400000).toISOString()
+          },
+          {
+            id: 2,
+            url: "https://github.com/replit/replit",
+            scans: 8,
+            createdAt: new Date(Date.now() - 172800000).toISOString()
+          }
+        ]
+      };
+      
+      console.log(`Returning demo stats for user ${userId}:`, demoStats);
+      res.json(demoStats);
     } catch (error) {
       console.error("Error fetching stats:", error);
       res.status(500).json({ message: "Error fetching stats" });
