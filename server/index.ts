@@ -125,31 +125,30 @@ async function generateQRCode(data: any) {
     try {
       console.log("Login attempt started");
       
-      // Check if database connection exists
-      if (!process.env.DATABASE_URL) {
-        console.error("DATABASE_URL not configured");
-        return res.status(500).json({ message: "Database not configured" });
-      }
-
+      // Use a fixed demo user to avoid unique constraint issues
       const demoUser = {
-        id: "demo-user-" + Date.now(),
+        id: "demo-user",
         email: "demo@myqr.app",
         firstName: "Demo",
         lastName: "User",
         profileImageUrl: null,
       };
       
-      console.log("Attempting to upsert user:", demoUser.id);
+      console.log("Setting up demo user session");
       
-      // Try to create/update user in database
+      // Try to get/create user in database
       let savedUser;
       try {
-        savedUser = await storage.upsertUser(demoUser);
-        console.log("User upserted successfully:", savedUser.id);
+        if (process.env.DATABASE_URL) {
+          console.log("Database available, attempting upsert");
+          savedUser = await storage.upsertUser(demoUser);
+          console.log("User upserted successfully:", savedUser.id);
+        } else {
+          console.log("No database configured, using session-only");
+          savedUser = demoUser;
+        }
       } catch (dbError) {
-        console.error("Database upsert error:", dbError);
-        // Continue with session-only login if DB fails
-        console.log("Continuing with session-only login");
+        console.error("Database error (continuing with session-only):", dbError);
         savedUser = demoUser;
       }
 
@@ -158,7 +157,7 @@ async function generateQRCode(data: any) {
       console.log("Session set for user:", savedUser.id);
       
       res.redirect("/");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Login error:", error);
       res.status(500).json({ 
         message: "Login failed",
