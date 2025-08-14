@@ -386,7 +386,7 @@ export default function Home() {
                             <img 
                               src={qrCode} 
                               alt="Código QR generado" 
-                              className="mx-auto border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-w-[450px] w-full h-auto"
+                              className="mx-auto border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-w-[600px] w-full h-auto"
                             />
                           </div>
                           

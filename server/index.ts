@@ -240,7 +240,7 @@ async function generateQRCode(data: any) {
         xlarge: 2400
       };
 
-      const qrSize = sizeMap[size as keyof typeof sizeMap] || 1024;
+      const qrSize = sizeMap[size as keyof typeof sizeMap] || 1600;
 
       // Apply creative styles to colors if specified
       let finalForegroundColor = foregroundColor || '#000000';
@@ -410,7 +410,7 @@ async function generateQRCode(data: any) {
         xlarge: 2400
       };
 
-      const qrSize = sizeMap[size as keyof typeof sizeMap] || 1024;
+      const qrSize = sizeMap[size as keyof typeof sizeMap] || 1600;
 
       // Apply creative styles
       let finalForegroundColor = foregroundColor || '#000000';
