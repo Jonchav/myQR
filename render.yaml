@@ -10,3 +10,5 @@ services:
         value: production
       - key: PAYPAL_ENVIRONMENT
         value: live
+      - key: SESSION_SECRET
+        generateValue: true
