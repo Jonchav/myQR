@@ -126,11 +126,20 @@ export default function StatsDashboard() {
   const totalStats = stats?.totalStats || { totalQRCodes: 0, totalScans: 0 };
 
   // Prepare chart data
-  const chartData = topQRCodes.slice(0, 10).map(qr => ({
-    name: qr.title || `QR ${qr.id}`,
-    scans: qr.totalScans,
-    url: qr.url.length > 30 ? qr.url.substring(0, 30) + "..." : qr.url
-  }));
+  const chartData = topQRCodes.slice(0, 10).map(qr => {
+    let hostname = qr.title;
+    try {
+      hostname = qr.title || new URL(qr.url).hostname;
+    } catch {
+      hostname = qr.title || `QR ${qr.id}`;
+    }
+    
+    return {
+      name: hostname,
+      scans: qr.totalScans || qr.scans || qr.scanCount || 0,
+      url: qr.url.length > 30 ? qr.url.substring(0, 30) + "..." : qr.url
+    };
+  });
 
   // Calculate max scans for Y-axis ticks
   const maxScans = Math.max(...chartData.map(d => d.scans), 1);
