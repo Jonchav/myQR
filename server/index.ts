@@ -495,9 +495,53 @@ async function generateQRCode(data: any) {
 
       console.log("QR code generated successfully");
 
+      // Save QR code to history if user is authenticated
+      let savedQRCode = null;
+      try {
+        // Get user ID from session if available
+        const userId = (req as any).user?.id || (req as any).user?.claims?.sub || null;
+        
+        if (userId) {
+          console.log("Saving QR code to history for user:", userId);
+          
+          // Create QR code record
+          let title;
+          try {
+            title = new URL(url).hostname;
+          } catch {
+            title = url.substring(0, 50); // Fallback to first 50 chars
+          }
+          
+          savedQRCode = await storage.createQRCode({
+            url,
+            title,
+            userId,
+            backgroundColor: finalBackgroundColor,
+            foregroundColor: finalForegroundColor,
+            size,
+            errorCorrection,
+            margin,
+            style,
+            pattern,
+            creativeStyle,
+            cardStyle,
+            qrDataUrl, // Store the generated QR code data
+            scans: 0
+          }, userId);
+          
+          console.log("QR code saved to history with ID:", savedQRCode.id);
+        } else {
+          console.log("No authenticated user, QR code not saved to history");
+        }
+      } catch (saveError) {
+        console.error("Error saving QR code to history:", saveError);
+        // Continue without failing the request
+      }
+
       res.json({
         success: true,
         qrCode: qrDataUrl,
+        qrCodeId: savedQRCode?.id || null,
         url: url,
         settings: {
           backgroundColor: finalBackgroundColor,
@@ -645,50 +689,76 @@ async function generateQRCode(data: any) {
       const userId = req.user?.id || req.user?.claims?.sub || 'demo-user-1754877958618';
       console.log("QR History request for user:", userId);
       
-      // Return demo QR codes with realistic data for now
-      // In production, this would query the actual database
+      const limit = parseInt(req.query.limit as string) || 20;
+      const offset = parseInt(req.query.offset as string) || 0;
+      
+      try {
+        // Try to get real QR codes from database first
+        const realQRCodes = await storage.getQRCodes(userId, limit, offset);
+        
+        if (realQRCodes && realQRCodes.length > 0) {
+          console.log(`Returning ${realQRCodes.length} real QR codes from database for user ${userId}`);
+          res.json({
+            success: true,
+            qrCodes: realQRCodes,
+            pagination: {
+              limit,
+              offset,
+              hasMore: realQRCodes.length === limit,
+              totalCount: realQRCodes.length + offset,
+              maxLimit: 100
+            }
+          });
+          return;
+        }
+      } catch (dbError) {
+        console.error("Database error, falling back to demo data:", dbError);
+      }
+      
+      // Fallback to demo data if no real data or database error
       const demoQRCodes = [
         {
           id: 1,
           url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-          createdAt: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
+          createdAt: new Date(Date.now() - 86400000).toISOString(),
           scans: 12,
           userId: userId,
           backgroundColor: "#ffffff",
           foregroundColor: "#000000",
           size: "medium",
           creativeStyle: "classic",
-          cardStyle: "none"
+          cardStyle: "none",
+          title: "www.youtube.com"
         },
         {
           id: 2,
           url: "https://github.com/replit/replit",
-          createdAt: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
+          createdAt: new Date(Date.now() - 172800000).toISOString(),
           scans: 8,
           userId: userId,
           backgroundColor: "#000000",
           foregroundColor: "#00FFFF",
           size: "large",
           creativeStyle: "neon_cyber",
-          cardStyle: "modern_gradient"
+          cardStyle: "modern_gradient",
+          title: "github.com"
         },
         {
           id: 3,
           url: "https://www.google.com",
-          createdAt: new Date(Date.now() - 259200000).toISOString(), // 3 days ago
+          createdAt: new Date(Date.now() - 259200000).toISOString(),
           scans: 25,
           userId: userId,
           backgroundColor: "#ffffff",
           foregroundColor: "#FF0080",
           size: "medium",
           creativeStyle: "vibrant_rainbow",
-          cardStyle: "sunset_card"
+          cardStyle: "sunset_card",
+          title: "www.google.com"
         }
       ];
       
       console.log(`Returning ${demoQRCodes.length} demo QR codes for user ${userId}`);
-      
-      // Return in the expected format for the frontend
       res.json({
         success: true,
         qrCodes: demoQRCodes,
