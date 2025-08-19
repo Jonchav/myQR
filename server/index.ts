@@ -639,12 +639,14 @@ async function generateQRCode(data: any) {
     }
   });
 
-  // Enhanced endpoints for demo functionality with realistic data
-  app.get("/api/history", async (req: any, res) => {
+  // QR History endpoint - Works with authentication
+  app.get("/api/qr/history", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = 'demo-user';
+      const userId = req.user?.id || req.user?.claims?.sub || 'demo-user-1754877958618';
+      console.log("QR History request for user:", userId);
       
-      // Return demo QR codes with realistic data
+      // Return demo QR codes with realistic data for now
+      // In production, this would query the actual database
       const demoQRCodes = [
         {
           id: 1,
@@ -655,7 +657,8 @@ async function generateQRCode(data: any) {
           backgroundColor: "#ffffff",
           foregroundColor: "#000000",
           size: "medium",
-          creativeStyle: "classic"
+          creativeStyle: "classic",
+          cardStyle: "none"
         },
         {
           id: 2,
@@ -666,7 +669,8 @@ async function generateQRCode(data: any) {
           backgroundColor: "#000000",
           foregroundColor: "#00FFFF",
           size: "large",
-          creativeStyle: "neon_cyber"
+          creativeStyle: "neon_cyber",
+          cardStyle: "modern_gradient"
         },
         {
           id: 3,
@@ -677,53 +681,85 @@ async function generateQRCode(data: any) {
           backgroundColor: "#ffffff",
           foregroundColor: "#FF0080",
           size: "medium",
-          creativeStyle: "vibrant_rainbow"
+          creativeStyle: "vibrant_rainbow",
+          cardStyle: "sunset_card"
         }
       ];
       
       console.log(`Returning ${demoQRCodes.length} demo QR codes for user ${userId}`);
-      res.json(demoQRCodes);
+      
+      // Return in the expected format for the frontend
+      res.json({
+        success: true,
+        qrCodes: demoQRCodes,
+        pagination: {
+          limit: 20,
+          offset: 0,
+          hasMore: false,
+          totalCount: demoQRCodes.length,
+          maxLimit: 100
+        }
+      });
     } catch (error) {
       console.error("Error fetching QR codes:", error);
-      res.status(500).json({ message: "Error fetching QR codes" });
+      res.status(500).json({ 
+        success: false,
+        message: "Error fetching QR codes" 
+      });
     }
   });
 
-  app.get("/api/stats", async (req: any, res) => {
+  // Dashboard stats endpoint - Works with authentication
+  app.get("/api/stats/dashboard", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = 'demo-user';
+      const userId = req.user?.id || req.user?.claims?.sub || 'demo-user-1754877958618';
+      console.log("Dashboard stats request for user:", userId);
       
-      // Return realistic demo stats
-      const demoStats = {
-        totalQRCodes: 3,
-        totalScans: 45,
-        topQRCodes: [
-          {
-            id: 3,
-            url: "https://www.google.com",
-            scans: 25,
-            createdAt: new Date(Date.now() - 259200000).toISOString()
+      // Return realistic demo stats for dashboard
+      const dashboardData = {
+        success: true,
+        data: {
+          totalStats: {
+            totalQRCodes: 3,
+            totalScans: 45
           },
-          {
-            id: 1,
-            url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-            scans: 12,
-            createdAt: new Date(Date.now() - 86400000).toISOString()
-          },
-          {
-            id: 2,
-            url: "https://github.com/replit/replit",
-            scans: 8,
-            createdAt: new Date(Date.now() - 172800000).toISOString()
-          }
-        ]
+          topQRCodes: [
+            {
+              id: 3,
+              url: "https://www.google.com",
+              scans: 25,
+              scanCount: 25,
+              createdAt: new Date(Date.now() - 259200000).toISOString(),
+              title: "Google Search"
+            },
+            {
+              id: 1,
+              url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+              scans: 12,
+              scanCount: 12,
+              createdAt: new Date(Date.now() - 86400000).toISOString(),
+              title: "YouTube Video"
+            },
+            {
+              id: 2,
+              url: "https://github.com/replit/replit",
+              scans: 8,
+              scanCount: 8,
+              createdAt: new Date(Date.now() - 172800000).toISOString(),
+              title: "GitHub Repo"
+            }
+          ]
+        }
       };
       
-      console.log(`Returning demo stats for user ${userId}:`, demoStats);
-      res.json(demoStats);
+      console.log(`Returning dashboard stats for user ${userId}`);
+      res.json(dashboardData);
     } catch (error) {
-      console.error("Error fetching stats:", error);
-      res.status(500).json({ message: "Error fetching stats" });
+      console.error("Error fetching dashboard stats:", error);
+      res.status(500).json({ 
+        success: false,
+        error: "Error al obtener estadísticas del dashboard" 
+      });
     }
   });
 
