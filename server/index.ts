@@ -464,6 +464,7 @@ setupGoogleAuth(app);
           }
           
           try {
+            // First create the QR code record to get the ID
             savedQRCode = await storage.createQRCode({
               url,
               title,
@@ -484,6 +485,37 @@ setupGoogleAuth(app);
             }, userId);
             
             console.log("QR code saved to database with ID:", savedQRCode.id);
+            
+            // Now regenerate the QR code with tracking URL
+            const trackingUrl = `${req.protocol}://${req.get('host')}/api/scan/${savedQRCode.id}`;
+            console.log("Regenerating QR with tracking URL:", trackingUrl);
+            
+            // Generate new QR code with tracking URL
+            const trackingQROptions = {
+              width: qrSize,
+              margin: margin,
+              color: {
+                dark: finalForegroundColor,
+                light: finalBackgroundColor,
+              },
+              errorCorrectionLevel: errorCorrection as any,
+            };
+            
+            let finalQRDataUrl = await QRCode.toDataURL(trackingUrl, trackingQROptions);
+            
+            // Apply creative card style if specified
+            if (cardStyle && cardStyle !== 'none' && cardStyle !== 'modern_gradient') {
+              finalQRDataUrl = await generateCreativeCard(finalQRDataUrl, cardStyle, customBackgroundImage);
+            }
+            
+            // Update the QR code record with the tracking QR
+            await storage.updateQRCode(savedQRCode.id, {
+              data: finalQRDataUrl,
+              qrDataUrl: finalQRDataUrl
+            });
+            
+            // Use the tracking QR as the response
+            qrDataUrl = finalQRDataUrl;
           } catch (dbError) {
             console.error("Error saving QR code to database:", dbError);
           }
@@ -764,6 +796,38 @@ setupGoogleAuth(app);
         success: false,
         error: "Error al obtener estadísticas del dashboard" 
       });
+    }
+  });
+
+  // QR Code scan tracking endpoint
+  app.get("/api/scan/:id", async (req: any, res) => {
+    try {
+      const qrId = req.params.id;
+      console.log("Scan attempt for QR ID:", qrId);
+      
+      // Get QR code from database
+      const qrCode = await storage.getQRCodeById(qrId);
+      
+      if (!qrCode) {
+        console.log("QR code not found:", qrId);
+        return res.status(404).json({ message: "QR code not found" });
+      }
+      
+      // Increment scan count
+      try {
+        await storage.incrementScanCount(qrId);
+        console.log("Scan count incremented for QR:", qrId);
+      } catch (error) {
+        console.error("Error incrementing scan count:", error);
+      }
+      
+      // Redirect to original URL
+      console.log("Redirecting to:", qrCode.url);
+      res.redirect(302, qrCode.url);
+      
+    } catch (error) {
+      console.error("Error processing scan:", error);
+      res.status(500).json({ message: "Error processing scan" });
     }
   });
 

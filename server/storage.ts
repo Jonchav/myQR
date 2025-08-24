@@ -34,6 +34,8 @@ export interface IStorage {
   createQRCode(qrCode: any, userId?: string): Promise<QRCode>;
   getQRCodes(userId?: string, limit?: number, offset?: number): Promise<QRCode[]>;
   getQRCode(id: number): Promise<QRCode | undefined>;
+  getQRCodeById(id: string): Promise<QRCode | undefined>;
+  incrementScanCount(id: string): Promise<void>;
   deleteQRCode(id: number, userId?: string): Promise<boolean>;
   updateQRCode(id: number, updates: any, userId?: string): Promise<QRCode | undefined>;
   maintainQRLimit(userId: string, limit?: number): Promise<void>;
@@ -187,6 +189,21 @@ export class DatabaseStorage implements IStorage {
   async getQRCode(id: number): Promise<QRCode | undefined> {
     const [qrCode] = await db.select().from(qrCodes).where(eq(qrCodes.id, id));
     return qrCode;
+  }
+
+  async getQRCodeById(id: string): Promise<QRCode | undefined> {
+    const [qrCode] = await db.select().from(qrCodes).where(eq(qrCodes.id, parseInt(id)));
+    return qrCode;
+  }
+
+  async incrementScanCount(id: string): Promise<void> {
+    await db
+      .update(qrCodes)
+      .set({ 
+        scanCount: sql`${qrCodes.scanCount} + 1`,
+        updatedAt: new Date()
+      })
+      .where(eq(qrCodes.id, parseInt(id)));
   }
 
   async deleteQRCode(id: number, userId?: string): Promise<boolean> {

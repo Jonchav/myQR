@@ -157,7 +157,7 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                           {qr.title || new URL(qr.url).hostname}
                         </h3>
                         <Badge variant="outline" className="border-purple-500/30 text-purple-300">
-                          {qr.scans || 0} scans
+                          {qr.scanCount || qr.scans || 0} scans
                         </Badge>
                         {qr.cardStyle && qr.cardStyle !== 'none' && (
                           <Badge variant="outline" className="border-blue-500/30 text-blue-300">
@@ -201,16 +201,59 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                         <ExternalLink className="w-4 h-4" />
                       </Button>
                       
-                      {onEditQR && (
-                        <Button
-                          size="sm"
-                          onClick={() => onEditQR(qr)}
-                          className="bg-purple-600 hover:bg-purple-700 text-white"
-                        >
-                          <Eye className="w-4 h-4 mr-1" />
-                          Ver
-                        </Button>
-                      )}
+                      <Button
+                        size="sm"
+                        onClick={() => {
+                          if (qr.qrDataUrl || qr.data) {
+                            // Create a modal or popup to show the QR code
+                            const newWindow = window.open('', '_blank', 'width=600,height=600');
+                            if (newWindow) {
+                              newWindow.document.write(`
+                                <html>
+                                  <head>
+                                    <title>QR Code - ${qr.title}</title>
+                                    <style>
+                                      body {
+                                        margin: 0;
+                                        padding: 20px;
+                                        font-family: Arial, sans-serif;
+                                        background: #1a1a1a;
+                                        color: white;
+                                        text-align: center;
+                                      }
+                                      img {
+                                        max-width: 90%;
+                                        height: auto;
+                                        border-radius: 8px;
+                                        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                                      }
+                                      h1 {
+                                        color: #a855f7;
+                                        margin-bottom: 20px;
+                                      }
+                                      .url {
+                                        color: #9ca3af;
+                                        word-break: break-all;
+                                        margin-top: 20px;
+                                      }
+                                    </style>
+                                  </head>
+                                  <body>
+                                    <h1>${qr.title}</h1>
+                                    <img src="${qr.qrDataUrl || qr.data}" alt="QR Code" />
+                                    <div class="url">${qr.url}</div>
+                                  </body>
+                                </html>
+                              `);
+                              newWindow.document.close();
+                            }
+                          }
+                        }}
+                        className="bg-purple-600 hover:bg-purple-700 text-white"
+                      >
+                        <Eye className="w-4 h-4 mr-1" />
+                        Ver
+                      </Button>
                     </div>
                   </div>
                 </CardContent>
