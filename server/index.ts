@@ -436,7 +436,26 @@ setupGoogleAuth(app);
         if (userId) {
           console.log("Saving QR code to history for user:", userId);
           
-          // Add QR to demo data collection (temporary solution)
+          // Ensure user exists in database first
+          try {
+            let user = await storage.getUser(userId);
+            if (!user) {
+              console.log("User not found, creating user in database");
+              user = await storage.upsertUser({
+                id: userId,
+                email: req.user?.email || `user_${userId}@myqr.app`,
+                firstName: req.user?.firstName || "Usuario",
+                lastName: req.user?.lastName || "",
+                profileImageUrl: req.user?.profileImageUrl || null,
+                username: req.user?.username || `user_${userId}`
+              });
+              console.log("User created:", user.id);
+            }
+          } catch (userError) {
+            console.error("Error ensuring user exists:", userError);
+          }
+          
+          // Create QR code record
           let title;
           try {
             title = new URL(url).hostname;
@@ -444,28 +463,30 @@ setupGoogleAuth(app);
             title = url.substring(0, 50);
           }
           
-          // Create in-memory entry (will be persistent later)
-          const newQREntry = {
-            id: Date.now(),
-            url,
-            title,
-            userId,
-            backgroundColor: finalBackgroundColor,
-            foregroundColor: finalForegroundColor,
-            size,
-            errorCorrection,
-            margin,
-            style,
-            pattern,
-            creativeStyle,
-            cardStyle,
-            scanCount: 0,
-            scans: 0,
-            createdAt: new Date().toISOString(),
-            type: 'url'
-          };
-          
-          console.log("QR code entry created for demo collection:", newQREntry.id);
+          try {
+            savedQRCode = await storage.createQRCode({
+              url,
+              title,
+              userId,
+              backgroundColor: finalBackgroundColor,
+              foregroundColor: finalForegroundColor,
+              size,
+              errorCorrection,
+              margin,
+              style,
+              pattern,
+              creativeStyle,
+              cardStyle,
+              data: qrDataUrl,
+              qrDataUrl: qrDataUrl,
+              scanCount: 0,
+              type: 'url'
+            }, userId);
+            
+            console.log("QR code saved to database with ID:", savedQRCode.id);
+          } catch (dbError) {
+            console.error("Error saving QR code to database:", dbError);
+          }
         } else {
           console.log("No authenticated user, QR code not saved to history");
         }
@@ -628,63 +649,41 @@ setupGoogleAuth(app);
       const limit = parseInt(req.query.limit as string) || 20;
       const offset = parseInt(req.query.offset as string) || 0;
       
-      // ALWAYS return demo data for now to keep UI working
-      // This will be replaced with real database data once user creation is fixed
-      console.log("Using demo data for consistency");
-      
-      // Fallback to demo data if no real data or database error
-      const now = new Date();
-      const demoQRCodes = [
-        {
-          id: 1,
-          url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-          createdAt: new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
-          scans: 12,
-          userId: userId,
-          backgroundColor: "#ffffff",
-          foregroundColor: "#000000",
-          size: "medium",
-          creativeStyle: "classic",
-          cardStyle: "none",
-          title: "www.youtube.com"
-        },
-        {
-          id: 2,
-          url: "https://github.com/replit/replit",
-          createdAt: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
-          scans: 8,
-          userId: userId,
-          backgroundColor: "#000000",
-          foregroundColor: "#00FFFF",
-          size: "large",
-          creativeStyle: "neon_cyber",
-          cardStyle: "modern_gradient",
-          title: "github.com"
-        },
-        {
-          id: 3,
-          url: "https://www.google.com",
-          createdAt: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
-          scans: 25,
-          userId: userId,
-          backgroundColor: "#ffffff",
-          foregroundColor: "#FF0080",
-          size: "medium",
-          creativeStyle: "vibrant_rainbow",
-          cardStyle: "sunset_card",
-          title: "www.google.com"
+      try {
+        // Get real QR codes from database
+        const realQRCodes = await storage.getQRCodes(userId, limit, offset);
+        
+        if (realQRCodes && realQRCodes.length > 0) {
+          console.log(`Returning ${realQRCodes.length} real QR codes from database for user ${userId}`);
+          res.json({
+            success: true,
+            qrCodes: realQRCodes,
+            pagination: {
+              limit,
+              offset,
+              hasMore: realQRCodes.length === limit,
+              totalCount: realQRCodes.length + offset,
+              maxLimit: 100
+            }
+          });
+          return;
+        } else {
+          console.log("No QR codes found in database for user:", userId);
         }
-      ];
+      } catch (dbError) {
+        console.error("Database error getting QR codes:", dbError);
+      }
       
-      console.log(`Returning ${demoQRCodes.length} demo QR codes for user ${userId}`);
+      // No QR codes found - return empty array
+      console.log("No QR codes found, returning empty array");
       res.json({
         success: true,
-        qrCodes: demoQRCodes,
+        qrCodes: [],
         pagination: {
-          limit: 20,
-          offset: 0,
+          limit,
+          offset,
           hasMore: false,
-          totalCount: demoQRCodes.length,
+          totalCount: 0,
           maxLimit: 100
         }
       });
@@ -700,63 +699,65 @@ setupGoogleAuth(app);
   // Dashboard stats endpoint - Works with authentication
   app.get("/api/stats/dashboard", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user?.id || req.user?.claims?.sub || 'demo-user-1754877958618';
+      const userId = req.user?.id || null;
       console.log("Dashboard stats request for user:", userId);
       
-      // Get real data from the QR codes (using same data as history)
-      const now = new Date();
-      const demoQRCodes = [
-        {
-          id: 1,
-          url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-          createdAt: new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
-          scans: 12,
-          scanCount: 12,
-          title: "www.youtube.com"
-        },
-        {
-          id: 2,
-          url: "https://github.com/replit/replit",
-          createdAt: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
-          scans: 8,
-          scanCount: 8,
-          title: "github.com"
-        },
-        {
-          id: 3,
-          url: "https://www.google.com",
-          createdAt: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
-          scans: 25,
-          scanCount: 25,
-          title: "www.google.com"
-        }
-      ];
+      if (!userId) {
+        return res.status(401).json({ message: "User not found" });
+      }
 
-      // Calculate real totals from the data
-      const totalQRCodes = demoQRCodes.length;
-      const totalScans = demoQRCodes.reduce((sum, qr) => sum + qr.scans, 0);
+      // Get real QR codes from database
+      try {
+        const allQRCodes = await storage.getQRCodes(userId, 1000, 0); // Get all QR codes for stats
+        
+        // Calculate real stats
+        const totalScans = allQRCodes.reduce((sum, qr) => sum + (qr.scanCount || 0), 0);
+        const totalQRCodes = allQRCodes.length;
+        const avgScansPerQR = totalQRCodes > 0 ? Math.round(totalScans / totalQRCodes) : 0;
 
-      // Sort by scans for top QR codes (descending)
-      const topQRCodes = [...demoQRCodes]
-        .sort((a, b) => b.scans - a.scans)
-        .map(qr => ({
-          ...qr,
-          totalScans: qr.scans // StatsDashboard expects totalScans field
-        }));
+        // Get top QR codes (sorted by scans)
+        const topQRCodes = allQRCodes
+          .sort((a, b) => (b.scanCount || 0) - (a.scanCount || 0))
+          .slice(0, 10)
+          .map(qr => ({
+            title: qr.title || qr.url,
+            scans: qr.scanCount || 0,
+            url: qr.url
+          }));
 
-      const dashboardData = {
-        success: true,
-        data: {
+        const stats = {
           totalStats: {
             totalQRCodes,
-            totalScans
+            totalScans,
+            avgScansPerQR
           },
           topQRCodes
-        }
-      };
-      
-      console.log(`Returning dashboard stats for user ${userId}`);
-      res.json(dashboardData);
+        };
+
+        console.log("Returning real dashboard stats for user", userId);
+        res.json({
+          success: true,
+          data: stats
+        });
+      } catch (error) {
+        console.error("Error getting dashboard stats:", error);
+        
+        // Return empty stats if database error
+        const stats = {
+          totalStats: {
+            totalQRCodes: 0,
+            totalScans: 0,
+            avgScansPerQR: 0
+          },
+          topQRCodes: []
+        };
+
+        console.log("Returning empty stats due to database error");
+        res.json({
+          success: true,
+          data: stats
+        });
+      }
     } catch (error) {
       console.error("Error fetching dashboard stats:", error);
       res.status(500).json({ 
