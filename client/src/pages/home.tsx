@@ -251,14 +251,14 @@ export default function Home() {
                     </span>
                   </div>
                   <Button variant="ghost" size="sm" asChild>
-                    <a href="/api/logout" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+                    <a href="/api/auth/logout" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
                       <LogOut className="w-4 h-4" />
                     </a>
                   </Button>
                 </div>
               ) : (
                 <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground vibrant-pulse color-glow" asChild>
-                  <a href="/api/login">Iniciar Sesión</a>
+                  <a href="/api/auth/google">Iniciar Sesión con Google</a>
                 </Button>
               )}
             </div>

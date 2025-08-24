@@ -86,6 +86,11 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user;
+  }
+
   async updateUserSubscription(userId: string, subscriptionData: {
     stripeCustomerId?: string;
     stripeSubscriptionId?: string;

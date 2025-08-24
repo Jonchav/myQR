@@ -103,10 +103,12 @@ export const userPreferences = pgTable("user_preferences", {
 
 // Schema validation
 export const insertUserSchema = createInsertSchema(users).pick({
+  id: true,
   username: true,
   email: true,
   firstName: true,
   lastName: true,
+  profileImageUrl: true,
 });
 
 export const insertQRCodeSchema = createInsertSchema(qrCodes).pick({

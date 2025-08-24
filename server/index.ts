@@ -9,6 +9,7 @@ import connectPg from "connect-pg-simple";
 import QRCode from "qrcode";
 import { z } from "zod";
 import sharp from "sharp";
+import { setupGoogleAuth, isAuthenticated } from "./googleAuth";
 
 const app = express();
 app.use(express.json({ limit: "50mb" }));
@@ -66,25 +67,7 @@ function getSession() {
   });
 }
 
-// Simple authentication middleware
-const isAuthenticated = (req: any, res: any, next: any) => {
-  try {
-    const user = req.session?.user;
-    console.log("Auth check for user:", user?.id || "none");
-    
-    if (!user) {
-      console.log("No user in session, returning 401");
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-    
-    req.user = user;
-    console.log("User authenticated:", user.id);
-    next();
-  } catch (error) {
-    console.error("Authentication middleware error:", error);
-    res.status(500).json({ message: "Authentication error" });
-  }
-};
+// Authentication will be handled by googleAuth.ts
 
 // QR generation schema
 const qrGenerationSchema = z.object({
@@ -296,73 +279,10 @@ async function generateQRCode(data: any) {
   app.set("trust proxy", 1);
   app.use(getSession());
 
-  // Auth routes
-  app.get("/api/login", async (req: any, res) => {
-    try {
-      console.log("Login attempt started");
-      
-      // Use a fixed demo user to avoid unique constraint issues
-      const demoUser = {
-        id: "demo-user",
-        email: "demo@myqr.app",
-        firstName: "Demo",
-        lastName: "User",
-        profileImageUrl: null,
-      };
-      
-      console.log("Setting up demo user session");
-      
-      // Skip database operations for demo user - use session-only approach
-      console.log("Using session-only authentication for demo user");
-      let savedUser = demoUser;
+// Setup Google OAuth authentication
+setupGoogleAuth(app);
 
-      // Set session
-      req.session.user = savedUser;
-      console.log("Session set for user:", savedUser.id);
-      
-      res.redirect("/");
-    } catch (error: any) {
-      console.error("Login error:", error);
-      res.status(500).json({ 
-        message: "Login failed",
-        error: process.env.NODE_ENV === 'development' ? error.message : undefined
-      });
-    }
-  });
-
-  app.get("/api/logout", (req: any, res) => {
-    try {
-      console.log("Logout attempt for user:", req.session?.user?.id);
-      req.session.user = null;
-      req.session.destroy((err: any) => {
-        if (err) {
-          console.error("Session destroy error:", err);
-          return res.status(500).json({ message: "Logout failed" });
-        }
-        console.log("Session destroyed successfully");
-        res.redirect("/");
-      });
-    } catch (error: any) {
-      console.error("Logout error:", error);
-      res.status(500).json({ message: "Logout failed" });
-    }
-  });
-
-  app.get("/api/callback", (req, res) => {
-    res.redirect("/");
-  });
-
-  // Auth user endpoint
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
-    try {
-      const user = req.user;
-      console.log("Returning user from session:", user.id);
-      res.json(user);
-    } catch (error) {
-      console.error("Error fetching user:", error);
-      res.status(500).json({ message: "Failed to fetch user" });
-    }
-  });
+  // Google OAuth routes are configured in googleAuth.ts
 
   // Generate QR code with customization support
   app.post("/api/qr/generate", isAuthenticated, async (req: any, res) => {
@@ -498,8 +418,8 @@ async function generateQRCode(data: any) {
       // Save QR code to history if user is authenticated
       let savedQRCode = null;
       try {
-        // Get user ID from session if available
-        const userId = req.user?.id || req.user?.claims?.sub || null;
+        // Get user ID from authenticated user
+        const userId = req.user?.id || null;
         
         if (userId) {
           console.log("Saving QR code to history for user:", userId);

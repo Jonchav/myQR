@@ -22,8 +22,8 @@ export default function Landing() {
               </div>
             </div>
             <Button asChild className="bg-primary hover:bg-primary/90 vibrant-pulse color-glow">
-              <a href="/api/login">
-                Iniciar Sesión
+              <a href="/api/auth/google">
+                Iniciar Sesión con Google
                 <ArrowRight className="w-4 h-4 ml-2" />
               </a>
             </Button>
@@ -50,8 +50,8 @@ export default function Landing() {
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button size="lg" asChild className="bg-primary hover:bg-primary/90 text-primary-foreground">
-            <a href="/api/login">
-              Comenzar Gratis
+            <a href="/api/auth/google">
+              Comenzar con Google
               <ArrowRight className="w-5 h-5 ml-2" />
             </a>
           </Button>
