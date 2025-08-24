@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { History, Eye, Copy, ExternalLink, Calendar } from "lucide-react";
+import { History, Eye, Copy, ExternalLink, Calendar, RefreshCw } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -16,8 +16,10 @@ interface QRHistoryProps {
 
 export function QRHistory({ onEditQR }: QRHistoryProps) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const itemsPerPage = 20;
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["qr-history", currentPage],
@@ -40,12 +42,43 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
     });
   };
 
+  const refreshHistory = async () => {
+    setIsRefreshing(true);
+    try {
+      await queryClient.invalidateQueries({ queryKey: ["qr-history"] });
+      toast({
+        title: "Actualizado",
+        description: "Historial actualizado correctamente",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Error al actualizar el historial",
+        variant: "destructive",
+      });
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="space-y-4">
-        <div className="flex items-center gap-2 mb-6">
-          <History className="w-6 h-6 text-purple-400" />
-          <h2 className="text-2xl font-bold text-white">Historial de QR</h2>
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-2">
+            <History className="w-6 h-6 text-purple-400" />
+            <h2 className="text-2xl font-bold text-white">Historial de QR</h2>
+          </div>
+          <Button
+            onClick={refreshHistory}
+            disabled={isRefreshing}
+            variant="outline"
+            size="sm"
+            className="text-purple-400 border-purple-500/30 hover:bg-purple-500/10"
+          >
+            <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+            Actualizar
+          </Button>
         </div>
         {Array.from({ length: 3 }).map((_, i) => (
           <Card key={i} className="gradient-card elegant-border">
@@ -79,14 +112,26 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-2 mb-6">
-        <History className="w-6 h-6 text-purple-400" />
-        <h2 className="text-2xl font-bold text-white">Historial de QR</h2>
-        {pagination && (
-          <Badge variant="secondary" className="bg-purple-600/20 text-purple-300">
-            {pagination.totalCount} códigos
-          </Badge>
-        )}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-2">
+          <History className="w-6 h-6 text-purple-400" />
+          <h2 className="text-2xl font-bold text-white">Historial de QR</h2>
+          {pagination && (
+            <Badge variant="secondary" className="bg-purple-600/20 text-purple-300">
+              {pagination.totalCount} códigos
+            </Badge>
+          )}
+        </div>
+        <Button
+          onClick={refreshHistory}
+          disabled={isRefreshing}
+          variant="outline"
+          size="sm"
+          className="text-purple-400 border-purple-500/30 hover:bg-purple-500/10"
+        >
+          <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+          Actualizar
+        </Button>
       </div>
 
       {qrCodes.length === 0 ? (
