@@ -257,9 +257,14 @@ export default function Home() {
                   </Button>
                 </div>
               ) : (
-                <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground vibrant-pulse color-glow" asChild>
-                  <a href="/api/auth/google">Iniciar Sesión con Google</a>
-                </Button>
+                <div className="flex gap-2">
+                  <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground vibrant-pulse color-glow" asChild>
+                    <a href="/api/auth/google">Google</a>
+                  </Button>
+                  <Button size="sm" variant="outline" asChild>
+                    <a href="/api/auth/demo-login">Demo</a>
+                  </Button>
+                </div>
               )}
             </div>
           </div>

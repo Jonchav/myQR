@@ -283,6 +283,18 @@ async function generateQRCode(data: any) {
 setupGoogleAuth(app);
 
   // Google OAuth routes are configured in googleAuth.ts
+  
+  // Temporary demo login route while Google OAuth is being configured
+  app.get("/api/auth/demo-login", (req: any, res) => {
+    req.session.user = {
+      id: "demo-user",
+      email: "demo@myqr.app",
+      firstName: "Demo",
+      lastName: "User",
+      username: "demo"
+    };
+    res.redirect("/");
+  });
 
   // Generate QR code with customization support
   app.post("/api/qr/generate", isAuthenticated, async (req: any, res) => {

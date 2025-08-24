@@ -21,12 +21,19 @@ export default function Landing() {
                 <p className="text-sm text-gray-600 dark:text-gray-400">Generador de Códigos QR</p>
               </div>
             </div>
-            <Button asChild className="bg-primary hover:bg-primary/90 vibrant-pulse color-glow">
-              <a href="/api/auth/google">
-                Iniciar Sesión con Google
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </a>
-            </Button>
+            <div className="flex gap-2">
+              <Button asChild className="bg-primary hover:bg-primary/90 vibrant-pulse color-glow">
+                <a href="/api/auth/google">
+                  Google
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </a>
+              </Button>
+              <Button asChild variant="outline">
+                <a href="/api/auth/demo-login">
+                  Demo
+                </a>
+              </Button>
+            </div>
           </div>
         </div>
       </header>
