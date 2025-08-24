@@ -365,7 +365,7 @@ async function generateQRCode(data: any) {
   });
 
   // Generate QR code with customization support
-  app.post("/api/qr/generate", async (req, res) => {
+  app.post("/api/qr/generate", isAuthenticated, async (req: any, res) => {
     try {
       console.log("QR generation request received:", req.body);
       
@@ -499,7 +499,7 @@ async function generateQRCode(data: any) {
       let savedQRCode = null;
       try {
         // Get user ID from session if available
-        const userId = (req as any).user?.id || (req as any).user?.claims?.sub || null;
+        const userId = req.user?.id || req.user?.claims?.sub || null;
         
         if (userId) {
           console.log("Saving QR code to history for user:", userId);
@@ -716,11 +716,12 @@ async function generateQRCode(data: any) {
       }
       
       // Fallback to demo data if no real data or database error
+      const now = new Date();
       const demoQRCodes = [
         {
           id: 1,
           url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-          createdAt: new Date(Date.now() - 86400000).toISOString(),
+          createdAt: new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
           scans: 12,
           userId: userId,
           backgroundColor: "#ffffff",
@@ -733,7 +734,7 @@ async function generateQRCode(data: any) {
         {
           id: 2,
           url: "https://github.com/replit/replit",
-          createdAt: new Date(Date.now() - 172800000).toISOString(),
+          createdAt: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
           scans: 8,
           userId: userId,
           backgroundColor: "#000000",
@@ -746,7 +747,7 @@ async function generateQRCode(data: any) {
         {
           id: 3,
           url: "https://www.google.com",
-          createdAt: new Date(Date.now() - 259200000).toISOString(),
+          createdAt: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
           scans: 25,
           userId: userId,
           backgroundColor: "#ffffff",
@@ -786,11 +787,12 @@ async function generateQRCode(data: any) {
       console.log("Dashboard stats request for user:", userId);
       
       // Get real data from the QR codes (using same data as history)
+      const now = new Date();
       const demoQRCodes = [
         {
           id: 1,
           url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-          createdAt: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
+          createdAt: new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
           scans: 12,
           scanCount: 12,
           title: "www.youtube.com"
@@ -798,7 +800,7 @@ async function generateQRCode(data: any) {
         {
           id: 2,
           url: "https://github.com/replit/replit",
-          createdAt: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
+          createdAt: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
           scans: 8,
           scanCount: 8,
           title: "github.com"
@@ -806,7 +808,7 @@ async function generateQRCode(data: any) {
         {
           id: 3,
           url: "https://www.google.com",
-          createdAt: new Date(Date.now() - 259200000).toISOString(), // 3 days ago
+          createdAt: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
           scans: 25,
           scanCount: 25,
           title: "www.google.com"
