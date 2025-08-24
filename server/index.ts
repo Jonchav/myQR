@@ -504,6 +504,24 @@ async function generateQRCode(data: any) {
         if (userId) {
           console.log("Saving QR code to history for user:", userId);
           
+          // Ensure user exists in database
+          try {
+            let user = await storage.getUser(userId);
+            if (!user) {
+              console.log("Creating demo user in database");
+              user = await storage.upsertUser({
+                id: userId,
+                email: "demo@myqr.app",
+                username: "demo",
+                firstName: "Demo",
+                lastName: "User"
+              });
+              console.log("Demo user created:", user.id);
+            }
+          } catch (userError) {
+            console.error("Error ensuring user exists:", userError);
+          }
+          
           // Create QR code record
           let title;
           try {
