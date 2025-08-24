@@ -525,8 +525,10 @@ async function generateQRCode(data: any) {
             pattern,
             creativeStyle,
             cardStyle,
-            qrDataUrl, // Store the generated QR code data
-            scans: 0
+            data: qrDataUrl, // Base64 QR data for 'data' field
+            qrDataUrl: qrDataUrl, // Also set qrDataUrl field
+            scanCount: 0,
+            type: 'url'
           }, userId);
           
           console.log("QR code saved to history with ID:", savedQRCode.id);
