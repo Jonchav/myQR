@@ -10,6 +10,7 @@ import QRCode from "qrcode";
 import { z } from "zod";
 import sharp from "sharp";
 import { setupGoogleAuth, isAuthenticated } from "./googleAuth";
+import geoip from "geoip-lite";
 
 const app = express();
 app.use(express.json({ limit: "50mb" }));
@@ -43,6 +44,119 @@ app.use((req, res, next) => {
 
   next();
 });
+
+// Function to get card dimensions for different social media platforms
+function getCardDimensions(template: string): { width: number; height: number } {
+  const dimensions: { [key: string]: { width: number; height: number } } = {
+    "instagram_post": { width: 1080, height: 1080 }, // Square
+    "instagram_story": { width: 1080, height: 1920 }, // Vertical Story
+    "facebook_post": { width: 1200, height: 630 }, // Horizontal
+    "twitter_post": { width: 1200, height: 675 }, // Horizontal
+    "linkedin_post": { width: 1200, height: 627 }, // Horizontal
+    "youtube_thumbnail": { width: 1280, height: 720 }, // 16:9
+    "tiktok_video": { width: 1080, height: 1920 }, // Vertical
+  };
+  
+  return dimensions[template] || { width: 1080, height: 1080 };
+}
+
+// Function to generate creative card with QR code
+async function generateCreativeCard(qrDataUrl: string, options: any): Promise<string> {
+  try {
+    const { cardTemplate, cardStyle, customBackgroundImage } = options;
+    
+    console.log('generateCreativeCard - cardTemplate:', cardTemplate);
+    console.log('generateCreativeCard - cardStyle:', cardStyle);
+    
+    if (cardTemplate === "none" && cardStyle === "none") {
+      return qrDataUrl;
+    }
+    
+    const { width, height } = getCardDimensions(cardTemplate);
+    console.log('Card dimensions:', width, 'x', height);
+    
+    // Generate simple colored background for the card
+    let background = '#ffffff'; // Default white background
+    
+    if (cardStyle === "custom_image" && customBackgroundImage) {
+      // Use custom background image
+      background = customBackgroundImage;
+    } else {
+      // Use predefined background colors based on cardStyle
+      const backgroundColors: { [key: string]: string } = {
+        "modern_gradient": '#667eea',
+        "neon_waves": '#ff006e',
+        "geometric": '#f093fb',
+        "minimalist": '#f8f9fa',
+        "elegant": '#2c3e50',
+        "vibrant": '#e74c3c'
+      };
+      background = backgroundColors[cardStyle] || '#ffffff';
+    }
+    
+    // Extract QR code data from base64
+    const qrBase64 = qrDataUrl.replace(/^data:image\/[a-z]+;base64,/, '');
+    const qrBuffer = Buffer.from(qrBase64, 'base64');
+    
+    // Calculate QR size based on card dimensions (40% of the smaller dimension)
+    const qrSize = Math.min(width, height) * 0.4;
+    
+    // Create background
+    let backgroundBuffer;
+    if (customBackgroundImage && cardStyle === "custom_image") {
+      // Process custom background image
+      const customImageBase64 = customBackgroundImage.replace(/^data:image\/[a-z]+;base64,/, '');
+      const customImageBuffer = Buffer.from(customImageBase64, 'base64');
+      
+      backgroundBuffer = await sharp(customImageBuffer)
+        .resize(width, height, { fit: 'cover' })
+        .png()
+        .toBuffer();
+    } else {
+      // Create solid color background
+      backgroundBuffer = await sharp({
+        create: {
+          width,
+          height,
+          channels: 3,
+          background: background
+        }
+      })
+      .png()
+      .toBuffer();
+    }
+    
+    // Resize QR code
+    const resizedQrBuffer = await sharp(qrBuffer)
+      .resize(Math.round(qrSize), Math.round(qrSize))
+      .png()
+      .toBuffer();
+    
+    // Calculate position to center QR code
+    const qrX = Math.round((width - qrSize) / 2);
+    const qrY = Math.round((height - qrSize) / 2);
+    
+    // Composite QR code onto background
+    const finalBuffer = await sharp(backgroundBuffer)
+      .composite([{
+        input: resizedQrBuffer,
+        left: qrX,
+        top: qrY
+      }])
+      .png()
+      .toBuffer();
+    
+    // Convert back to data URL
+    const finalDataUrl = `data:image/png;base64,${finalBuffer.toString('base64')}`;
+    
+    console.log('Creative card generated successfully');
+    return finalDataUrl;
+    
+  } catch (error) {
+    console.error('Error generating creative card:', error);
+    return qrDataUrl; // Return original QR if card generation fails
+  }
+}
 
 // Session setup
 function getSession() {
@@ -78,172 +192,6 @@ const qrGenerationSchema = z.object({
   size: z.enum(["small", "medium", "large"]).default("medium"),
 });
 
-// Función simplificada para generar estilos de tarjeta
-async function generateCreativeCard(qrDataUrl: string, options: any): Promise<string> {
-  try {
-    const { cardStyle, backgroundColor = "#ffffff" } = options;
-    
-    console.log('Generating creative card with style:', cardStyle);
-    
-    if (cardStyle === "none" || !cardStyle) {
-      return qrDataUrl;
-    }
-    
-    const width = 1200;
-    const height = 1200;
-    
-    // Generar fondo basado en el estilo
-    let backgroundSVG = '';
-    
-    switch (cardStyle) {
-      case 'modern_gradient':
-        backgroundSVG = `
-          <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="modernGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
-              </linearGradient>
-            </defs>
-            <rect width="${width}" height="${height}" fill="url(#modernGrad)"/>
-          </svg>
-        `;
-        break;
-      case 'neon_glow':
-        backgroundSVG = `
-          <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="neonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#00f5ff;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#0099ff;stop-opacity:1" />
-              </linearGradient>
-            </defs>
-            <rect width="${width}" height="${height}" fill="url(#neonGrad)"/>
-          </svg>
-        `;
-        break;
-      case 'sunset_card':
-        backgroundSVG = `
-          <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="sunsetGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#ff6b6b;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#ffa500;stop-opacity:1" />
-              </linearGradient>
-            </defs>
-            <rect width="${width}" height="${height}" fill="url(#sunsetGrad)"/>
-          </svg>
-        `;
-        break;
-      case 'forest_green':
-        backgroundSVG = `
-          <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="forestGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#134e5e;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#71b280;stop-opacity:1" />
-              </linearGradient>
-            </defs>
-            <rect width="${width}" height="${height}" fill="url(#forestGrad)"/>
-          </svg>
-        `;
-        break;
-      case 'ocean_blue':
-        backgroundSVG = `
-          <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="oceanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#667db6;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#0082c8;stop-opacity:1" />
-              </linearGradient>
-            </defs>
-            <rect width="${width}" height="${height}" fill="url(#oceanGrad)"/>
-          </svg>
-        `;
-        break;
-      case 'purple_haze':
-        backgroundSVG = `
-          <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#8360c3;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#2ebf91;stop-opacity:1" />
-              </linearGradient>
-            </defs>
-            <rect width="${width}" height="${height}" fill="url(#purpleGrad)"/>
-          </svg>
-        `;
-        break;
-      case 'golden_hour':
-        backgroundSVG = `
-          <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="goldenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#ffd89b;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#19547b;stop-opacity:1" />
-              </linearGradient>
-            </defs>
-            <rect width="${width}" height="${height}" fill="url(#goldenGrad)"/>
-          </svg>
-        `;
-        break;
-      default:
-        // Gradiente por defecto
-        backgroundSVG = `
-          <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="defaultGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
-              </linearGradient>
-            </defs>
-            <rect width="${width}" height="${height}" fill="url(#defaultGrad)"/>
-          </svg>
-        `;
-    }
-    
-    // Crear el buffer de fondo
-    const backgroundBuffer = Buffer.from(backgroundSVG);
-    
-    // Crear fondo procesado
-    const processedBackground = await sharp(backgroundBuffer)
-      .resize(width, height)
-      .png()
-      .toBuffer();
-    
-    // Procesar QR code
-    const qrBase64 = qrDataUrl.replace(/^data:image\/[a-z]+;base64,/, '');
-    const qrBuffer = Buffer.from(qrBase64, 'base64');
-    
-    // Tamaño del QR en la tarjeta
-    const qrSize = Math.min(width, height) * 0.55;
-    const qrPositionX = (width - qrSize) / 2;
-    const qrPositionY = (height - qrSize) / 2;
-    
-    // Redimensionar QR
-    const resizedQR = await sharp(qrBuffer)
-      .resize(qrSize, qrSize, { fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 1 } })
-      .toBuffer();
-    
-    // Componer tarjeta final
-    const finalCard = await sharp(processedBackground)
-      .composite([
-        {
-          input: resizedQR,
-          top: Math.round(qrPositionY),
-          left: Math.round(qrPositionX)
-        }
-      ])
-      .png({ quality: 90 })
-      .toBuffer();
-    
-    console.log('Creative card generated successfully');
-    return `data:image/png;base64,${finalCard.toString('base64')}`;
-  } catch (error) {
-    console.error('Error generating creative card:', error);
-    return qrDataUrl; // Return original if fails
-  }
-}
 
 // QR code generation function
 async function generateQRCode(data: any) {
@@ -312,6 +260,7 @@ setupGoogleAuth(app);
         pattern = "standard",
         creativeStyle = "classic",
         cardStyle = "none",
+        cardTemplate = "none",
         customBackgroundImage = null
       } = req.body;
       
@@ -412,17 +361,15 @@ setupGoogleAuth(app);
 
       let qrDataUrl = await QRCode.toDataURL(url, qrOptions);
 
-      // Apply card style if specified
-      if (cardStyle && cardStyle !== 'none' && cardStyle !== 'custom_image') {
-        console.log("Applying card style:", cardStyle);
+      // Apply card style or template if specified
+      if ((cardStyle && cardStyle !== 'none') || (cardTemplate && cardTemplate !== 'none')) {
+        console.log("Applying card style:", cardStyle, "with template:", cardTemplate);
         qrDataUrl = await generateCreativeCard(qrDataUrl, {
           cardStyle,
-          customBackgroundImage,
-          backgroundColor: finalBackgroundColor,
-          cardTemplate: 'instagram_post', // Default template
-          qrPosition: 'center'
+          cardTemplate,
+          customBackgroundImage
         });
-        console.log("Card style applied successfully");
+        console.log("Card style/template applied successfully");
       }
 
       console.log("QR code generated successfully");
@@ -505,9 +452,13 @@ setupGoogleAuth(app);
             
             let finalQRDataUrl = await QRCode.toDataURL(trackingUrl, trackingQROptions);
             
-            // Apply creative card style if specified
-            if (cardStyle && cardStyle !== 'none' && cardStyle !== 'modern_gradient') {
-              finalQRDataUrl = await generateCreativeCard(finalQRDataUrl, cardStyle);
+            // Apply creative card style or template if specified
+            if ((cardStyle && cardStyle !== 'none') || (cardTemplate && cardTemplate !== 'none')) {
+              finalQRDataUrl = await generateCreativeCard(finalQRDataUrl, {
+                cardStyle,
+                cardTemplate,
+                customBackgroundImage
+              });
             }
             
             // Update the QR code record with the tracking QR
