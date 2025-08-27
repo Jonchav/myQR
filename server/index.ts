@@ -395,16 +395,16 @@ setupGoogleAuth(app);
         }
       }
 
-      // Generate QR code with customization - Celdas más grandes
+      // Generate QR code with customization - Celdas mucho más grandes
       const qrOptions = {
         width: qrSize,
-        margin: 1, // Mínimo margen para maximizar celdas
-        scale: 10, // Factor de escala para celdas más grandes
+        margin: 0, // Sin margen para maximizar el área del QR
+        scale: 20, // Factor de escala mucho mayor para celdas grandes
         color: {
           dark: finalForegroundColor,
           light: finalBackgroundColor === 'transparent' ? '#ffffff00' : finalBackgroundColor
         },
-        errorCorrectionLevel: 'L' as 'L' | 'M' | 'Q' | 'H', // Menor corrección = celdas más grandes
+        errorCorrectionLevel: 'L' as 'L' | 'M' | 'Q' | 'H', // Menor corrección = menos celdas = celdas más grandes
         type: 'image/png' as const
       };
 
@@ -490,15 +490,17 @@ setupGoogleAuth(app);
             const trackingUrl = `${req.protocol}://${req.get('host')}/api/scan/${savedQRCode.id}`;
             console.log("Regenerating QR with tracking URL:", trackingUrl);
             
-            // Generate new QR code with tracking URL
+            // Generate new QR code with tracking URL - Same large cell settings
             const trackingQROptions = {
               width: qrSize,
-              margin: margin,
+              margin: 0, // Sin margen para maximizar el área del QR
+              scale: 20, // Factor de escala mucho mayor para celdas grandes
               color: {
                 dark: finalForegroundColor,
                 light: finalBackgroundColor,
               },
-              errorCorrectionLevel: errorCorrection as any,
+              errorCorrectionLevel: 'L' as 'L' | 'M' | 'Q' | 'H', // Menor corrección = celdas más grandes
+              type: 'image/png' as const
             };
             
             let finalQRDataUrl = await QRCode.toDataURL(trackingUrl, trackingQROptions);
