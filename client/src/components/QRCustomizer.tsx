@@ -225,7 +225,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                 <img
                   src={qrCode}
                   alt="QR Code"
-                  className="w-full h-auto rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm"
+                  className="w-80 h-80 mx-auto rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm object-contain"
                 />
               </div>
             ) : (
