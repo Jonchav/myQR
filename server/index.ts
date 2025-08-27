@@ -395,16 +395,16 @@ setupGoogleAuth(app);
         }
       }
 
-      // Generate QR code with customization - Celdas optimizadas
+      // Generate QR code with customization - Celdas balanceadas
       const qrOptions = {
         width: qrSize,
-        margin: 0, // Sin margen para maximizar el área del QR
-        scale: 17, // Factor de escala reducido 15% (20 * 0.85 = 17)
+        margin: 1, // Mínimo margen para mejor escaneabilidad
+        scale: 8, // Factor de escala más moderado para celdas apropiadas
         color: {
           dark: finalForegroundColor,
           light: finalBackgroundColor === 'transparent' ? '#ffffff00' : finalBackgroundColor
         },
-        errorCorrectionLevel: 'L' as 'L' | 'M' | 'Q' | 'H', // Menor corrección = menos celdas = celdas más grandes
+        errorCorrectionLevel: 'M' as 'L' | 'M' | 'Q' | 'H', // Corrección media para balance
         type: 'image/png' as const
       };
 
@@ -490,16 +490,16 @@ setupGoogleAuth(app);
             const trackingUrl = `${req.protocol}://${req.get('host')}/api/scan/${savedQRCode.id}`;
             console.log("Regenerating QR with tracking URL:", trackingUrl);
             
-            // Generate new QR code with tracking URL - Same optimized cell settings
+            // Generate new QR code with tracking URL - Same balanced cell settings
             const trackingQROptions = {
               width: qrSize,
-              margin: 0, // Sin margen para maximizar el área del QR
-              scale: 17, // Factor de escala reducido 15% (20 * 0.85 = 17)
+              margin: 1, // Mínimo margen para mejor escaneabilidad
+              scale: 8, // Factor de escala más moderado para celdas apropiadas
               color: {
                 dark: finalForegroundColor,
                 light: finalBackgroundColor,
               },
-              errorCorrectionLevel: 'L' as 'L' | 'M' | 'Q' | 'H', // Menor corrección = celdas más grandes
+              errorCorrectionLevel: 'M' as 'L' | 'M' | 'Q' | 'H', // Corrección media para balance
               type: 'image/png' as const
             };
             
