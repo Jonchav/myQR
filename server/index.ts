@@ -505,7 +505,7 @@ setupGoogleAuth(app);
             
             // Apply creative card style if specified
             if (cardStyle && cardStyle !== 'none' && cardStyle !== 'modern_gradient') {
-              finalQRDataUrl = await generateCreativeCard(finalQRDataUrl, cardStyle, customBackgroundImage);
+              finalQRDataUrl = await generateCreativeCard(finalQRDataUrl, cardStyle);
             }
             
             // Update the QR code record with the tracking QR
