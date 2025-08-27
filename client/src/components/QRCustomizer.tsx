@@ -83,6 +83,20 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
     };
     return descriptions[template] || "";
   };
+  
+  // Función para obtener información del tamaño QR
+  const getQRSizeInfo = (template: string): string => {
+    const sizeInfo: { [key: string]: string } = {
+      "instagram_post": "55% del canvas (590px aprox.)",
+      "instagram_story": "55% del ancho (594px aprox.)",
+      "facebook_post": "60% de la altura (378px aprox.)",
+      "twitter_post": "60% de la altura (405px aprox.)",
+      "linkedin_post": "60% de la altura (376px aprox.)",
+      "youtube_thumbnail": "60% de la altura (432px aprox.)",
+      "tiktok_video": "55% del ancho (594px aprox.)"
+    };
+    return sizeInfo[template] || "Optimizado automáticamente";
+  };
 
   const updateSetting = (key: string, value: any) => {
     const newSettings = { ...settings, [key]: value };
@@ -480,9 +494,12 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                 
                 {/* Descripción del formato seleccionado */}
                 {settings.cardTemplate && settings.cardTemplate !== "none" && (
-                  <div className="mt-2 p-2 bg-purple-50 dark:bg-purple-900/20 rounded border border-purple-200 dark:border-purple-700">
-                    <p className="text-xs text-purple-700 dark:text-purple-300">
+                  <div className="mt-2 p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-700">
+                    <p className="text-xs text-purple-700 dark:text-purple-300 mb-1">
                       {getFormatDescription(settings.cardTemplate)}
+                    </p>
+                    <p className="text-xs text-purple-600 dark:text-purple-400 font-mono">
+                      Tamaño QR optimizado: {getQRSizeInfo(settings.cardTemplate)}
                     </p>
                   </div>
                 )}

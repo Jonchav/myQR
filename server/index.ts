@@ -98,8 +98,21 @@ async function generateCreativeCard(qrDataUrl: string, options: any): Promise<st
     const qrBase64 = qrDataUrl.replace(/^data:image\/[a-z]+;base64,/, '');
     const qrBuffer = Buffer.from(qrBase64, 'base64');
     
-    // Calculate QR size based on card dimensions (40% of the smaller dimension)
-    const qrSize = Math.min(width, height) * 0.4;
+    // Calculate QR size optimized for each format type
+    let qrSize;
+    
+    if (height > width * 1.5) {
+      // Formato vertical (Stories, TikTok) - QR más grande para aprovechar el ancho
+      qrSize = width * 0.55;
+    } else if (width > height * 1.5) {
+      // Formato horizontal (Facebook, Twitter, LinkedIn, YouTube) - QR proporcionado a la altura
+      qrSize = height * 0.60;
+    } else {
+      // Formato cuadrado (Instagram Post) - QR balanceado
+      qrSize = Math.min(width, height) * 0.55;
+    }
+    
+    console.log(`QR size calculated: ${Math.round(qrSize)}px for ${width}x${height} format`);
     
     // Create background
     let backgroundBuffer;
