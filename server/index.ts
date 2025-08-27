@@ -395,11 +395,11 @@ setupGoogleAuth(app);
         }
       }
 
-      // Generate QR code with customization - Celdas mucho más grandes
+      // Generate QR code with customization - Celdas optimizadas
       const qrOptions = {
         width: qrSize,
         margin: 0, // Sin margen para maximizar el área del QR
-        scale: 20, // Factor de escala mucho mayor para celdas grandes
+        scale: 17, // Factor de escala reducido 15% (20 * 0.85 = 17)
         color: {
           dark: finalForegroundColor,
           light: finalBackgroundColor === 'transparent' ? '#ffffff00' : finalBackgroundColor
@@ -490,11 +490,11 @@ setupGoogleAuth(app);
             const trackingUrl = `${req.protocol}://${req.get('host')}/api/scan/${savedQRCode.id}`;
             console.log("Regenerating QR with tracking URL:", trackingUrl);
             
-            // Generate new QR code with tracking URL - Same large cell settings
+            // Generate new QR code with tracking URL - Same optimized cell settings
             const trackingQROptions = {
               width: qrSize,
               margin: 0, // Sin margen para maximizar el área del QR
-              scale: 20, // Factor de escala mucho mayor para celdas grandes
+              scale: 17, // Factor de escala reducido 15% (20 * 0.85 = 17)
               color: {
                 dark: finalForegroundColor,
                 light: finalBackgroundColor,
