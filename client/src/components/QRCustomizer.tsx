@@ -69,6 +69,20 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
       description: "Se ha eliminado la imagen de fondo personalizada",
     });
   };
+  
+  // Función para obtener la descripción del formato
+  const getFormatDescription = (template: string): string => {
+    const descriptions: { [key: string]: string } = {
+      "instagram_post": "Formato cuadrado perfecto para publicaciones de feed de Instagram",
+      "instagram_story": "Formato vertical para Stories de Instagram y Facebook",
+      "facebook_post": "Formato horizontal optimizado para publicaciones de Facebook",
+      "twitter_post": "Formato horizontal ideal para publicaciones de Twitter/X",
+      "linkedin_post": "Formato horizontal profesional para LinkedIn",
+      "youtube_thumbnail": "Formato 16:9 estándar para miniaturas de YouTube",
+      "tiktok_video": "Formato vertical para videos de TikTok e Instagram Reels"
+    };
+    return descriptions[template] || "";
+  };
 
   const updateSetting = (key: string, value: any) => {
     const newSettings = { ...settings, [key]: value };
@@ -454,15 +468,24 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">🔳 Sin formato especial</SelectItem>
-                    <SelectItem value="instagram_post">📸 Instagram Post (1080x1080)</SelectItem>
-                    <SelectItem value="instagram_story">📱 Instagram Story (1080x1920)</SelectItem>
-                    <SelectItem value="facebook_post">👥 Facebook Post (1200x630)</SelectItem>
-                    <SelectItem value="twitter_post">🐦 Twitter Post (1200x675)</SelectItem>
-                    <SelectItem value="linkedin_post">💼 LinkedIn Post (1200x627)</SelectItem>
-                    <SelectItem value="youtube_thumbnail">🎥 YouTube Thumbnail (1280x720)</SelectItem>
-                    <SelectItem value="tiktok_video">🎵 TikTok Video (1080x1920)</SelectItem>
+                    <SelectItem value="instagram_post">📸 Instagram Post (1080x1080) - Cuadrado</SelectItem>
+                    <SelectItem value="instagram_story">📱 Instagram Story (1080x1920) - Vertical</SelectItem>
+                    <SelectItem value="facebook_post">👥 Facebook Post (1200x630) - Horizontal</SelectItem>
+                    <SelectItem value="twitter_post">🐦 Twitter Post (1200x675) - Horizontal</SelectItem>
+                    <SelectItem value="linkedin_post">💼 LinkedIn Post (1200x627) - Horizontal</SelectItem>
+                    <SelectItem value="youtube_thumbnail">🎥 YouTube Thumbnail (1280x720) - 16:9</SelectItem>
+                    <SelectItem value="tiktok_video">🎵 TikTok Video (1080x1920) - Vertical</SelectItem>
                   </SelectContent>
                 </Select>
+                
+                {/* Descripción del formato seleccionado */}
+                {settings.cardTemplate && settings.cardTemplate !== "none" && (
+                  <div className="mt-2 p-2 bg-purple-50 dark:bg-purple-900/20 rounded border border-purple-200 dark:border-purple-700">
+                    <p className="text-xs text-purple-700 dark:text-purple-300">
+                      {getFormatDescription(settings.cardTemplate)}
+                    </p>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
