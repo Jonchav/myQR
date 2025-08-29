@@ -115,15 +115,37 @@ export const downloadQR = {
         img.onload = resolve;
       });
       
-      // Add QR code centered on page
-      const imgWidth = 100;
-      const imgHeight = 100;
+      // Calculate dimensions maintaining aspect ratio
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
-      const x = (pageWidth - imgWidth) / 2;
-      const y = (pageHeight - imgHeight) / 2;
+      const maxWidth = pageWidth * 0.7; // Use 70% of page width
+      const maxHeight = pageHeight * 0.7; // Use 70% of page height
       
-      pdf.addImage(qrDataUrl, 'PNG', x, y, imgWidth, imgHeight);
+      // Get original image dimensions
+      const originalWidth = img.naturalWidth;
+      const originalHeight = img.naturalHeight;
+      const aspectRatio = originalWidth / originalHeight;
+      
+      // Calculate final dimensions maintaining aspect ratio
+      let finalWidth, finalHeight;
+      
+      if (aspectRatio > 1) {
+        // Landscape or square image
+        finalWidth = Math.min(maxWidth, maxHeight * aspectRatio);
+        finalHeight = finalWidth / aspectRatio;
+      } else {
+        // Portrait image
+        finalHeight = Math.min(maxHeight, maxWidth / aspectRatio);
+        finalWidth = finalHeight * aspectRatio;
+      }
+      
+      // Center the image
+      const x = (pageWidth - finalWidth) / 2;
+      const y = (pageHeight - finalHeight) / 2;
+      
+      console.log(`PDF: Original ${originalWidth}x${originalHeight}, Final ${Math.round(finalWidth)}x${Math.round(finalHeight)}`);
+      
+      pdf.addImage(qrDataUrl, 'PNG', x, y, finalWidth, finalHeight);
       pdf.save(`${filename}.pdf`);
     } catch (error) {
       console.error('Error downloading PDF:', error);
@@ -146,19 +168,42 @@ export const downloadQR = {
       pdf.setFontSize(20);
       pdf.text('Código QR', 105, 30, { align: 'center' });
       
-      // Add QR code
-      const imgWidth = 120;
-      const imgHeight = 120;
+      // Calculate QR dimensions maintaining aspect ratio
       const pageWidth = pdf.internal.pageSize.getWidth();
-      const x = (pageWidth - imgWidth) / 2;
+      const maxWidth = pageWidth * 0.6; // Use 60% of page width for print
+      const maxHeight = 120; // Max height to leave space for text
+      
+      // Get original image dimensions
+      const originalWidth = img.naturalWidth;
+      const originalHeight = img.naturalHeight;
+      const aspectRatio = originalWidth / originalHeight;
+      
+      // Calculate final dimensions maintaining aspect ratio
+      let finalWidth, finalHeight;
+      
+      if (aspectRatio > 1) {
+        // Landscape or square image
+        finalWidth = Math.min(maxWidth, maxHeight * aspectRatio);
+        finalHeight = finalWidth / aspectRatio;
+      } else {
+        // Portrait image
+        finalHeight = Math.min(maxHeight, maxWidth / aspectRatio);
+        finalWidth = finalHeight * aspectRatio;
+      }
+      
+      // Center the QR code
+      const x = (pageWidth - finalWidth) / 2;
       const y = 50;
       
-      pdf.addImage(qrDataUrl, 'PNG', x, y, imgWidth, imgHeight);
+      console.log(`PDF Print: Original ${originalWidth}x${originalHeight}, Final ${Math.round(finalWidth)}x${Math.round(finalHeight)}`);
       
-      // Add instructions
+      pdf.addImage(qrDataUrl, 'PNG', x, y, finalWidth, finalHeight);
+      
+      // Add instructions below the QR code
       pdf.setFontSize(12);
-      pdf.text('Escanea este código QR con tu dispositivo móvil', 105, 190, { align: 'center' });
-      pdf.text('para acceder al contenido.', 105, 200, { align: 'center' });
+      const textY = y + finalHeight + 20;
+      pdf.text('Escanea este código QR con tu dispositivo móvil', 105, textY, { align: 'center' });
+      pdf.text('para acceder al contenido.', 105, textY + 10, { align: 'center' });
       
       pdf.save(`${filename}-print.pdf`);
     } catch (error) {
