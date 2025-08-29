@@ -779,12 +779,16 @@ setupGoogleAuth(app);
         return res.status(404).json({ message: "QR code not found" });
       }
       
-      // Increment scan count
+      // Record the scan with detailed tracking
       try {
-        await storage.incrementScanCount(qrId);
-        console.log("Scan count incremented for QR:", qrId);
+        const userAgent = req.get('User-Agent') || '';
+        const ipAddress = req.ip || req.connection.remoteAddress || '';
+        const country = 'Unknown'; // Can be enhanced with geoip-lite if needed
+        
+        await storage.recordQRScan(parseInt(qrId), userAgent, ipAddress, country);
+        console.log(`Scan recorded for QR ${qrId} - IP: ${ipAddress}, UA: ${userAgent.substring(0, 50)}`);
       } catch (error) {
-        console.error("Error incrementing scan count:", error);
+        console.error("Error recording scan:", error);
       }
       
       // Redirect to original URL
