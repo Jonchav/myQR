@@ -15,6 +15,7 @@ interface QRCodeStats {
   title: string;
   createdAt: string;
   totalScans: number;
+  scans: number; // For chart compatibility
 }
 
 interface DashboardStats {
@@ -136,7 +137,7 @@ export default function StatsDashboard() {
     
     return {
       name: hostname,
-      scans: qr.totalScans || qr.scans || qr.scanCount || 0,
+      scans: qr.totalScans || qr.scans || 0,
       url: qr.url.length > 30 ? qr.url.substring(0, 30) + "..." : qr.url
     };
   });

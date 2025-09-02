@@ -808,9 +808,12 @@ setupGoogleAuth(app);
           .sort((a, b) => (b.scanCount || 0) - (a.scanCount || 0))
           .slice(0, 10)
           .map(qr => ({
+            id: qr.id,
             title: qr.title || qr.url,
-            scans: qr.scanCount || 0,
-            url: qr.url
+            totalScans: qr.scanCount || 0,
+            scans: qr.scanCount || 0, // For chart compatibility
+            url: qr.url,
+            createdAt: qr.createdAt?.toISOString() || new Date().toISOString()
           }));
 
         const stats = {
