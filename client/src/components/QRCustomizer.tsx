@@ -211,12 +211,12 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                 <div></div>
               </div>
               
-              {/* Botones Aplicar cambios y Deshacer */}
-              <div className="flex flex-col gap-2 items-center">
+              {/* Botones Aplicar cambios y Deshacer - mejorada posición estética */}
+              <div className="flex flex-row gap-3 items-center justify-center mt-4 p-4 bg-gray-50/50 dark:bg-gray-800/50 rounded-xl">
                 <Button
                   onClick={onGenerate}
                   disabled={isGenerating}
-                  className="w-[180px] bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium py-2 px-4 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105 text-sm"
+                  className="flex-1 max-w-[140px] bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium py-3 px-4 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105 text-sm"
                 >
                   {isGenerating ? (
                     <>
@@ -228,7 +228,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                       <svg className="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                       </svg>
-                      Aplicar cambios
+                      Aplicar
                     </>
                   )}
                 </Button>
@@ -237,7 +237,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                   onClick={handleUndo}
                   disabled={!previousSettings || isGenerating}
                   variant="outline"
-                  className="w-[180px] border-gray-300 hover:border-gray-400 text-gray-700 hover:text-gray-900 font-medium py-2 px-4 rounded-lg transition-all duration-200 text-sm"
+                  className="flex-1 max-w-[140px] border-gray-300 hover:border-gray-400 text-gray-700 hover:text-gray-900 dark:border-gray-600 dark:text-gray-300 dark:hover:text-gray-100 font-medium py-3 px-4 rounded-lg transition-all duration-200 text-sm"
                 >
                   <Undo className="w-3 h-3 mr-2" />
                   Deshacer
@@ -263,13 +263,13 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
             )}
           </div>
           
-          {/* Botón Aplicar cambios cuando no hay cardStyle - centrado */}
+          {/* Botón Aplicar cambios cuando no hay cardStyle - centrado y mejorado */}
           {settings.cardStyle === "none" && (
-            <div className="flex flex-col items-center gap-2">
+            <div className="flex flex-row gap-3 items-center justify-center mt-6 p-4 bg-gray-50/30 dark:bg-gray-800/30 rounded-xl">
               <Button
                 onClick={onGenerate}
                 disabled={isGenerating}
-                className="w-[180px] bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium py-2 px-4 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105 text-sm"
+                className="flex-1 max-w-[140px] bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium py-3 px-4 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105 text-sm"
               >
                 {isGenerating ? (
                   <>
@@ -281,7 +281,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                     <svg className="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
-                    Aplicar cambios
+                    Aplicar
                   </>
                 )}
               </Button>
@@ -290,7 +290,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
                 onClick={handleUndo}
                 disabled={!previousSettings || isGenerating}
                 variant="outline"
-                className="w-[180px] border-gray-300 hover:border-gray-400 text-gray-700 hover:text-gray-900 font-medium py-2 px-4 rounded-lg transition-all duration-200 text-sm"
+                className="flex-1 max-w-[140px] border-gray-300 hover:border-gray-400 text-gray-700 hover:text-gray-900 dark:border-gray-600 dark:text-gray-300 dark:hover:text-gray-100 font-medium py-3 px-4 rounded-lg transition-all duration-200 text-sm"
               >
                 <Undo className="w-3 h-3 mr-2" />
                 Deshacer

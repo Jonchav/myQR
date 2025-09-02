@@ -140,24 +140,6 @@ export function CardStyleCatalog({ onStyleSelect, selectedStyle, isGenerating }:
         <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
           Estilos de Tarjeta
         </h3>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={scrollLeft}
-            disabled={isLoading}
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={scrollRight}
-            disabled={isLoading}
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
       </div>
 
       <div className="relative">
