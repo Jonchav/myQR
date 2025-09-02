@@ -1,14 +1,18 @@
 import { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
-import { History, Eye, Copy, ExternalLink, Calendar, RefreshCw } from "lucide-react";
+import { History, Eye, Copy, ExternalLink, Calendar, RefreshCw, Edit3, Trash2, Save, X } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { apiRequest } from "@/lib/queryClient";
 
 interface QRHistoryProps {
   onEditQR?: (qr: any) => void;
@@ -17,6 +21,9 @@ interface QRHistoryProps {
 export function QRHistory({ onEditQR }: QRHistoryProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingTitle, setEditingTitle] = useState("");
+  const [isRenameOpen, setIsRenameOpen] = useState(false);
   const itemsPerPage = 20;
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -58,6 +65,69 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
       });
     } finally {
       setIsRefreshing(false);
+    }
+  };
+
+  // Mutation para eliminar QR
+  const deleteQRMutation = useMutation({
+    mutationFn: async (qrId: number) => {
+      const response = await apiRequest("DELETE", `/api/qr/${qrId}`);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["qr-history"] });
+      toast({
+        title: "Eliminado",
+        description: "Código QR eliminado correctamente",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Error al eliminar el código QR",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Mutation para renombrar QR
+  const renameQRMutation = useMutation({
+    mutationFn: async ({ qrId, title }: { qrId: number; title: string }) => {
+      const response = await apiRequest("PATCH", `/api/qr/${qrId}`, { title });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["qr-history"] });
+      setEditingId(null);
+      setEditingTitle("");
+      setIsRenameOpen(false);
+      toast({
+        title: "Actualizado",
+        description: "Título actualizado correctamente",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error", 
+        description: error.message || "Error al actualizar el título",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleDelete = (qrId: number) => {
+    deleteQRMutation.mutate(qrId);
+  };
+
+  const handleRename = (qr: any) => {
+    setEditingId(qr.id);
+    setEditingTitle(qr.title || new URL(qr.url).hostname);
+    setIsRenameOpen(true);
+  };
+
+  const saveRename = () => {
+    if (editingId && editingTitle.trim()) {
+      renameQRMutation.mutate({ qrId: editingId, title: editingTitle.trim() });
     }
   };
 
@@ -188,6 +258,7 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                         variant="ghost"
                         onClick={() => copyToClipboard(qr.url)}
                         className="text-gray-400 hover:text-white hover:bg-gray-700"
+                        title="Copiar URL"
                       >
                         <Copy className="w-4 h-4" />
                       </Button>
@@ -197,9 +268,104 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
                         variant="ghost"
                         onClick={() => window.open(qr.url, '_blank')}
                         className="text-gray-400 hover:text-white hover:bg-gray-700"
+                        title="Abrir en nueva pestaña"
                       >
                         <ExternalLink className="w-4 h-4" />
                       </Button>
+
+                      {/* Botón Renombrar */}
+                      <Dialog open={isRenameOpen && editingId === qr.id} onOpenChange={setIsRenameOpen}>
+                        <DialogTrigger asChild>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleRename(qr)}
+                            className="text-gray-400 hover:text-blue-400 hover:bg-gray-700"
+                            title="Renombrar"
+                          >
+                            <Edit3 className="w-4 h-4" />
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-md">
+                          <DialogHeader>
+                            <DialogTitle>Renombrar QR Code</DialogTitle>
+                            <DialogDescription>
+                              Cambia el título de tu código QR
+                            </DialogDescription>
+                          </DialogHeader>
+                          <div className="flex items-center space-x-2">
+                            <Input
+                              value={editingTitle}
+                              onChange={(e) => setEditingTitle(e.target.value)}
+                              placeholder="Nuevo título..."
+                              className="flex-1"
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  saveRename();
+                                }
+                              }}
+                            />
+                          </div>
+                          <DialogFooter className="sm:justify-start">
+                            <Button
+                              onClick={saveRename}
+                              disabled={renameQRMutation.isPending || !editingTitle.trim()}
+                              className="bg-blue-600 hover:bg-blue-700"
+                            >
+                              {renameQRMutation.isPending ? (
+                                <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                              ) : (
+                                <Save className="w-4 h-4 mr-2" />
+                              )}
+                              Guardar
+                            </Button>
+                            <Button
+                              variant="outline"
+                              onClick={() => setIsRenameOpen(false)}
+                            >
+                              <X className="w-4 h-4 mr-2" />
+                              Cancelar
+                            </Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
+
+                      {/* Botón Eliminar */}
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="text-gray-400 hover:text-red-400 hover:bg-gray-700"
+                            title="Eliminar"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>¿Eliminar código QR?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Esta acción no se puede deshacer. Se eliminará permanentemente el código QR "{qr.title || new URL(qr.url).hostname}" y todos sus datos de escaneo.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleDelete(qr.id)}
+                              className="bg-red-600 hover:bg-red-700"
+                              disabled={deleteQRMutation.isPending}
+                            >
+                              {deleteQRMutation.isPending ? (
+                                <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                              ) : (
+                                <Trash2 className="w-4 h-4 mr-2" />
+                              )}
+                              Eliminar
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                       
                       <Button
                         size="sm"

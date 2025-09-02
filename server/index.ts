@@ -638,6 +638,92 @@ setupGoogleAuth(app);
     }
   });
 
+  // Delete QR Code endpoint
+  app.delete("/api/qr/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const qrId = parseInt(req.params.id);
+      const userId = req.user?.id || req.user?.claims?.sub;
+      
+      if (!userId) {
+        return res.status(401).json({ message: "Usuario no autenticado" });
+      }
+      
+      if (!qrId || isNaN(qrId)) {
+        return res.status(400).json({ message: "ID de QR inválido" });
+      }
+      
+      console.log(`Attempting to delete QR ${qrId} for user ${userId}`);
+      
+      const deleted = await storage.deleteQRCode(qrId, userId);
+      
+      if (deleted) {
+        console.log(`QR ${qrId} deleted successfully`);
+        res.json({
+          success: true,
+          message: "Código QR eliminado correctamente"
+        });
+      } else {
+        console.log(`QR ${qrId} not found or user unauthorized`);
+        res.status(404).json({ 
+          success: false,
+          message: "Código QR no encontrado o sin permisos" 
+        });
+      }
+    } catch (error) {
+      console.error("Error deleting QR code:", error);
+      res.status(500).json({ 
+        success: false,
+        message: "Error al eliminar el código QR" 
+      });
+    }
+  });
+
+  // Update QR Code endpoint
+  app.patch("/api/qr/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const qrId = parseInt(req.params.id);
+      const userId = req.user?.id || req.user?.claims?.sub;
+      const { title } = req.body;
+      
+      if (!userId) {
+        return res.status(401).json({ message: "Usuario no autenticado" });
+      }
+      
+      if (!qrId || isNaN(qrId)) {
+        return res.status(400).json({ message: "ID de QR inválido" });
+      }
+      
+      if (!title || typeof title !== 'string' || title.trim().length === 0) {
+        return res.status(400).json({ message: "Título requerido" });
+      }
+      
+      console.log(`Attempting to update QR ${qrId} title to "${title}" for user ${userId}`);
+      
+      const updatedQR = await storage.updateQRCode(qrId, { title: title.trim() }, userId);
+      
+      if (updatedQR) {
+        console.log(`QR ${qrId} updated successfully`);
+        res.json({
+          success: true,
+          message: "Código QR actualizado correctamente",
+          qrCode: updatedQR
+        });
+      } else {
+        console.log(`QR ${qrId} not found or user unauthorized`);
+        res.status(404).json({ 
+          success: false,
+          message: "Código QR no encontrado o sin permisos" 
+        });
+      }
+    } catch (error) {
+      console.error("Error updating QR code:", error);
+      res.status(500).json({ 
+        success: false,
+        message: "Error al actualizar el código QR" 
+      });
+    }
+  });
+
   // QR History endpoint - Works with authentication
   app.get("/api/qr/history", isAuthenticated, async (req: any, res) => {
     try {
