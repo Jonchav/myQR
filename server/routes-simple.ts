@@ -130,6 +130,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const offset = (page - 1) * limit;
 
       const qrCodes = await storage.getQRCodes(userId, limit, offset);
+      
+      console.log(`📋 QR History - User ${userId}: Found ${qrCodes.length} QR codes`);
+      qrCodes.forEach(qr => {
+        console.log(`- QR ${qr.id}: ${qr.url} (${qr.scanCount || 0} scans) - Title: ${qr.title || 'No title'}`);
+      });
+      
       res.json(qrCodes);
     } catch (error) {
       console.error("Error fetching QR codes:", error);
