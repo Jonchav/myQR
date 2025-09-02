@@ -159,55 +159,7 @@ export function QRCustomizer({ settings, onChange, onGenerate, isGenerating, onB
           {/* QR Position Controls - Solo las flechas centradas */}
           {settings.cardStyle !== "none" && (
             <div className="flex flex-col items-center space-y-4">
-              <div className="space-y-3">
-                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 text-center">
-                  Posición del QR
-                </h4>
-                <div className="flex flex-wrap gap-2 justify-center">
-                  <Button
-                    size="sm"
-                    variant={settings.qrPosition === "top" ? "default" : "outline"}
-                    onClick={() => applyRealTimeChange("qrPosition", "top")}
-                    className="text-xs px-3 py-1"
-                  >
-                    Arriba
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant={settings.qrPosition === "center" ? "default" : "outline"}
-                    onClick={() => applyRealTimeChange("qrPosition", "center")}
-                    className="text-xs px-3 py-1"
-                  >
-                    Centro
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant={settings.qrPosition === "bottom" ? "default" : "outline"}
-                    onClick={() => applyRealTimeChange("qrPosition", "bottom")}
-                    className="text-xs px-3 py-1"
-                  >
-                    Abajo
-                  </Button>
-                </div>
-                <div className="flex flex-wrap gap-2 justify-center">
-                  <Button
-                    size="sm"
-                    variant={settings.qrPosition === "left" ? "default" : "outline"}
-                    onClick={() => applyRealTimeChange("qrPosition", "left")}
-                    className="text-xs px-3 py-1"
-                  >
-                    Izquierda
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant={settings.qrPosition === "right" ? "default" : "outline"}
-                    onClick={() => applyRealTimeChange("qrPosition", "right")}
-                    className="text-xs px-3 py-1"
-                  >
-                    Derecha
-                  </Button>
-                </div>
-              </div>
+
               
               {/* Botones Aplicar cambios y Deshacer - mejorada posición estética */}
               <div className="flex flex-row gap-3 items-center justify-center mt-4 p-4 bg-gray-50/50 dark:bg-gray-800/50 rounded-xl">
