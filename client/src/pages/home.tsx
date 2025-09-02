@@ -224,7 +224,7 @@ export default function Home() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
-                  my<span className="bg-gradient-financial bg-clip-text text-transparent">QR</span>
+                  my<span className="text-blue-600 dark:text-blue-400">QR</span>
                 </h1>
                 <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">Professional QR Solutions</p>
               </div>
@@ -424,11 +424,11 @@ export default function Home() {
                           </div>
                         </div>
                       ) : (
-                        <div className="w-full h-64 bg-gray-900 border-2 border-dashed border-gray-700 rounded-lg flex items-center justify-center">
+                        <div className="w-full h-80 bg-slate-100 dark:bg-slate-800 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-2xl flex items-center justify-center">
                           <div className="text-center">
-                            <QrCode className="w-16 h-16 text-gray-600 mx-auto mb-3" />
-                            <p className="text-gray-400 text-sm">
-                              El código QR aparecerá aquí
+                            <QrCode className="w-20 h-20 text-slate-400 dark:text-slate-500 mx-auto mb-4" />
+                            <p className="text-slate-500 dark:text-slate-400 text-base font-medium">
+                              Your QR code will appear here
                             </p>
                           </div>
                         </div>
