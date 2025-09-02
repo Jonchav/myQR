@@ -802,6 +802,8 @@ setupGoogleAuth(app);
         const totalScans = allQRCodes.reduce((sum, qr) => sum + (qr.scanCount || 0), 0);
         const totalQRCodes = allQRCodes.length;
         const avgScansPerQR = totalQRCodes > 0 ? Math.round(totalScans / totalQRCodes) : 0;
+        
+        console.log(`📊 Dashboard Stats - User ${userId}: Total QRs: ${totalQRCodes}, Total Scans: ${totalScans}`);
 
         // Get top QR codes (sorted by scans)
         const topQRCodes = allQRCodes
