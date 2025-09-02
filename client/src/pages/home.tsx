@@ -213,20 +213,20 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen qr-pattern-bg">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       {/* Header */}
-      <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+      <header className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 shadow-financial">
+        <div className="max-w-7xl mx-auto px-4 py-5">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-primary to-primary/80 rounded-xl flex items-center justify-center vibrant-pulse color-glow">
-                <QrCode className="w-6 h-6 text-white" />
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 bg-gradient-financial rounded-2xl flex items-center justify-center shadow-financial">
+                <QrCode className="w-7 h-7 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                  my<span className="text-primary vibrant-pulse">QR</span>
+                <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+                  my<span className="bg-gradient-financial bg-clip-text text-transparent">QR</span>
                 </h1>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Generador de Códigos QR</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">Professional QR Solutions</p>
               </div>
             </div>
             
@@ -235,33 +235,33 @@ export default function Home() {
                 variant="ghost"
                 size="sm"
                 onClick={toggleTheme}
-                className="rounded-full"
+                className="rounded-xl p-3 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
               >
-                {theme === "light" ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+                {theme === "light" ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
               </Button>
               
               {isAuthenticated ? (
-                <div className="flex items-center space-x-3">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-8 h-8 bg-gradient-to-r from-primary to-primary/80 rounded-full flex items-center justify-center vibrant-pulse">
+                <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-3 px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-xl">
+                    <div className="w-9 h-9 bg-gradient-financial rounded-xl flex items-center justify-center shadow-financial">
                       <User className="w-4 h-4 text-white" />
                     </div>
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">
+                    <span className="text-sm font-semibold text-slate-900 dark:text-white">
                       {(user as any)?.firstName || (user as any)?.email || "Usuario"}
                     </span>
                   </div>
-                  <Button variant="ghost" size="sm" asChild>
-                    <a href="/api/auth/logout" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
-                      <LogOut className="w-4 h-4" />
+                  <Button variant="ghost" size="sm" className="rounded-xl" asChild>
+                    <a href="/api/auth/logout" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white p-3">
+                      <LogOut className="w-5 h-5" />
                     </a>
                   </Button>
                 </div>
               ) : (
-                <div className="flex gap-2">
-                  <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground vibrant-pulse color-glow" asChild>
-                    <a href="/api/auth/google">Google</a>
+                <div className="flex gap-3">
+                  <Button size="sm" className="bg-gradient-financial hover:opacity-90 text-white shadow-financial rounded-xl px-6 font-semibold" asChild>
+                    <a href="/api/auth/google">Sign In</a>
                   </Button>
-                  <Button size="sm" variant="outline" asChild>
+                  <Button size="sm" variant="outline" className="border-slate-300 dark:border-slate-600 rounded-xl px-6 font-semibold" asChild>
                     <a href="/api/auth/demo-login">Demo</a>
                   </Button>
                 </div>
@@ -272,41 +272,41 @@ export default function Home() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <main className="max-w-7xl mx-auto px-4 py-10">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
-            <TabsTrigger value="generate" className="flex items-center gap-2 text-gray-600 dark:text-gray-400 data-[state=active]:text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-600">
+          <TabsList className="grid w-full grid-cols-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-financial rounded-2xl p-2">
+            <TabsTrigger value="generate" className="flex items-center gap-2 text-slate-600 dark:text-slate-400 data-[state=active]:text-white data-[state=active]:bg-gradient-financial data-[state=active]:shadow-financial rounded-xl font-semibold transition-all duration-200">
               <QrCode className="w-4 h-4" />
-              Generar
+              Generate
             </TabsTrigger>
-            <TabsTrigger value="customize" className="flex items-center gap-2 text-gray-600 dark:text-gray-400 data-[state=active]:text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-600">
+            <TabsTrigger value="customize" className="flex items-center gap-2 text-slate-600 dark:text-slate-400 data-[state=active]:text-white data-[state=active]:bg-gradient-financial data-[state=active]:shadow-financial rounded-xl font-semibold transition-all duration-200">
               <Palette className="w-4 h-4" />
-              Personalizar
+              Customize
             </TabsTrigger>
-            <TabsTrigger value="stats" className="flex items-center gap-2 text-gray-600 dark:text-gray-400 data-[state=active]:text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-600">
+            <TabsTrigger value="stats" className="flex items-center gap-2 text-slate-600 dark:text-slate-400 data-[state=active]:text-white data-[state=active]:bg-gradient-financial data-[state=active]:shadow-financial rounded-xl font-semibold transition-all duration-200">
               <TrendingUp className="w-4 h-4" />
-              Dashboard
+              Analytics
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="generate" className="mt-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <TabsContent value="generate" className="mt-10">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
               {/* Input Section */}
-              <div className="space-y-6">
-                <Card className="border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
-                  <CardHeader>
-                    <CardTitle className="text-lg text-gray-900 dark:text-white">Ingresa tu enlace</CardTitle>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Introduce la URL para generar tu código QR
+              <div className="space-y-8">
+                <Card className="border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-financial rounded-2xl">
+                  <CardHeader className="pb-6">
+                    <CardTitle className="text-xl text-slate-900 dark:text-white font-semibold tracking-tight">Enter Your Link</CardTitle>
+                    <p className="text-base text-slate-600 dark:text-slate-400 font-medium">
+                      Provide the URL to generate your professional QR code
                     </p>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="url-input" className="text-gray-700 dark:text-gray-300">URL o enlace</Label>
+                  <CardContent className="space-y-6">
+                    <div className="space-y-3">
+                      <Label htmlFor="url-input" className="text-slate-700 dark:text-slate-300 font-semibold">URL or Link</Label>
                       <Input
                         id="url-input"
                         type="url"
-                        placeholder="https://ejemplo.com"
+                        placeholder="https://example.com"
                         value={url}
                         onChange={(e) => {
                           setUrl(e.target.value);
@@ -314,37 +314,37 @@ export default function Home() {
                           setShowSuccess(false);
                         }}
                         onKeyPress={handleKeyPress}
-                        className="bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-500 focus:border-emerald-500 focus:ring-emerald-500 transition-colors duration-200"
+                        className="bg-slate-50 dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white placeholder:text-slate-500 focus:border-blue-500 focus:ring-blue-500 rounded-xl h-12 px-4 text-base font-medium transition-all duration-200"
                       />
                     </div>
                     
                     <Button 
                       onClick={handleGenerate}
                       disabled={generateQRMutation.isPending}
-                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                      className="w-full bg-gradient-financial hover:opacity-90 text-white shadow-financial rounded-xl h-12 text-base font-semibold transition-all duration-200"
                     >
                       {generateQRMutation.isPending ? (
                         <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Generando...
+                          <Loader2 className="w-5 h-5 mr-3 animate-spin" />
+                          Generating...
                         </>
                       ) : (
-                        "Generar código QR"
+                        "Generate QR Code"
                       )}
                     </Button>
                     
                     {error && (
-                      <Alert variant="destructive">
-                        <AlertCircle className="h-4 w-4" />
-                        <AlertDescription>{error}</AlertDescription>
+                      <Alert variant="destructive" className="rounded-xl border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20">
+                        <AlertCircle className="h-5 w-5" />
+                        <AlertDescription className="font-medium">{error}</AlertDescription>
                       </Alert>
                     )}
 
                     {showSuccess && (
-                      <Alert className="bg-green-50 border-green-200 dark:bg-green-900/20">
-                        <CheckCircle className="h-4 w-4 text-green-600" />
-                        <AlertDescription className="text-green-700 dark:text-green-400">
-                          ¡Código QR generado exitosamente!
+                      <Alert className="bg-emerald-50 border-emerald-200 dark:bg-emerald-900/20 rounded-xl">
+                        <CheckCircle className="h-5 w-5 text-emerald-600" />
+                        <AlertDescription className="text-emerald-800 dark:text-emerald-400 font-medium">
+                          QR Code generated successfully!
                         </AlertDescription>
                       </Alert>
                     )}
@@ -352,23 +352,23 @@ export default function Home() {
                 </Card>
 
                 {/* Features List */}
-                <Card className="border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+                <Card className="border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-financial rounded-2xl">
                   <CardHeader>
-                    <CardTitle className="text-lg text-gray-900 dark:text-white">Características</CardTitle>
+                    <CardTitle className="text-xl text-slate-900 dark:text-white font-semibold tracking-tight">Professional Features</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       {[
-                        "Generación instantánea",
-                        "Alta calidad de imagen", 
-                        "Descarga fácil",
-                        "Historial personal"
+                        "Instant Generation",
+                        "High-Resolution Output", 
+                        "Multiple Formats",
+                        "Analytics Tracking"
                       ].map((feature, index) => (
-                        <div key={index} className="flex items-center space-x-3">
-                          <div className="w-5 h-5 bg-emerald-600 rounded-full flex items-center justify-center">
+                        <div key={index} className="flex items-center space-x-4">
+                          <div className="w-6 h-6 bg-gradient-financial rounded-xl flex items-center justify-center shadow-financial">
                             <CheckCircle className="w-3 h-3 text-white" />
                           </div>
-                          <span className="text-sm text-gray-700 dark:text-gray-300">{feature}</span>
+                          <span className="text-base font-medium text-slate-700 dark:text-slate-300">{feature}</span>
                         </div>
                       ))}
                     </div>
@@ -377,46 +377,46 @@ export default function Home() {
               </div>
 
               {/* QR Display Section */}
-              <div className="space-y-6">
-                <Card className="border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+              <div className="space-y-8">
+                <Card className="border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-financial rounded-2xl">
                   <CardHeader>
-                    <CardTitle className="text-lg text-center text-gray-900 dark:text-white">Tu código QR</CardTitle>
+                    <CardTitle className="text-xl text-center text-slate-900 dark:text-white font-semibold tracking-tight">Your QR Code</CardTitle>
                   </CardHeader>
                   <CardContent className="text-center">
-                    <div className="mb-6">
+                    <div className="mb-8">
                       {qrCode ? (
-                        <div className="space-y-4">
+                        <div className="space-y-6">
                           {/* QR Code Display */}
-                          <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                          <div className="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
                             <img 
                               src={qrCode} 
-                              alt="Código QR generado" 
-                              className="mx-auto border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-w-[600px] w-full h-auto"
+                              alt="Generated QR Code" 
+                              className="mx-auto border border-slate-300 dark:border-slate-600 rounded-xl shadow-elevated max-w-[600px] w-full h-auto"
                             />
                           </div>
                           
-                          <Alert className="bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-700">
-                            <Link className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-                            <AlertDescription className="text-gray-700 dark:text-gray-300">
-                              <span className="font-medium">Enlace:</span>{" "}
-                              <span className="font-mono text-sm break-all text-emerald-700 dark:text-emerald-300">{generatedUrl}</span>
+                          <Alert className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-700 rounded-xl">
+                            <Link className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                            <AlertDescription className="text-slate-700 dark:text-slate-300 font-medium">
+                              <span className="font-semibold">Link:</span>{" "}
+                              <span className="font-mono text-sm break-all text-blue-700 dark:text-blue-300">{generatedUrl}</span>
                             </AlertDescription>
                           </Alert>
 
-                          <div className="space-y-3">
-                            <div className="flex gap-2">
+                          <div className="space-y-4">
+                            <div className="flex gap-4">
                               <DownloadButton 
                                 qrDataUrl={qrCode}
                                 filename="qr-code"
-                                className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
+                                className="flex-1 bg-gradient-financial hover:opacity-90 text-white shadow-financial rounded-xl h-12 font-semibold"
                               />
                               <Button 
                                 onClick={handleReset}
                                 variant="outline"
-                                className="flex-1 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                                className="flex-1 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl h-12 font-semibold"
                               >
-                                <RefreshCw className="w-4 h-4 mr-2" />
-                                Nuevo
+                                <RefreshCw className="w-5 h-5 mr-2" />
+                                Reset
                               </Button>
                             </div>
                             
