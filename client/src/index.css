@@ -108,6 +108,17 @@
   .bg-gradient-card {
     background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--muted)) 100%);
   }
+  
+  /* Selection styles to prevent invisible text */
+  ::selection {
+    background-color: hsl(var(--primary));
+    color: white;
+  }
+  
+  ::-moz-selection {
+    background-color: hsl(var(--primary));
+    color: white;
+  }
 }
 
 @layer utilities {

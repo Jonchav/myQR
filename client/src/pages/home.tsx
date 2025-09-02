@@ -275,15 +275,15 @@ export default function Home() {
       <main className="max-w-7xl mx-auto px-4 py-10">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-financial rounded-2xl p-2">
-            <TabsTrigger value="generate" className="flex items-center gap-2 text-slate-600 dark:text-slate-400 data-[state=active]:text-white data-[state=active]:bg-gradient-financial data-[state=active]:shadow-financial rounded-xl font-semibold transition-all duration-200">
+            <TabsTrigger value="generate" className="flex items-center gap-2 text-slate-600 dark:text-slate-400 data-[state=active]:text-white data-[state=active]:bg-blue-600 hover:data-[state=active]:bg-blue-700 data-[state=active]:shadow-financial rounded-xl font-semibold transition-all duration-200 selection:text-white selection:bg-blue-600">
               <QrCode className="w-4 h-4" />
               Generate
             </TabsTrigger>
-            <TabsTrigger value="customize" className="flex items-center gap-2 text-slate-600 dark:text-slate-400 data-[state=active]:text-white data-[state=active]:bg-gradient-financial data-[state=active]:shadow-financial rounded-xl font-semibold transition-all duration-200">
+            <TabsTrigger value="customize" className="flex items-center gap-2 text-slate-600 dark:text-slate-400 data-[state=active]:text-white data-[state=active]:bg-blue-600 hover:data-[state=active]:bg-blue-700 data-[state=active]:shadow-financial rounded-xl font-semibold transition-all duration-200 selection:text-white selection:bg-blue-600">
               <Palette className="w-4 h-4" />
               Customize
             </TabsTrigger>
-            <TabsTrigger value="stats" className="flex items-center gap-2 text-slate-600 dark:text-slate-400 data-[state=active]:text-white data-[state=active]:bg-gradient-financial data-[state=active]:shadow-financial rounded-xl font-semibold transition-all duration-200">
+            <TabsTrigger value="stats" className="flex items-center gap-2 text-slate-600 dark:text-slate-400 data-[state=active]:text-white data-[state=active]:bg-blue-600 hover:data-[state=active]:bg-blue-700 data-[state=active]:shadow-financial rounded-xl font-semibold transition-all duration-200 selection:text-white selection:bg-blue-600">
               <TrendingUp className="w-4 h-4" />
               Analytics
             </TabsTrigger>
