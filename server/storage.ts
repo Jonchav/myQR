@@ -134,7 +134,7 @@ export class DatabaseStorage implements IStorage {
     return qrCode;
   }
 
-  async maintainQRLimit(userId: string, limit: number = 100): Promise<void> {
+  async maintainQRLimit(userId: string, limit: number = 3): Promise<void> {
     // Obtener el total de QR codes del usuario
     const totalQRs = await db
       .select({ count: sql<number>`count(*)` })

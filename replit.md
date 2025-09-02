@@ -7,7 +7,16 @@ myQR is a full-stack web application for generating QR codes from URLs. It featu
 Preferred communication style: Simple, everyday language.
 Dashboard preference: Dashboard should only display graphs and metrics, not detailed QR code lists.
 
-## Recent Changes (August 11, 2025)
+## Recent Changes (September 2, 2025)
+### ✅ Professional Financial Design & QR Limit Fix - COMPLETED
+- **Visual Redesign**: Complete transformation to professional financial aesthetic with corporate blue palette, Inter font, elevated shadows and rounded corners
+- **UI Improvements**: Header redesign with better spacing, professional tabs with solid colors instead of gradients, improved contrast for better readability
+- **Text Visibility**: Fixed invisible text issues - logo "QR" changed from transparent gradient to solid blue, corrected selection styling with proper ::selection CSS
+- **QR Code Limit**: **CRITICAL FIX** - Changed QR limit from 100 to 3 codes per user in `server/storage.ts maintainQRLimit()` function
+- **Database Cleanup**: Removed 97 excess QR codes, maintaining only the 3 most recent ones per user
+- **Status**: 100% FUNCTIONAL WITH PROPER 3-QR LIMIT ✅
+
+### Previous Changes (August 11, 2025)
 ### ✅ Render Deployment Fixes - COMPLETED
 - **Authentication System**: Complete rewrite with `auth-clean.ts` - zero external dependencies
 - **Dependencies Cleanup**: Fully removed passport, openid-client, and all problematic packages
