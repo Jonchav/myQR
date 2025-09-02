@@ -71,8 +71,11 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
   // Mutation para eliminar QR
   const deleteQRMutation = useMutation({
     mutationFn: async (qrId: number) => {
+      console.log("Attempting to delete QR with ID:", qrId);
       const response = await apiRequest("DELETE", `/api/qr/${qrId}`);
-      return response.json();
+      const result = await response.json();
+      console.log("Delete response:", result);
+      return result;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["qr-history"] });
@@ -82,6 +85,7 @@ export function QRHistory({ onEditQR }: QRHistoryProps) {
       });
     },
     onError: (error: any) => {
+      console.error("Delete error:", error);
       toast({
         title: "Error",
         description: error.message || "Error al eliminar el código QR",

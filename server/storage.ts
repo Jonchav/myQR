@@ -33,6 +33,7 @@ export interface IStorage {
   // QR Code operations
   createQRCode(qrCode: any, userId?: string): Promise<QRCode>;
   getQRCodes(userId?: string, limit?: number, offset?: number): Promise<QRCode[]>;
+  getQRCodesCount(userId?: string): Promise<number>;
   getQRCode(id: number): Promise<QRCode | undefined>;
   getQRCodeById(id: string): Promise<QRCode | undefined>;
   incrementScanCount(id: string): Promise<void>;
@@ -183,6 +184,18 @@ export class DatabaseStorage implements IStorage {
         .orderBy(desc(qrCodes.createdAt))
         .limit(limit)
         .offset(offset);
+    }
+  }
+
+  async getQRCodesCount(userId?: string): Promise<number> {
+    const query = db.select({ count: sql<number>`count(*)` }).from(qrCodes);
+    
+    if (userId) {
+      const [result] = await query.where(eq(qrCodes.userId, userId));
+      return result?.count || 0;
+    } else {
+      const [result] = await query;
+      return result?.count || 0;
     }
   }
 

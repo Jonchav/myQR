@@ -739,6 +739,10 @@ setupGoogleAuth(app);
         
         if (realQRCodes && realQRCodes.length > 0) {
           console.log(`Returning ${realQRCodes.length} real QR codes from database for user ${userId}`);
+          
+          // Get total count for pagination
+          const totalCountResult = await storage.getQRCodesCount(userId);
+          
           res.json({
             success: true,
             qrCodes: realQRCodes,
@@ -746,7 +750,7 @@ setupGoogleAuth(app);
               limit,
               offset,
               hasMore: realQRCodes.length === limit,
-              totalCount: realQRCodes.length + offset,
+              totalCount: totalCountResult,
               maxLimit: 100
             }
           });
