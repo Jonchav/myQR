@@ -257,10 +257,28 @@ setupGoogleAuth(app);
     res.redirect("/");
   });
 
+  // Request tracking for deduplication
+  const recentRequests = new Map();
+  
   // Generate QR code with customization support
   app.post("/api/qr/generate", isAuthenticated, async (req: any, res) => {
     try {
       console.log("QR generation request received:", req.body);
+      
+      // Deduplication check
+      const userId = req.user?.id || 'anonymous';
+      const requestKey = `${userId}:${req.body.url}:${Date.now() - (Date.now() % 5000)}`; // 5-second window
+      
+      if (recentRequests.has(requestKey)) {
+        console.log("Duplicate request detected, ignoring");
+        return res.status(429).json({
+          success: false,
+          message: "Request too frequent, please wait a moment"
+        });
+      }
+      
+      recentRequests.set(requestKey, true);
+      setTimeout(() => recentRequests.delete(requestKey), 10000); // Cleanup after 10 seconds
       
       const { 
         url, 
