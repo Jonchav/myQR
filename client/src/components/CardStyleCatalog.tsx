@@ -49,13 +49,13 @@ export function CardStyleCatalog({ onStyleSelect, selectedStyle, isGenerating }:
 
   const generateCardPreview = async (cardStyleId: string) => {
     try {
-      const response = await fetch('/api/qr/generate', {
+      const response = await fetch('/api/qr/preview', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          url: 'https://myqr.app',
+          url: 'https://example.com',
           cardStyle: cardStyleId,
           creativeStyle: 'classic',
           size: 'small',
@@ -66,7 +66,7 @@ export function CardStyleCatalog({ onStyleSelect, selectedStyle, isGenerating }:
 
       const data = await response.json();
       if (data.success) {
-        return data.qrCode;
+        return data.preview;
       }
     } catch (error) {
       console.error('Error generating card preview:', error);

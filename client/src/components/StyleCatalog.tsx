@@ -72,13 +72,13 @@ export function StyleCatalog({ onStyleSelect, selectedStyle, isGenerating }: Sty
 
   const generateQRPreview = async (styleId: string) => {
     try {
-      const response = await fetch('/api/qr/generate', {
+      const response = await fetch('/api/qr/preview', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          url: 'https://myqr.app',
+          url: 'https://example.com',
           creativeStyle: styleId,
           size: 'small',
           backgroundColor: '#ffffff',
@@ -88,7 +88,7 @@ export function StyleCatalog({ onStyleSelect, selectedStyle, isGenerating }: Sty
 
       const data = await response.json();
       if (data.success) {
-        return data.qrCode;
+        return data.preview;
       }
     } catch (error) {
       console.error('Error generating QR preview:', error);
